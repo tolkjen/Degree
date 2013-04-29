@@ -1,0 +1,79 @@
+import string
+from libcodon import get_codons
+
+def translate_uploaded_file(uploaded_file):
+	trans = {
+		'uuu': 'fenyloalanina',
+		'uuc': 'fenyloalanina',
+		'uua': 'leucyna',
+		'uug': 'leucyna',
+		'cuu': 'leucyna',
+		'cuc': 'leucyna',
+		'cua': 'leucyna',
+		'cug': 'leucyna',
+		'auu': 'izoleucyna',
+		'auc': 'izoleucyna',
+		'aua': 'izoleucyna',
+		'aug': 'metionina',
+		'guu': 'walina',
+		'guc': 'walina',
+		'gua': 'walina',
+		'gug': 'walina',
+		
+		'ucu': 'seryna',
+		'ucc': 'seryna',
+		'uca': 'seryna',
+		'ucg': 'seryna',
+		'ccu': 'prolina',
+		'ccc': 'prolina',
+		'cca': 'prolina',
+		'ccg': 'prolina',
+		'acu': 'treonina',
+		'acc': 'treonina',
+		'aca': 'treonina',
+		'acg': 'treonina',
+		'gcu': 'alanina',
+		'gcc': 'alanina',
+		'gca': 'alanina',
+		'gcg': 'alanina',
+		
+		'uau': 'tyrozyna',
+		'uac': 'tyrozyna',
+		'uaa': 'Ochre',
+		'uag': 'Amber',
+		'cau': 'histydyna',
+		'cac': 'histydyna',
+		'caa': 'glutamina',
+		'cag': 'glutamina',
+		'aau': 'asparagina',
+		'aac': 'asparagina',
+		'aaa': 'lizyna',
+		'aag': 'lizyna',
+		'gau': 'asparaginian',
+		'gac': 'asparaginian',
+		'gaa': 'glutaminian',
+		'gag': 'glutaminian',
+	}
+	
+	result = ''
+	data = ''.join(uploaded_file.read().split()).lower()
+	
+	if len(data) % 3 != 0:
+		raise Exception, 'Sequence length not divisible by 3!'
+	
+	for i in range(0, len(data), 3):
+		code = data[i] + data[i+1] + data[i+2]
+		if code in trans:
+			result += trans[code] + ' '
+		else:
+			raise Exception, 'Incorrect file contents!'
+	return result
+	
+def translate_uploaded_file(uploaded_file):
+	data = ''.join(uploaded_file.read().split()).lower()
+	
+	if len(data) % 3 != 0:
+		raise Exception, 'Sequence length not divisible by 3!'
+	
+	return get_codons(data)
+	

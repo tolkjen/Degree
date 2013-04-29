@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'protein/style.css' %}" />
+<title>Translacja</title>
+</head>
+
+<body>
+<div id="stylized">
+<form id="form" name="form" method="post" action="/protein/upload/" enctype="multipart/form-data">
+	{% csrf_token %}
+	<h1>Translacja</h1>
+	{% if error %}
+	<div class="error">{{ error }}</div>
+	{% endif %}
+	<p>Wyślij plik zawierający sekwencje kodujące białka. Plik może zawierać sekwencje znaków <i>a, c, g, u</i> rozdzielanych znakami białymi.</p>
+
+	<label>Plik
+	<span class="small">Wybierz plik z sekwencją</span>
+	</label>
+	<input type="file" name="uploaded_file" id="id_uploaded_file" />
+
+	<button type="submit">Wyślij</button>
+	<div class="spacer"></div>
+</form>
+</div>
+</body>
+
+</html>
