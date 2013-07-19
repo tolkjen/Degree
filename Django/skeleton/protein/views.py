@@ -9,7 +9,7 @@ import random
 import os.path
 
 def index(request):
-	return HttpResponse('Hello to skeleton site')
+	return HttpResponse('Hello to skeleton site man')
 	
 def upload(request):
 	if request.method == 'POST':
