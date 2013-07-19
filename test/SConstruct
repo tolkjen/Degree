@@ -1,6 +1,16 @@
-libraries = ['boost_python']
-library_dirs = ['/usr/lib64']
-linker_flags = ['-fPIC']
-include_dirs = ['/usr/include/python2.7', '/usr/include']
-src_files = ['codon.cpp', 'TripletBase.cpp']
-SharedLibrary(target='codon', source=src_files, LIBS=libraries, LIBPATH=library_dirs, CPPPATH=include_dirs, LINKFLAGS=linker_flags)
+src_files = [
+	'codon.cpp', 
+	'TripletBase.cpp'
+]
+
+env = Environment(TARGET_ARCH = 'x64')
+if env['PLATFORM'] == 'win32':
+	env.Append(LIBPATH=['C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\lib\\shared_all', 'C:\\Python27\\libs'])
+	env.Append(CPPPATH=['C:\\Users\\tolkjen\\Documents\\boost_1_53_0', 'C:\\Python27\\include'])
+	env.Append(CCFLAGS=['/MD'])
+else:
+	env.ParseConfig('pkg-config --cflags python')
+	env.Append(LIBS=['boost_python'])
+	env.Append(LINKFLAGS=['-fPIC'])
+
+env.SharedLibrary(target='codon', source=src_files)
