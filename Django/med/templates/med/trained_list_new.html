@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Medical site</title>
+</head>
+
+<body>
+<div id="stylized">
+	<form id="form" name="form" method="post" action="{% url 'med:trained_list_new' %}" enctype="multipart/form-data">
+		{% csrf_token %}
+
+		<h1>New classifier training</h1>
+
+		{% if error %}
+		<div class="error">{{ error }}</div>
+		{% endif %}
+
+		<p>Instructions</p>
+
+		<label>Classifier name
+			<span>Enter a name for classifier model</span>
+		</label>
+		<input type="text" name="name" maxlength="64" />
+
+		<label>Training data
+			<span>Choose a file with data for training a new classifier</span>
+		</label>
+		<input type="file" name="uploaded_file" />
+
+		<button type="submit">Train</button>
+		<div class="spacer"></div>
+	</form>
+</div>
+</body>
+
+</html>

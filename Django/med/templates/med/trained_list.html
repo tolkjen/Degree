@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Medical site</title>
+</head>
+
+<body>
+<div id="stylized">
+	<h1>Trained classifiers list</h1>
+
+	{% if error %}
+	<div class="error">{{ error }}</div>
+	{% endif %}
+
+	<div>
+		<a href="{% url 'med:trained_list_new' %}">Train new</a>
+	</div>
+	<table>
+	{% for data in trained %}
+		<tr>
+			<td>{{ data.name }}</td>
+			<td>{{ data.date_started }}</td>
+			<td>{{ data.date_finished }}</td>
+			<td><a href="{% url 'med:trained_list_delete' data.id %}">Delete</a></td>
+		</tr>
+	{% endfor %}
+	</table>
+</div>
+</body>
+
+</html>

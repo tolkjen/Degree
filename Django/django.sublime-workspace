@@ -1,0 +1,483 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"trained",
+				"trained_list_error"
+			],
+			[
+				"trained_",
+				"trained_list_error"
+			],
+			[
+				"tra",
+				"trained_list_error"
+			],
+			[
+				"tr",
+				"trained_list"
+			],
+			[
+				"Htt",
+				"HttpResponse"
+			],
+			[
+				"Train",
+				"TrainData"
+			],
+			[
+				"get",
+				"get_object_or_404"
+			],
+			[
+				"Htte",
+				"HttpResponseRedirect"
+			],
+			[
+				"class",
+				"classification"
+			],
+			[
+				"resu",
+				"result_rows"
+			],
+			[
+				"date",
+				"date_finished"
+			],
+			[
+				"Classification",
+				"ClassificationResults"
+			],
+			[
+				"Http",
+				"HttpResponseRedirect"
+			],
+			[
+				"traindata",
+				"traindata"
+			],
+			[
+				"Class",
+				"ClassificationResults"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "med/views.py",
+			"settings":
+			{
+				"buffer_size": 3611,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "med/templates/med/index.html",
+			"settings":
+			{
+				"buffer_size": 259,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "med/templates/med/cls_list_preview.html",
+			"settings":
+			{
+				"buffer_size": 311,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "med/templates/med/trained_list.html",
+			"settings":
+			{
+				"buffer_size": 549,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "med/models.py",
+			"settings":
+			{
+				"buffer_size": 459,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/SCons.sublime-build",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/tolkjen/Documents/Programming/Degree/html5/index.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list_new.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_preview.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_new_form.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/urls.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/forms.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_delete.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_new.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/models.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/skeleton/settings.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/protein/algorithms.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/protein/templates/protein/upload.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/protein/forms.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/protein/views.py",
+		"/var/run/media/tolkjen/62A2024FA202285D/Documents and Settings/tolkjen/Moje dokumenty/Informatyczne/Programowanie/Python/Django test/mysite/polls/urls.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list_delete.html",
+		"/var/run/media/tolkjen/62A2024FA202285D/Documents and Settings/tolkjen/Moje dokumenty/Informatyczne/Programowanie/Python/Django test/mysite/polls/views.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/admin.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/skeleton/urls.py",
+		"/var/run/media/tolkjen/62A2024FA202285D/Documents and Settings/tolkjen/Moje dokumenty/Informatyczne/Programowanie/Python/Django test/mysite/polls/models.py",
+		"/var/run/media/tolkjen/62A2024FA202285D/Documents and Settings/tolkjen/Moje dokumenty/Informatyczne/Programowanie/Python/Django test/mysite/polls/templates/polls/index.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/tests.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/protein/urls.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/__init__.py",
+		"/home/tolkjen/.config/sublime-text-3/Packages/User/SCons.sublime-build",
+		"/home/tolkjen/Downloads/Instalki/sublime_text_3/sublime_text.desktop"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"id",
+			"uploaded_file"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "med/views.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3611,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								390,
+								390
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "med/templates/med/index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 259,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								259,
+								259
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "med/templates/med/cls_list_preview.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 311,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								302,
+								302
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "med/templates/med/trained_list.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 549,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								549,
+								549
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "med/models.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 459,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"project": "django.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"tr",
+				"med/templates/med/trained_list_new.html"
+			],
+			[
+				"tra",
+				"med/templates/med/trained_list_new.html"
+			],
+			[
+				"mode",
+				"med/models.py"
+			],
+			[
+				"cls",
+				"med/templates/med/cls_list_preview.html"
+			],
+			[
+				"ind",
+				"med/templates/med/index.html"
+			],
+			[
+				"model",
+				"med/models.py"
+			],
+			[
+				"sett",
+				"skeleton/settings.py"
+			],
+			[
+				"url",
+				"med/urls.py"
+			],
+			[
+				"algo",
+				"protein/algorithms.py"
+			],
+			[
+				"uplo",
+				"protein/templates/protein/upload.html"
+			],
+			[
+				"form",
+				"protein/forms.py"
+			],
+			[
+				"view",
+				"protein/views.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 501.0,
+		"selected_items":
+		[
+			[
+				"",
+				"~/Documents/Programming/Degree/Django/skeleton/protein/site.sublime-project"
+			]
+		],
+		"width": 381.0
+	},
+	"select_symbol":
+	{
+		"height": 212.0,
+		"selected_items":
+		[
+			[
+				"",
+				"TripletBase"
+			],
+			[
+				"get",
+				"get_codons"
+			]
+		],
+		"width": 392.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

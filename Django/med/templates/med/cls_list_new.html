@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Medical site</title>
+</head>
+
+<body>
+<div id="stylized">
+	<h1>Trained classifiactors list</h1>
+	<p>Choose a model for classification</p>
+	<table>
+	{% for data in trained %}
+		<tr>
+			<td>{{ data.name }}</td>
+			<td>{{ data.date_started }}</td>
+			<td>{{ data.date_finished }}</td>
+			<td><a href="{% url 'med:cls_list_new_form' data.id %}">Choose</a></td>
+		</tr>
+	{% endfor %}
+	</table>
+</div>
+</body>
+
+</html>

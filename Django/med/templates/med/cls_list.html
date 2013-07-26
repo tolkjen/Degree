@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Medical site</title>
+</head>
+
+<body>
+<div id="stylized">
+<h1>Classification results</h1>
+<a href="{% url 'med:cls_list_new' %}">New classification</a>
+<table>
+	{% for cls_item in cls_list %}
+	<tr>
+		<td>{{ cls_item.name }}</td>
+		<td>{{ cls_item.date_started }}</td>
+		<td>{{ cls_item.date_finished }}</td>
+		<td><a href="{% url 'med:cls_list_preview' cls_item.id %}">Preview</a></td>
+		<td><a href="{% url 'med:cls_list_delete' cls_item.id %}">Delete</a></td>
+	</tr>
+	{% endfor %}
+<table>
+</div>
+</body>
+
+</html>
