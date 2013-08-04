@@ -1,0 +1,44 @@
+import platform
+
+# Compile unit tests
+
+src_path='#src'
+src_files=[
+	'tests.cpp', 
+	'../TrainingData.cpp', 
+	'../TestData.cpp', 
+	'../TemporaryReader.cpp',
+	'../AbstractReader.cpp',
+	'../NaiveClassifier.cpp'
+]
+libs=[
+	'boost_python', 
+	'boost_unit_test_framework', 
+	'boost_serialization'
+]
+
+env = Environment(TARGET_ARCH = 'x64')
+env.Append(CPPPATH=src_path)
+env.Append(CCFLAGS=['-std=c++11'])
+
+if platform.system() == "Windows":
+	pass
+else:
+	env.ParseConfig('pkg-config --cflags --libs python')
+	env.Append(LIBS=libs)
+
+env.Program(target='tests', source=src_files)
+
+# Copy test files 
+
+test_files = [
+	'test_input_00.txt', 
+	'test_input_01.txt',
+	'training_input_00.txt',
+	'training_input_01.txt'
+]
+
+for test_file in test_files:
+	Command('#bin/tests/' + test_file, 
+			'#src/tests/' + test_file, 
+			Copy('$TARGET', '$SOURCE'))

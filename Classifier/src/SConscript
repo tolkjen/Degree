@@ -1,0 +1,25 @@
+import platform
+
+# Compile shared library
+
+src_files=[
+	'classifier.cpp', 
+	'TrainingData.cpp', 
+	'TestData.cpp', 
+	'TemporaryReader.cpp',
+	'AbstractReader.cpp',
+	'NaiveClassifier.cpp'
+]
+
+env = Environment(TARGET_ARCH = 'x64')
+env.Append(CPPPATH=['#src'])
+env.Append(CCFLAGS=['-std=c++11'])
+
+if platform.system() == "Windows":
+	pass
+else:
+	env.ParseConfig('pkg-config --cflags --libs python')
+	env.Append(LIBS=['boost_python', 'boost_serialization'])
+	env.Append(LINKFLAGS=['-fPIC'])
+
+env.SharedLibrary(target='classifier', source=src_files)
