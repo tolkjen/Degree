@@ -1,21 +1,3 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-<title>Medical site</title>
-</head>
-
-<body>
-<div id="stylized">
-	<h1>Classification results preview</h1>
-	<p>Name: {{ results.name }}</p>
-	<p>Start date: {{ results.date_started }}</p>
-	<p>Finish date: {{ results.date_finished }}</p>
-	<p>Classification</p>
-</div>
-</body>
-
-</html>
- -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,7 +35,17 @@
 	<p>Nazwa: {{ results.name }}</p>
 	<p>Moment rozpoczęcia: {{ results.date_started }}</p>
 	<p>Moment zakończenia: {{ results.date_finished }}</p>
-	<p>(Szczegóły)</p>
+	<table>
+		<tr class="header"><td>Strength</td><td>Dexterity</td><td>Intelligence</td><td>Class</td></tr>
+		{% for item in rows %}
+		<tr>
+			<td>{{ item.attr.0 }}</td>
+			<td>{{ item.attr.1 }}</td>
+			<td>{{ item.attr.2 }}</td>
+			<td>{{ item.category }}</td>
+		</tr>
+		{% endfor %}
+	</table>
 </div>
 <div class="footer">
 	<p>Piotr Tąkiel 2013</p>

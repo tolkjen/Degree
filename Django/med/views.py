@@ -9,6 +9,8 @@ from datetime import datetime
 from med.models import TrainData, ClassificationResults
 from med.forms import NewTrainDataForm, NewClassificationForm
 
+import classifier
+
 # Index page view
 
 def index(request):
@@ -28,9 +30,12 @@ def trained_list_new(request):
 	if request.method == 'POST':
 		form = NewTrainDataForm(request.POST, request.FILES)
 		if form.is_valid():
-			traindata = create_train_data(form)
-			traindata.save()
-			return HttpResponseRedirect(reverse('med:trained_list'))
+			try:
+				traindata = create_train_data(form)
+				traindata.save()
+				return HttpResponseRedirect(reverse('med:trained_list'))
+			except Exception, e:
+				return render(request, 'med/trained_list_new.html', {'form': form, 'error': e})
 		else:
 			error = "Proszę wybrać nazwę oraz plik z danymi uczącymi!"
 			return render(request, 'med/trained_list_new.html', {'form': form, 'error': error})
@@ -62,9 +67,12 @@ def cls_list_new_form(request, id):
 	if request.method == 'POST':
 		form = NewClassificationForm(request.POST, request.FILES)
 		if form.is_valid():
-			classification = create_classfication(form, model)
-			classification.save()
-			return HttpResponseRedirect(reverse('med:cls_list'))
+			try:
+				classification = create_classfication(form, model)
+				classification.save()
+				return HttpResponseRedirect(reverse('med:cls_list'))
+			except Exception, e:
+				return render(request, 'med/cls_list_new_form.html', {'model': model, 'id': id, 'error': e})
 		else:
 			error = "Proszę wybrać nazwę oraz plik z danymi uczącymi!"
 			return render(request, 'med/cls_list_new_form.html', {'model': model, 'id': id, 'error': error})
@@ -75,14 +83,26 @@ def cls_list_new_form(request, id):
 
 def cls_list_preview(request, id):
 	classification = get_object_or_404(ClassificationResults, pk=id)
-	return render(request, 'med/cls_list_preview.html', {'results': classification})
+	rows = get_classification_rows(classification)
+	return render(request, 'med/cls_list_preview.html', {
+		'results': classification,
+		'rows' : rows,
+	})
 
 def cls_list_delete(request, id):
 	classification = get_object_or_404(ClassificationResults, pk=id)
 	classification.delete()
 	return HttpResponseRedirect(reverse('med:cls_list'))
 
-# Factory methods
+# Helper methods
+
+def get_classification_rows(classification):
+	example_data = classifier.TrainingDataVector()
+	example_data.deserialize(classification.result_rows.encode('ascii', 'ignore'))
+	l = example_data.to_list()
+	for item in l:
+		print item.attr, item.category
+	return example_data.to_list()
 
 def create_classfication(form, data):
 	train_data = data
@@ -90,6 +110,15 @@ def create_classfication(form, data):
 	date_started = datetime.now()
 	result_rows = 'TO BE IMPLEMENTED'
 	date_finished = datetime.now()
+
+	reader = classifier.TemporaryReader()
+	filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
+	test_data = reader.readTestData(filepath)
+
+	nc = classifier.NaiveClassifier()
+	encoded_state = data.classifier_state.encode('ascii', 'ignore')
+	nc.deserialize(encoded_state)
+	result_rows = nc.getCategories(test_data).serialize()
 
 	return ClassificationResults(
 		name=name,
@@ -102,8 +131,15 @@ def create_classfication(form, data):
 def create_train_data(form):
 	name = form.cleaned_data['name']
 	date_started = datetime.now()
-	state = "TO BE IMPLEMENTED"
 	date_finished = datetime.now()
+
+	reader = classifier.TemporaryReader()
+	filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
+	training_data = reader.readTrainingData(filepath)
+
+	nc = classifier.NaiveClassifier()
+	nc.train(training_data)
+	state = nc.serialize()
 
 	return TrainData(
 		name=name, 
