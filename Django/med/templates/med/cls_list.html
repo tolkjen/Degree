@@ -1,25 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'med/style.css' %}" />
 <title>Medical site</title>
 </head>
 
 <body>
-<div id="stylized">
-<h1>Classification results</h1>
-<a href="{% url 'med:cls_list_new' %}">New classification</a>
-<table>
-	{% for cls_item in cls_list %}
-	<tr>
-		<td>{{ cls_item.name }}</td>
-		<td>{{ cls_item.date_started }}</td>
-		<td>{{ cls_item.date_finished }}</td>
-		<td><a href="{% url 'med:cls_list_preview' cls_item.id %}">Preview</a></td>
-		<td><a href="{% url 'med:cls_list_delete' cls_item.id %}">Delete</a></td>
-	</tr>
-	{% endfor %}
-<table>
+<div class="container">
+<div class="header">
+	<h1>Aplikacja medyczna</h1>
+</div>
+<div class="left">
+	<p>Uczenie</p>
+	<ul>
+		<li><a href="{% url 'med:trained_list_new' %}">Nowy klasyfikator</a></li>
+		<li><a href="{% url 'med:trained_list' %}">Lista klasyfikatorów</a></li>
+	</ul>
+
+	<p>Klasyfikacja</p>
+	<ul>
+		<li><a href="{% url 'med:cls_list_new' %}">Nowa klasyfikacja</a></li>
+		<li><a href="{% url 'med:cls_list' %}">Wyniki klasyfikacji</a></li>
+	</ul>
+
+	<p>Pomoc</p>
+	<ul>
+		<li><a href="#">Jak korzystać?</a></li>
+		<li><a href="#">Autor</a></li>
+	</ul>
+</div>
+<div class="content">
+	<h1>Wyniki klasyfikacji</h1>
+	<a href="{% url 'med:cls_list_new' %}">Nowa klasyfikacja</a>
+	<table>
+		<tr class="header"><td>Nazwa klasyfikacji</td><td>Przesłanie danych</td><td>Ukończenie obliczeń</td><td>Operacje</td></tr>
+		{% for cls_item in cls_list %}
+		<tr>
+			<td>{{ cls_item.name }}</td>
+			<td>{{ cls_item.date_started }}</td>
+			<td>{{ cls_item.date_finished }}</td>
+			<td><a href="{% url 'med:cls_list_preview' cls_item.id %}">Szczegóły</a>
+			<a href="{% url 'med:cls_list_delete' cls_item.id %}">Usuń</a></td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+<div class="footer">
+	<p>Piotr Tąkiel 2013</p>
+</div>
 </div>
 </body>
 
 </html>
+
+
+

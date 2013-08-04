@@ -1,35 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'med/style.css' %}" />
 <title>Medical site</title>
 </head>
 
 <body>
-<div id="stylized">
+<div class="container">
+<div class="header">
+	<h1>Aplikacja medyczna</h1>
+</div>
+<div class="left">
+	<p>Uczenie</p>
+	<ul>
+		<li><a href="{% url 'med:trained_list_new' %}">Nowy klasyfikator</a></li>
+		<li><a href="{% url 'med:trained_list' %}">Lista klasyfikatorów</a></li>
+	</ul>
+
+	<p>Klasyfikacja</p>
+	<ul>
+		<li><a href="{% url 'med:cls_list_new' %}">Nowa klasyfikacja</a></li>
+		<li><a href="{% url 'med:cls_list' %}">Wyniki klasyfikacji</a></li>
+	</ul>
+
+	<p>Pomoc</p>
+	<ul>
+		<li><a href="#">Jak korzystać?</a></li>
+		<li><a href="#">Autor</a></li>
+	</ul>
+</div>
+<div class="content">
+	<h1>Nowy klasyfikator</h1>
+	{% if error %}
+	<div class="error">{{ error }}</div>
+	{% endif %}
+	<p>Instrukcje</p>
 	<form id="form" name="form" method="post" action="{% url 'med:trained_list_new' %}" enctype="multipart/form-data">
+	<div>
 		{% csrf_token %}
 
-		<h1>New classifier training</h1>
+		<label>Nazwa klasyfikatora:</label>
+		<input class="cool" type="text" name="name" maxlength="64" />
 
-		{% if error %}
-		<div class="error">{{ error }}</div>
-		{% endif %}
-
-		<p>Instructions</p>
-
-		<label>Classifier name
-			<span>Enter a name for classifier model</span>
-		</label>
-		<input type="text" name="name" maxlength="64" />
-
-		<label>Training data
-			<span>Choose a file with data for training a new classifier</span>
-		</label>
+		<label>Dane uczące:</label>
 		<input type="file" name="uploaded_file" />
 
-		<button type="submit">Train</button>
+		<button type="submit">Naucz klasyfikator</button>
 		<div class="spacer"></div>
+	</div>
 	</form>
+</div>
+<div class="footer">
+	<p>Piotr Tąkiel 2013</p>
+</div>
 </div>
 </body>
 

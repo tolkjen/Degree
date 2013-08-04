@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
@@ -30,14 +32,14 @@ def trained_list_new(request):
 			traindata.save()
 			return HttpResponseRedirect(reverse('med:trained_list'))
 		else:
-			error = "Please provide a name and a data file."
+			error = "Proszę wybrać nazwę oraz plik z danymi uczącymi!"
 			return render(request, 'med/trained_list_new.html', {'form': form, 'error': error})
 	return render(request, 'med/trained_list_new.html')
 
 def trained_list_delete(request, id):
 	classifications = ClassificationResults.objects.filter(train_data__id=id)
 	if len(classifications) > 0:
-		error = 'You can\'t delete this classifier because database contains results made with it. Delete them first.'
+		error = "Przed usunięciem wybranego klasyfikatora należy usunąć wszystkie wyniki klasyfikacji z nim związane."
 		request.session['trained_list_error'] = error
 	else:
 		trained = get_object_or_404(TrainData, pk=id)
@@ -64,7 +66,7 @@ def cls_list_new_form(request, id):
 			classification.save()
 			return HttpResponseRedirect(reverse('med:cls_list'))
 		else:
-			error = "Please provide a name and a data file."
+			error = "Proszę wybrać nazwę oraz plik z danymi uczącymi!"
 			return render(request, 'med/cls_list_new_form.html', {'model': model, 'id': id, 'error': error})
 	else:
 		request.session['train_data_id'] = id
