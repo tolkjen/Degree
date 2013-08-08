@@ -3,6 +3,7 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
+from django.utils.cache import patch_cache_control
 
 from datetime import datetime
 
@@ -11,6 +12,17 @@ from med.forms import NewTrainDataForm, NewClassificationForm
 
 import classifier
 
+# Decorators
+
+class no_browser_cache(object):
+	def __init__(self, func):
+		self.func = func
+
+	def __call__(self, *args):
+		response = self.func(*args)
+		patch_cache_control(response, no_cache=True, no_store=True, must_revalidate=True)
+		return response
+
 # Index page view
 
 def index(request):
@@ -18,6 +30,7 @@ def index(request):
 
 # Trained classifiers views
 
+@no_browser_cache
 def trained_list(request):
 	trained = TrainData.objects.all()
 	if 'trained_list_error' in request.session:
@@ -53,12 +66,16 @@ def trained_list_delete(request, id):
 
 # Classification results views
 
+@no_browser_cache
 def cls_list(request):
 	results = ClassificationResults.objects.all()
+	print "cls_list: %d" % len(results)
 	return render(request, 'med/cls_list.html', {'cls_list': results})
 
+@no_browser_cache
 def cls_list_new(request):
 	trained = TrainData.objects.all()
+	print "cls_list_new: %d" % len(trained)
 	return render(request, 'med/cls_list_new.html', {'trained': trained})
 
 def cls_list_new_form(request, id):
@@ -98,17 +115,13 @@ def cls_list_delete(request, id):
 
 def get_classification_rows(classification):
 	example_data = classifier.TrainingDataVector()
-	example_data.deserialize(classification.result_rows.encode('ascii', 'ignore'))
-	l = example_data.to_list()
-	for item in l:
-		print item.attr, item.category
+	example_data.deserialize(classification.result_rows.encode('iso8859_2', 'ignore'))
 	return example_data.to_list()
 
 def create_classfication(form, data):
 	train_data = data
 	name = form.cleaned_data['name']
 	date_started = datetime.now()
-	result_rows = 'TO BE IMPLEMENTED'
 	date_finished = datetime.now()
 
 	reader = classifier.TemporaryReader()
@@ -116,7 +129,7 @@ def create_classfication(form, data):
 	test_data = reader.readTestData(filepath)
 
 	nc = classifier.NaiveClassifier()
-	encoded_state = data.classifier_state.encode('ascii', 'ignore')
+	encoded_state = data.classifier_state.encode('iso8859_2', 'ignore')
 	nc.deserialize(encoded_state)
 	result_rows = nc.getCategories(test_data).serialize()
 
