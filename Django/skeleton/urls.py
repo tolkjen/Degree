@@ -14,6 +14,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^med/', include('med.urls', namespace="med")),
-    url(r'^protein/', include('protein.urls', namespace="protein")),
+    # url(r'^protein/', include('protein.urls', namespace="protein")),
     url(r'^admin/', include(admin.site.urls)),
 )

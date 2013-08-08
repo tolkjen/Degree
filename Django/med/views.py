@@ -74,7 +74,7 @@ def cls_list_new_form(request, id):
 			except Exception, e:
 				return render(request, 'med/cls_list_new_form.html', {'model': model, 'id': id, 'error': e})
 		else:
-			error = "Proszę wybrać nazwę oraz plik z danymi uczącymi!"
+			error = "Proszę wybrać nazwę oraz plik z danymi do klasyfikacji!"
 			return render(request, 'med/cls_list_new_form.html', {'model': model, 'id': id, 'error': error})
 	else:
 		request.session['train_data_id'] = id
