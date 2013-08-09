@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingNonEmpty )
 {
 	TemporaryReader reader;
 	vector<TrainingData> data = reader.readTrainingData("training_input_01.txt");
-	BOOST_CHECK_EQUAL(data.size(), 2);
+	BOOST_CHECK_EQUAL(data.size(), 3);
 	BOOST_CHECK_EQUAL(data[0].getCategory(), "warrior");
 }
 
