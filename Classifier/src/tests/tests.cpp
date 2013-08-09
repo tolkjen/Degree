@@ -70,11 +70,18 @@ BOOST_AUTO_TEST_CASE( TemporaryReaderReadTestWrongFormat )
 		ReadingException);
 }
 
-BOOST_AUTO_TEST_CASE( TemporaryReaderReadTestNonEmpty )
+BOOST_AUTO_TEST_CASE( TemporaryReaderReadTestCorrectFormat )
 {
 	TemporaryReader reader;
 	vector<TestData> data = reader.readTestData("test_input_01.txt");
 	BOOST_CHECK_EQUAL(data.size(), 2);
+}
+
+BOOST_AUTO_TEST_CASE( TemporaryReaderReadTestSimilarFormat )
+{
+	TemporaryReader reader;
+	BOOST_REQUIRE_THROW(reader.readTestData("training_input_01.txt"),
+		ReadingException);
 }
 
 BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingNoFile )
@@ -91,12 +98,19 @@ BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingWrongFormat )
 		ReadingException);
 }
 
-BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingNonEmpty )
+BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingCorrectFormat )
 {
 	TemporaryReader reader;
 	vector<TrainingData> data = reader.readTrainingData("training_input_01.txt");
 	BOOST_CHECK_EQUAL(data.size(), 3);
 	BOOST_CHECK_EQUAL(data[0].getCategory(), "warrior");
+}
+
+BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingSimilarFormat )
+{
+	TemporaryReader reader;
+	BOOST_REQUIRE_THROW(reader.readTrainingData("test_input_01.txt"),
+		ReadingException);
 }
 
 /*
