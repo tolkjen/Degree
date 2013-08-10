@@ -7,8 +7,8 @@ from django.utils.cache import patch_cache_control
 
 from datetime import datetime
 
-from med.models import TrainData, ClassificationResults
-from med.forms import NewTrainDataForm, NewClassificationForm
+from med.models import ClassifierData, ClassificationResults
+from med.forms import NewClassifierDataForm, NewClassificationForm
 
 import classifier
 
@@ -32,7 +32,7 @@ def index(request):
 
 @no_browser_cache
 def trained_list(request):
-	trained = TrainData.objects.all()
+	trained = ClassifierData.objects.all()
 	if 'trained_list_error' in request.session:
 		error = request.session['trained_list_error']
 		del request.session['trained_list_error']
@@ -42,11 +42,11 @@ def trained_list(request):
 
 def trained_list_new(request):
 	if request.method == 'POST':
-		form = NewTrainDataForm(request.POST, request.FILES)
+		form = NewClassifierDataForm(request.POST, request.FILES)
 		if form.is_valid():
 			try:
-				traindata = create_train_data(form)
-				traindata.save()
+				cls_data = create_classifier_data(form)
+				cls_data.save()
 				return HttpResponseRedirect(reverse('med:trained_list'))
 			except Exception, e:
 				return render(request, 'med/trained_list_new.html', {'form': form, 'error': e})
@@ -56,12 +56,12 @@ def trained_list_new(request):
 	return render(request, 'med/trained_list_new.html')
 
 def trained_list_delete(request, id):
-	classifications = ClassificationResults.objects.filter(train_data__id=id)
+	classifications = ClassificationResults.objects.filter(classifier_data__id=id)
 	if len(classifications) > 0:
 		error = "Przed usunięciem wybranego klasyfikatora należy usunąć wszystkie wyniki klasyfikacji z nim związane."
 		request.session['trained_list_error'] = error
 	else:
-		trained = get_object_or_404(TrainData, pk=id)
+		trained = get_object_or_404(ClassifierData, pk=id)
 		trained.delete()
 	return HttpResponseRedirect(reverse('med:trained_list'))
 
@@ -75,12 +75,12 @@ def cls_list(request):
 
 @no_browser_cache
 def cls_list_new(request):
-	trained = TrainData.objects.all()
+	trained = ClassifierData.objects.all()
 	print "cls_list_new: %d" % len(trained)
 	return render(request, 'med/cls_list_new.html', {'trained': trained})
 
 def cls_list_new_form(request, id):
-	model = get_object_or_404(TrainData, pk=id)
+	model = get_object_or_404(ClassifierData, pk=id)
 
 	if request.method == 'POST':
 		form = NewClassificationForm(request.POST, request.FILES)
@@ -95,7 +95,7 @@ def cls_list_new_form(request, id):
 			error = "Proszę wybrać nazwę oraz plik z danymi do klasyfikacji!"
 			return render(request, 'med/cls_list_new_form.html', {'model': model, 'id': id, 'error': error})
 	else:
-		request.session['train_data_id'] = id
+		request.session['classifier_data_id'] = id
 
 	return render(request, 'med/cls_list_new_form.html', {'model': model, 'id': id})
 
@@ -120,7 +120,7 @@ def get_classification_rows(classification):
 	return example_data.to_list()
 
 def create_classfication(form, data):
-	train_data = data
+	classifier_data = data
 	name = form.cleaned_data['name']
 	date_started = datetime.now()
 	date_finished = datetime.now()
@@ -139,10 +139,10 @@ def create_classfication(form, data):
 		date_started=date_started,
 		date_finished=date_finished,
 		result_rows=result_rows,
-		train_data=train_data
+		classifier_data=classifier_data
 	)
 
-def create_train_data(form):
+def create_classifier_data(form):
 	name = form.cleaned_data['name']
 	date_started = datetime.now()
 	date_finished = datetime.now()
@@ -155,7 +155,7 @@ def create_train_data(form):
 	nc.train(training_data)
 	state = nc.serialize()
 
-	return TrainData(
+	return ClassifierData(
 		name=name, 
 		date_started=date_started, 
 		date_finished=date_finished, 

@@ -1,6 +1,6 @@
 from django import forms
 
-class NewTrainDataForm(forms.Form):
+class NewClassifierDataForm(forms.Form):
     name = forms.CharField(max_length=64)
     uploaded_file  = forms.FileField()
 

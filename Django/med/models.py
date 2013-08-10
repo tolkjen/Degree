@@ -1,13 +1,13 @@
 from django.db import models
 
-class TrainData(models.Model):
+class ClassifierData(models.Model):
 	name = models.CharField(max_length=64)
 	date_started = models.DateTimeField()
 	date_finished = models.DateTimeField()
 	classifier_state = models.TextField()
 
 class ClassificationResults(models.Model):
-	train_data = models.ForeignKey(TrainData)
+	classifier_data = models.ForeignKey(ClassifierData)
 	name = models.CharField(max_length=64)
 	date_started = models.DateTimeField()
 	date_finished = models.DateTimeField()
