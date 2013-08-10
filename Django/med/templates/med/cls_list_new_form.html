@@ -41,7 +41,7 @@
 		{% csrf_token %}
 
 		<label>Nazwa klasyfikacji:</label>
-		<input class="cool" type="text" name="name" maxlength="64" />
+		<input class="cool" type="text" name="name" maxlength="64" autocomplete="off" />
 
 		<label>Nazwa klasyfikatora:</label>
 		<span>{{ model.name }}</span>

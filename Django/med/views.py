@@ -37,6 +37,7 @@ def trained_list(request):
 		error = request.session['trained_list_error']
 		del request.session['trained_list_error']
 		return render(request, 'med/trained_list.html', {'trained': trained, 'error': error})
+	print "trained list size: %d" % len(trained)
 	return render(request, 'med/trained_list.html', {'trained': trained})
 
 def trained_list_new(request):
