@@ -32,7 +32,8 @@
 </div>
 <div class="content">
 	<h1>Szczegóły przeprowadzonej klasyfikacji</h1>
-	<p>Nazwa: {{ results.name }}</p>
+	<a href="{% url 'med:cls_list' %}">Powrót</a>
+	<h3>{{ results.name }}</h3>
 	<p>Moment rozpoczęcia: {{ results.date_started }}</p>
 	<p>Moment zakończenia: {{ results.date_finished }}</p>
 	<table>
