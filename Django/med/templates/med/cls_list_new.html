@@ -32,18 +32,23 @@
 </div>
 <div class="content">
 	<h1>Nowa klasyfikacja - wybór klasyfikatora</h1>
-	<p>Wybierz klasyfikator, który ma zostać użyty podczas klasyfikacji:</p>
-	<table>
-		<tr class="header"><td>Nazwa klasyfikatora</td><td>Przesłanie danych</td><td>Ukończenie nauki</td><td>Operacje</td></tr>
-		{% for data in trained %}
-		<tr>
-			<td>{{ data.name }}</td>
-			<td>{{ data.date_started }}</td>
-			<td>{{ data.date_finished }}</td>
-			<td><a href="{% url 'med:cls_list_new_form' data.id %}">Wybierz</a></td>
-		</tr>
-		{% endfor %}
-	</table>
+
+	{% if trained %}
+		<p>Wybierz klasyfikator, który ma zostać użyty podczas klasyfikacji:</p>
+		<table>
+			<tr class="header"><td>Nazwa klasyfikatora</td><td>Przesłanie danych</td><td>Ukończenie nauki</td><td>Operacje</td></tr>
+			{% for data in trained %}
+			<tr>
+				<td>{{ data.name }}</td>
+				<td>{{ data.date_started }}</td>
+				<td>{{ data.date_finished }}</td>
+				<td><a href="{% url 'med:cls_list_new_form' data.id %}">Wybierz</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>Przed przystąpieniem do klasyfikacji danych należy utworzyć klasyfikator. Aby utworzyć nowy klasyfikator, kliknij <a href="{% url 'med:trained_list_new' %}">tutaj</a>.</p>
+	{% endif %}
 </div>
 <div class="footer">
 	<p>Piotr Tąkiel 2013</p>

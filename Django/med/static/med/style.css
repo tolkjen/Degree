@@ -120,6 +120,13 @@ div.content a
 	display: block;
 }
 
+div.content p a 
+{
+	margin-top: 0px;
+	margin-bottom: 0px;
+	display: inline;
+}
+
 div.content table
 {
 	width: 100%;

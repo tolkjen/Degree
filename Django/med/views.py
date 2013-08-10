@@ -20,7 +20,7 @@ class no_browser_cache(object):
 
 	def __call__(self, *args):
 		response = self.func(*args)
-		patch_cache_control(response, no_cache=True, no_store=True, must_revalidate=True)
+		response["Cache-Control"] = "no-cache, no-store, must-revalidate"
 		return response
 
 # Index page view
