@@ -16,7 +16,8 @@ vector<TrainingData> TemporaryReader::readTrainingData(string path)
 		int nRows;
 		file >> nRows;
 
-		char str[8], dex[8], intel[8], cat[16];
+		double str, dex, intel;
+		char cat[64];
 		for (int i = 0; i < nRows; i++) {
 			file >> str >> dex >> intel >> cat;
 			if (!file.good())
@@ -52,7 +53,7 @@ vector<TestData> TemporaryReader::readTestData(string path)
 		int nRows;
 		file >> nRows;
 
-		char str[8], dex[8], intel[8];
+		double str, dex, intel;
 		for (int i = 0; i < nRows; i++) {
 			file >> str >> dex >> intel;
 			if (!file.good())

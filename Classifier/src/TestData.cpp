@@ -17,12 +17,12 @@ typename TestData::Iterator TestData::end()
 	return values.end();
 }
 
-void TestData::insert(string s)
+void TestData::insert(double s)
 {
 	values.push_back(s);
 }
 
-string& TestData::operator[](int index)
+double& TestData::operator[](int index)
 {
 	return values[index];
 }

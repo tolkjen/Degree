@@ -9,6 +9,8 @@
 #include "TemporaryReader.hpp"
 #include "NaiveClassifier.hpp"
 
+#include <iostream>
+
 using namespace reader;
 
 /*
@@ -24,16 +26,16 @@ BOOST_AUTO_TEST_CASE( TestDataEmpty )
 BOOST_AUTO_TEST_CASE( TestDataEmptyAfterInsert )
 {
 	TestData data;
-	data.insert("kitty");
+	data.insert(0.0);
 	BOOST_CHECK_EQUAL(data.empty(), false);
 }
 
 BOOST_AUTO_TEST_CASE( TestDataGetAfterInsert )
 {
 	TestData data;
-	data.insert("kitty");
-	string obj = data[0];
-	BOOST_CHECK_EQUAL(obj, "kitty");
+	data.insert(13.0);
+	double obj = data[0];
+	BOOST_CHECK_EQUAL(obj, 13.0);
 }
 
 /*
@@ -117,7 +119,7 @@ BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingSimilarFormat )
  * Tests for NaiveClassifier
  */
 
-static TrainingData createTrainingData(string *d, int count, string &cat)
+static TrainingData createTrainingData(double *d, int count, string &cat)
 {
 	TrainingData t;
 	for (int i = 0; i < count; i++)
@@ -126,7 +128,7 @@ static TrainingData createTrainingData(string *d, int count, string &cat)
 	return t;
 }
 
-static TestData createTestData(string *d, int count)
+static TestData createTestData(double *d, int count)
 {
 	TestData t;
 	for (int i = 0; i < count; i++)
@@ -135,9 +137,11 @@ static TestData createTestData(string *d, int count)
 }
 
 template <int length>
-static NaiveClassifier trainClassifier(string attr[][length], string cat[], 
+static NaiveClassifier trainClassifier(double attr[][length], string cat[], 
 	int count)
 {
+	const int domainCount = 6;
+
 	NaiveClassifier::TrainingSet trainingSet;
 	for (int i = 0; i < count; i++) {
 		TrainingData example = createTrainingData(attr[i], length, cat[i]);
@@ -145,7 +149,7 @@ static NaiveClassifier trainClassifier(string attr[][length], string cat[],
 	}
 
 	NaiveClassifier cl;
-	cl.train(trainingSet);
+	cl.train(trainingSet, domainCount);
 	return cl;
 }
 
@@ -154,10 +158,10 @@ BOOST_AUTO_TEST_CASE( NaiveClassifierMajorCategory )
 	const int exampleCount = 3;
 	const int exampleLength = 3;
 
-	string trainAttr[exampleCount][exampleLength] = {
-		{"3", "1", "1"},
-		{"1", "3", "1"},
-		{"1", "1", "3"},
+	double trainAttr[exampleCount][exampleLength] = {
+		{3, 1, 0},
+		{1, 3, 1},
+		{1, 1, 3},
 	};
 	string trainCat[exampleCount] = {
 		"warrior",
@@ -178,10 +182,10 @@ BOOST_AUTO_TEST_CASE( NaiveClassifierSerialization )
 	const int exampleCount = 3;
 	const int exampleLength = 3;
 
-	string trainAttr[exampleCount][exampleLength] = {
-		{"3", "1", "1"},
-		{"1", "3", "1"},
-		{"1", "1", "3"},
+	double trainAttr[exampleCount][exampleLength] = {
+		{3, 1, 0},
+		{1, 3, 1},
+		{1, 1, 3},
 	};
 	string trainCat[exampleCount] = {
 		"warrior",
@@ -191,6 +195,8 @@ BOOST_AUTO_TEST_CASE( NaiveClassifierSerialization )
 
 	NaiveClassifier clFirst = trainClassifier(trainAttr, trainCat, exampleCount);
 	string serialized = clFirst.serialize();
+
+	// cout << serialized;
 
 	NaiveClassifier clSecond;
 	clSecond.deserialize(serialized);

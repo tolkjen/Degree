@@ -12,14 +12,14 @@ class TestData
 {
 public:
 	friend class boost::serialization::access;
-	typedef vector<string>::iterator Iterator;
+	typedef vector<double>::iterator Iterator;
 
 public:
 	Iterator begin();
 	bool empty();
 	Iterator end();
-	void insert(string s);
-	string& operator[] (int index);
+	void insert(double s);
+	double& operator[] (int index);
 
 	template<class Archive> void serialize(Archive &ar, 
 		const unsigned int version)
@@ -28,7 +28,7 @@ public:
 	}
 
 private:
-	vector<string> values;
+	vector<double> values;
 };
 
 #endif
