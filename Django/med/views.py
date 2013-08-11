@@ -152,7 +152,7 @@ def create_classifier_data(form):
 	training_data = reader.readTrainingData(filepath)
 
 	nc = classifier.NaiveClassifier()
-	nc.train(training_data)
+	nc.train(training_data, 4)
 	state = nc.serialize()
 
 	return ClassifierData(

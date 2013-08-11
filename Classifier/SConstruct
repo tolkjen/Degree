@@ -1,2 +1,2 @@
 SConscript(dirs='src/tests', variant_dir='bin', src_dir='src', duplicate=0)
-# SConscript(dirs='src', variant_dir='bin', src_dir='src', duplicate=0)
+SConscript(dirs='src', variant_dir='bin', src_dir='src', duplicate=0)

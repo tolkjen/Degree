@@ -123,9 +123,9 @@ public:
 		return cl.serialize();
 	}
 
-	void train(TrainingDataVector &v)
+	void train(TrainingDataVector &v, int dCount)
 	{
-		cl.train(v.data);
+		cl.train(v.data, dCount);
 	}
 
 private:
