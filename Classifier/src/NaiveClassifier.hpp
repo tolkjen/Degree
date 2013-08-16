@@ -29,9 +29,6 @@ public:
 	virtual void train(TrainingSet &data);
 	void train(TrainingSet &data, int dCount);
 
-public:
-	static const int attrCount;
-
 private:
 	class Range
 	{
@@ -61,7 +58,7 @@ private:
 private:
 	shared_ptr<NB> _classifier;
 	vector<Range> _ranges;
-	int _domainCount;
+	int _domainCount, _attrCount;
 };
 
 #endif

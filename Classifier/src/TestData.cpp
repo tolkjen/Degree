@@ -26,3 +26,8 @@ double& TestData::operator[](int index)
 {
 	return values[index];
 }
+
+int TestData::size()
+{
+	return values.size();
+}

@@ -19,11 +19,10 @@ using namespace std;
 using namespace faif;
 using namespace faif::ml;
 
-const int NaiveClassifier::attrCount = 3;
-
 NaiveClassifier::NaiveClassifier()
 {
 	_domainCount = 2;
+	_attrCount = 1;
 	_classifier = shared_ptr<NB>(new NB());
 }
 
@@ -40,6 +39,7 @@ void NaiveClassifier::deserialize(string s)
 	ia >> boost::serialization::make_nvp("NBC", *_classifier);
 	ia >> BOOST_SERIALIZATION_NVP(_ranges);
 	ia >> BOOST_SERIALIZATION_NVP(_domainCount);
+	ia >> BOOST_SERIALIZATION_NVP(_attrCount);
 }
 
 string NaiveClassifier::getCategory(TestData &data)
@@ -55,6 +55,7 @@ string NaiveClassifier::serialize()
 	oa << boost::serialization::make_nvp("NBC", *_classifier);
 	oa << BOOST_SERIALIZATION_NVP(_ranges);
 	oa << BOOST_SERIALIZATION_NVP(_domainCount);
+	oa << BOOST_SERIALIZATION_NVP(_attrCount);
 	return oss.str();
 }
 
@@ -64,14 +65,17 @@ void NaiveClassifier::train(TrainingSet &data)
 	typedef NB::AttrDomain AttrDomain;
 	typedef NB::ExamplesTrain ExamplesTrain;
 
+	// Learn about the number of attributes in the data.
+	_attrCount = data[0].size();
+
 	// Calculate ranges for attributes and create a set of category names
 	set<string> catSet;
 
 	_ranges.clear();
-	_ranges.resize(attrCount);
+	_ranges.resize(_attrCount);
 
 	for (auto &t : data) {
-		for (int i = 0; i < attrCount; i++) {
+		for (int i = 0; i < _attrCount; i++) {
 			_ranges[i].start = min(_ranges[i].start, t[i]);
 			_ranges[i].end = max(_ranges[i].end, t[i]);
 		}
@@ -79,7 +83,7 @@ void NaiveClassifier::train(TrainingSet &data)
 	}
 
 	// Add a 'guard' to the range to eliminate special cases when start = end.
-	for (int i = 0; i < attrCount; i++)
+	for (int i = 0; i < _attrCount; i++)
 		if (_ranges[i].start == _ranges[i].end)
 			_ranges[i].end += 1.0;
 
@@ -90,12 +94,9 @@ void NaiveClassifier::train(TrainingSet &data)
 		domainNames[i] = buildDomainName(i);
 
 	Domains attribs;
-	attribs.push_back( createDomain("attr0", domainNames, 
-		domainNames + _domainCount) );
-	attribs.push_back( createDomain("attr1", domainNames, 
-		domainNames + _domainCount) );
-	attribs.push_back( createDomain("attr2", domainNames, 
-		domainNames + _domainCount) );
+	for (int i = 0; i < _attrCount; i++)
+		attribs.push_back( createDomain("", domainNames, 
+			domainNames + _domainCount) );
 
 	string catArray[catSet.size()];
 	int i = 0;
@@ -138,7 +139,7 @@ typename NaiveClassifier::ExampleTrain
 NaiveClassifier::createTrainingExample(TrainingData &data)
 {
 	vector<string> discrete;
-	for (int i = 0; i < attrCount; i++) {
+	for (int i = 0; i < _attrCount; i++) {
 		double realData = max(data[i], 0.0);
 		double domainLength = (double) (_ranges[i].end - _ranges[i].start) / _domainCount;
 
@@ -155,7 +156,7 @@ typename NaiveClassifier::ExampleTest
 NaiveClassifier::createTestExample(TestData &data)
 {
 	vector<string> discrete;
-	for (int i = 0; i < attrCount; i++) {
+	for (int i = 0; i < _attrCount; i++) {
 		double realData = max(data[i], 0.0);
 		double domainLength = (double) (_ranges[i].end - _ranges[i].start) / _domainCount;
 

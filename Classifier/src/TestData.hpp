@@ -20,6 +20,7 @@ public:
 	Iterator end();
 	void insert(double s);
 	double& operator[] (int index);
+	int size();
 
 	template<class Archive> void serialize(Archive &ar, 
 		const unsigned int version)

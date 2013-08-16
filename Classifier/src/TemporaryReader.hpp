@@ -13,8 +13,13 @@ namespace reader
 		typedef vector<TrainingData> TrainingSet;
 		typedef vector<TestData> TestSet;
 
+		TemporaryReader(int attrCount);
+
 		virtual TrainingSet readTrainingData(string path);
 		virtual TestSet readTestData(string path);
+
+	private:
+		int _attrCount;
 	};
 }
 

@@ -7,27 +7,36 @@ using namespace std;
 
 using namespace reader;
 
+TemporaryReader::TemporaryReader(int attrCount)
+{
+	_attrCount = attrCount;
+}
+
 vector<TrainingData> TemporaryReader::readTrainingData(string path)
 {
 	vector<TrainingData> results;
-	ifstream file(path);
+	vector<double> attrValues;
+	string category;
 
+	attrValues.resize(_attrCount);
+
+	ifstream file(path);
 	if (file.is_open()) {
 		int nRows;
 		file >> nRows;
 
-		double str, dex, intel;
-		char cat[64];
 		for (int i = 0; i < nRows; i++) {
-			file >> str >> dex >> intel >> cat;
+			for (int j = 0; j < _attrCount; j++)
+				file >> attrValues[j];
+			file >> category;
+
 			if (!file.good())
 				throw ReadingException("Nieprawidłowy format pliku");
 
 			TrainingData data;
-			data.insert(str);
-			data.insert(dex);
-			data.insert(intel);
-			data.setCategory(cat);
+			for (double& value : attrValues)
+				data.insert(value);
+			data.setCategory(category);
 
 			results.push_back(data);
 		}
@@ -47,22 +56,25 @@ vector<TrainingData> TemporaryReader::readTrainingData(string path)
 vector<TestData> TemporaryReader::readTestData(string path)
 {
 	vector<TestData> results;
-	ifstream file(path);
+	vector<double> attrValues;
 
+	attrValues.resize(_attrCount);
+
+	ifstream file(path);
 	if (file.is_open()) {
 		int nRows;
 		file >> nRows;
 
-		double str, dex, intel;
 		for (int i = 0; i < nRows; i++) {
-			file >> str >> dex >> intel;
+			for (int j = 0; j < _attrCount; j++)
+				file >> attrValues[j];
+
 			if (!file.good())
 				throw ReadingException("Nieprawidłowy format pliku");
 
 			TestData data;
-			data.insert(str);
-			data.insert(dex);
-			data.insert(intel);
+			for (double& value : attrValues)
+				data.insert(value);
 
 			results.push_back(data);
 		}

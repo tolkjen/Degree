@@ -8,6 +8,7 @@
 #include "TrainingData.hpp"
 #include "TemporaryReader.hpp"
 #include "NaiveClassifier.hpp"
+#include "TemporaryFactory.hpp"
 
 #include <iostream>
 
@@ -61,48 +62,48 @@ BOOST_AUTO_TEST_CASE( TrainingDataSetCategory )
 
 BOOST_AUTO_TEST_CASE( TemporaryReaderReadTestNoFile )
 {
-	TemporaryReader reader;
+	TemporaryReader reader(3);
 	BOOST_REQUIRE_THROW(reader.readTestData("NO-FILE"), ReadingException);
 }
 
 BOOST_AUTO_TEST_CASE( TemporaryReaderReadTestWrongFormat )
 {
-	TemporaryReader reader;
+	TemporaryReader reader(3);
 	BOOST_REQUIRE_THROW(reader.readTestData("test_input_00.txt"), 
 		ReadingException);
 }
 
 BOOST_AUTO_TEST_CASE( TemporaryReaderReadTestCorrectFormat )
 {
-	TemporaryReader reader;
+	TemporaryReader reader(3);
 	vector<TestData> data = reader.readTestData("test_input_01.txt");
 	BOOST_CHECK_EQUAL(data.size(), 2);
 }
 
 BOOST_AUTO_TEST_CASE( TemporaryReaderReadTestSimilarFormat )
 {
-	TemporaryReader reader;
+	TemporaryReader reader(3);
 	BOOST_REQUIRE_THROW(reader.readTestData("training_input_01.txt"),
 		ReadingException);
 }
 
 BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingNoFile )
 {
-	TemporaryReader reader;
+	TemporaryReader reader(3);
 	BOOST_REQUIRE_THROW(reader.readTrainingData("NO-FILE"), 
 		ReadingException);
 }
 
 BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingWrongFormat )
 {
-	TemporaryReader reader;
+	TemporaryReader reader(3);
 	BOOST_REQUIRE_THROW(reader.readTrainingData("training_input_00.txt"), 
 		ReadingException);
 }
 
 BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingCorrectFormat )
 {
-	TemporaryReader reader;
+	TemporaryReader reader(3);
 	vector<TrainingData> data = reader.readTrainingData("training_input_01.txt");
 	BOOST_CHECK_EQUAL(data.size(), 3);
 	BOOST_CHECK_EQUAL(data[0].getCategory(), "warrior");
@@ -110,9 +111,29 @@ BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingCorrectFormat )
 
 BOOST_AUTO_TEST_CASE( TemporaryReaderReadTrainingSimilarFormat )
 {
-	TemporaryReader reader;
+	TemporaryReader reader(3);
 	BOOST_REQUIRE_THROW(reader.readTrainingData("test_input_01.txt"),
 		ReadingException);
+}
+
+/*
+ * Tests for TemporaryFactory
+ */
+
+BOOST_AUTO_TEST_CASE( TemporaryFactoryBasicAttributes )
+{
+	TemporaryFactory factory;
+	BOOST_CHECK_EQUAL(factory.category(), "Class");
+	BOOST_CHECK_EQUAL(factory.attributes().size(), 3);
+}
+
+BOOST_AUTO_TEST_CASE( TemporaryFactoryReadTrainingCorrect )
+{
+	TemporaryFactory dataFactory;
+	vector<TrainingData> data = dataFactory.readTrainingData(
+		"training_input_01.txt");
+	BOOST_CHECK_EQUAL(data.size(), 3);
+	BOOST_CHECK_EQUAL(data[0].getCategory(), "warrior");
 }
 
 /*

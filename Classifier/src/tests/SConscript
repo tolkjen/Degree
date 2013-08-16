@@ -9,7 +9,9 @@ src_files=[
 	'../TestData.cpp', 
 	'../TemporaryReader.cpp',
 	'../AbstractReader.cpp',
-	'../NaiveClassifier.cpp'
+	'../NaiveClassifier.cpp',
+	'../TemporaryFactory.cpp',
+	'../DataFactory.cpp'
 ]
 libs=[
 	'boost_python', 
