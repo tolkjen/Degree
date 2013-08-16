@@ -102,7 +102,11 @@ def cls_list_new_form(request, id):
 def cls_list_preview(request, id):
 	classification = get_object_or_404(ClassificationResults, pk=id)
 	rows = get_classification_rows(classification)
+	dataFactory = classifier.TemporaryFactory()
+
 	return render(request, 'med/cls_list_preview.html', {
+		'attributes' : dataFactory.attributes,
+		'category' : dataFactory.category,
 		'results': classification,
 		'rows' : rows,
 	})

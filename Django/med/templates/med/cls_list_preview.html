@@ -37,12 +37,17 @@
 	<p>Moment rozpoczęcia: {{ results.date_started }}</p>
 	<p>Moment zakończenia: {{ results.date_finished }}</p>
 	<table>
-		<tr class="header"><td>Strength</td><td>Dexterity</td><td>Intelligence</td><td>Class</td></tr>
+		<tr class="header">
+			{% for attr in attributes %}
+			<td>{{ attr }}</td>
+			{% endfor %}
+			<td>{{ category }}</td>
+		</tr>
 		{% for item in rows %}
 		<tr>
-			<td>{{ item.attr.0 }}</td>
-			<td>{{ item.attr.1 }}</td>
-			<td>{{ item.attr.2 }}</td>
+			{% for attr_name in item.attr %}
+			<td>{{ attr_name }}</td>
+			{% endfor %}
 			<td>{{ item.category }}</td>
 		</tr>
 		{% endfor %}
