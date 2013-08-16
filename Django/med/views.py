@@ -125,9 +125,9 @@ def create_classfication(form, data):
 	date_started = datetime.now()
 	date_finished = datetime.now()
 
-	reader = classifier.TemporaryReader()
 	filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
-	test_data = reader.readTestData(filepath)
+	factory = classifier.TemporaryFactory()
+	test_data = factory.readTestData(filepath)
 
 	nc = classifier.NaiveClassifier()
 	encoded_state = data.classifier_state.encode('iso8859_2', 'ignore')
@@ -147,9 +147,9 @@ def create_classifier_data(form):
 	date_started = datetime.now()
 	date_finished = datetime.now()
 
-	reader = classifier.TemporaryReader()
 	filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
-	training_data = reader.readTrainingData(filepath)
+	factory = classifier.TemporaryFactory()
+	training_data = factory.readTrainingData(filepath)
 
 	nc = classifier.NaiveClassifier()
 	nc.train(training_data, 4)

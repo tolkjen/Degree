@@ -8,6 +8,7 @@
 #include "TrainingData.hpp"
 #include "TemporaryReader.hpp"
 #include "NaiveClassifier.hpp"
+#include "TemporaryFactory.hpp"
 
 using namespace boost::python;
 using namespace reader;
@@ -74,24 +75,6 @@ public:
 	vector<TestData> data;
 };
 
-class TemporaryReaderWrapper : public TemporaryReader
-{
-public:
-	TrainingDataVector readTraining(string path)
-	{
-		TrainingDataVector result;
-		result.data = TemporaryReader::readTrainingData(path);
-		return result;
-	}
-
-	TestDataVector readTest(string path)
-	{
-		TestDataVector result;
-		result.data = TemporaryReader::readTestData(path);
-		return result;
-	}
-};
-
 class NaiveClassifierWrapper
 {
 public:
@@ -132,6 +115,41 @@ private:
 	NaiveClassifier cl;
 };
 
+class TemporaryFactoryWrapper
+{
+public:
+	boost::python::list attributes()
+	{
+		boost::python::list result;
+		auto stringVector = _factory.attributes();
+		for (string& s : stringVector)
+			result.append( s );
+		return result;
+	}
+
+	string category() 
+	{
+		return _factory.category();
+	}
+
+	TrainingDataVector readTraining(string path)
+	{
+		TrainingDataVector result;
+		result.data = _factory.readTrainingData(path);
+		return result;
+	}
+
+	TestDataVector readTest(string path)
+	{
+		TestDataVector result;
+		result.data = _factory.readTestData(path);
+		return result;
+	}
+
+private:
+	TemporaryFactory _factory;
+};
+
 BOOST_PYTHON_MODULE(classifier)
 {
 	register_exception_translator<ReadingException>
@@ -151,16 +169,18 @@ BOOST_PYTHON_MODULE(classifier)
 	;
 	class_<TestDataVector>("TestDataVector");
 
-	class_<TemporaryReaderWrapper>("TemporaryReader")
-		.def("readTrainingData", &TemporaryReaderWrapper::readTraining)
-		.def("readTestData", &TemporaryReaderWrapper::readTest)
-	;
-
 	class_<NaiveClassifierWrapper>("NaiveClassifier", init<>())
 		.def("deserialize", &NaiveClassifierWrapper::deserialize)
 		.def("getCategory", &NaiveClassifierWrapper::getCategory)
 		.def("getCategories", &NaiveClassifierWrapper::getCategories)
 		.def("serialize", &NaiveClassifierWrapper::serialize)
 		.def("train", &NaiveClassifierWrapper::train)
+	;
+
+	class_<TemporaryFactoryWrapper>("TemporaryFactory")
+		.def_readonly("attributes", &TemporaryFactoryWrapper::attributes)
+		.def_readonly("category", &TemporaryFactoryWrapper::category)
+		.def("readTrainingData", &TemporaryFactoryWrapper::readTraining)
+		.def("readTestData", &TemporaryFactoryWrapper::readTest)
 	;
 }

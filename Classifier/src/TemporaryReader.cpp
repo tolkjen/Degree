@@ -7,6 +7,10 @@ using namespace std;
 
 using namespace reader;
 
+TemporaryReader::TemporaryReader()
+{
+}
+
 TemporaryReader::TemporaryReader(int attrCount)
 {
 	_attrCount = attrCount;
