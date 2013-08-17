@@ -40,14 +40,17 @@
 	<div>
 		{% csrf_token %}
 
+		<div>
 		<label>Nazwa klasyfikatora:</label>
 		<input class="cool" type="text" name="name" maxlength="64" autocomplete="off" />
+		</div>
 
+		<div>
 		<label>Dane uczące:</label>
 		<input type="file" name="uploaded_file" />
+		</div>
 
 		<button type="submit">Naucz klasyfikator</button>
-		<div class="spacer"></div>
 	</div>
 	</form>
 </div>

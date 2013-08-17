@@ -41,17 +41,22 @@
 	<div>
 		{% csrf_token %}
 
+		<div>
 		<label>Nazwa klasyfikacji:</label>
 		<input class="cool" type="text" name="name" maxlength="64" autocomplete="off" />
+		</div>
 
+		<div>
 		<label>Nazwa klasyfikatora:</label>
 		<span>{{ model.name }}</span>
+		</div>
 
+		<div>
 		<label>Dane wejściowe:</label>
 		<input type="file" name="uploaded_file" />
+		</div>
 
 		<button type="submit">Wyślij dane</button>
-		<div class="spacer"></div>
 	</div>
 	</form>
 </div>

@@ -4,6 +4,42 @@
 		"selected_items":
 		[
 			[
+				"fon",
+				"font-style"
+			],
+			[
+				"margin",
+				"margin-top"
+			],
+			[
+				"marg",
+				"margin-top"
+			],
+			[
+				"mar",
+				"margin-top"
+			],
+			[
+				"in",
+				"inline-block"
+			],
+			[
+				"di",
+				"display"
+			],
+			[
+				"inlie",
+				"inline"
+			],
+			[
+				"data",
+				"dataFactory"
+			],
+			[
+				"classi",
+				"classifier"
+			],
+			[
 				"class",
 				"classifier"
 			],
@@ -68,43 +104,27 @@
 	"buffers":
 	[
 		{
-			"file": "med/views.py",
+			"file": "med/templates/med/trained_list_new.html",
 			"settings":
 			{
-				"buffer_size": 5276,
+				"buffer_size": 1407,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "med/static/med/style.css",
+			"settings":
+			{
+				"buffer_size": 3223,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "med/templates/med/index.html",
+			"file": "med/templates/med/cls_list_new_form.html",
 			"settings":
 			{
-				"buffer_size": 873,
+				"buffer_size": 1560,
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "med/templates/med/cls_list_preview.html",
-			"settings":
-			{
-				"buffer_size": 1378,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "med/templates/med/trained_list.html",
-			"settings":
-			{
-				"buffer_size": 1611,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "med/models.py",
-			"settings":
-			{
-				"buffer_size": 474,
-				"line_ending": "Windows"
 			}
 		}
 	],
@@ -133,7 +153,13 @@
 	"file_history":
 	[
 		"/home/tolkjen/Documents/Programming/Degree/html5/index.html",
+		"/home/tolkjen/Documents/Programming/Degree/html5/style.css",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list_new.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/views.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/static/med/style.css",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/models.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/index.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_preview.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_new_form.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list.html",
@@ -141,9 +167,7 @@
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/forms.py",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_delete.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_new.html",
-		"/home/tolkjen/Documents/Programming/Degree/Django/med/models.py",
 		"/home/tolkjen/Documents/Programming/Degree/Django/skeleton/settings.py",
-		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/protein/algorithms.py",
 		"/home/tolkjen/Documents/Programming/Degree/Django/protein/templates/protein/upload.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/protein/forms.py",
@@ -197,77 +221,77 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "med/views.py",
+					"file": "med/templates/med/trained_list_new.html",
 					"settings":
 					{
-						"buffer_size": 5276,
+						"buffer_size": 1407,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4668,
-								4668
+								945,
+								945
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.tmLanguage",
+							"syntax": "Packages/HTML/HTML.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1890.0,
+						"translation.y": 360.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "med/templates/med/index.html",
+					"file": "med/static/med/style.css",
 					"settings":
 					{
-						"buffer_size": 873,
+						"buffer_size": 3223,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								2620,
+								2620
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"syntax": "Packages/CSS/CSS.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2700.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "med/templates/med/cls_list_preview.html",
+					"file": "med/templates/med/cls_list_new_form.html",
 					"settings":
 					{
-						"buffer_size": 1378,
+						"buffer_size": 1560,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1227,
+								1227
 							]
 						],
 						"settings":
@@ -276,60 +300,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "med/templates/med/trained_list.html",
-					"settings":
-					{
-						"buffer_size": 1611,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "med/models.py",
-					"settings":
-					{
-						"buffer_size": 474,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 315.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -382,6 +353,22 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"new",
+				"med/templates/med/cls_list_new_form.html"
+			],
+			[
+				"sty",
+				"med/static/med/style.css"
+			],
+			[
+				"style",
+				"med/static/med/style.css"
+			],
+			[
+				"train",
+				"med/templates/med/trained_list_new.html"
+			],
 			[
 				"tr",
 				"med/templates/med/trained_list_new.html"
