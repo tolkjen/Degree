@@ -83,6 +83,11 @@ public:
 		cl.deserialize(s);
 	}
 
+	int attributeCount()
+	{
+		return cl.attributeCount();
+	}
+
 	string getCategory(TestData &data)
 	{
 		return cl.getCategory(data);
@@ -113,6 +118,37 @@ public:
 
 private:
 	NaiveClassifier cl;
+};
+
+class TemporaryReaderWrapper
+{
+public:
+	TemporaryReaderWrapper(int attrCount)
+	{
+		_reader = new TemporaryReader(attrCount);
+	}
+
+	~TemporaryReaderWrapper()
+	{
+		delete _reader;
+	}
+
+	TrainingDataVector readTraining(string path)
+	{
+		TrainingDataVector result;
+		result.data = _reader->readTrainingData(path);
+		return result;
+	}
+
+	TestDataVector readTest(string path)
+	{
+		TestDataVector result;
+		result.data = _reader->readTestData(path);
+		return result;
+	}
+
+private:
+	TemporaryReader* _reader;
 };
 
 class TemporaryFactoryWrapper
@@ -170,11 +206,17 @@ BOOST_PYTHON_MODULE(classifier)
 	class_<TestDataVector>("TestDataVector");
 
 	class_<NaiveClassifierWrapper>("NaiveClassifier", init<>())
+		.def_readonly("attributes", &NaiveClassifierWrapper::attributeCount)
 		.def("deserialize", &NaiveClassifierWrapper::deserialize)
 		.def("getCategory", &NaiveClassifierWrapper::getCategory)
 		.def("getCategories", &NaiveClassifierWrapper::getCategories)
 		.def("serialize", &NaiveClassifierWrapper::serialize)
 		.def("train", &NaiveClassifierWrapper::train)
+	;
+
+	class_<TemporaryReaderWrapper>("TemporaryReader", init<int>())
+		.def("readTrainingData", &TemporaryReaderWrapper::readTraining)
+		.def("readTestData", &TemporaryReaderWrapper::readTest)
 	;
 
 	class_<TemporaryFactoryWrapper>("TemporaryFactory")

@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"Cla",
+				"Classifier"
+			],
+			[
+				"class",
+				"classification"
+			],
+			[
+				"de",
+				"deserialize"
+			],
+			[
+				"re",
+				"readTrainingData"
+			],
+			[
+				"clas",
+				"classifier_object"
+			],
+			[
 				"fon",
 				"font-style"
 			],
@@ -37,10 +57,6 @@
 			],
 			[
 				"classi",
-				"classifier"
-			],
-			[
-				"class",
 				"classifier"
 			],
 			[
@@ -104,14 +120,6 @@
 	"buffers":
 	[
 		{
-			"file": "med/templates/med/trained_list_new.html",
-			"settings":
-			{
-				"buffer_size": 1407,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "med/static/med/style.css",
 			"settings":
 			{
@@ -125,6 +133,30 @@
 			{
 				"buffer_size": 1560,
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "med/views.py",
+			"settings":
+			{
+				"buffer_size": 5512,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "med/classification.py",
+			"settings":
+			{
+				"buffer_size": 605,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/tolkjen/Documents/Programming/Degree/Classifier/src/TemporaryReader.hpp",
+			"settings":
+			{
+				"buffer_size": 472,
+				"line_ending": "Windows"
 			}
 		}
 	],
@@ -152,9 +184,9 @@
 	},
 	"file_history":
 	[
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list_new.html",
 		"/home/tolkjen/Documents/Programming/Degree/html5/index.html",
 		"/home/tolkjen/Documents/Programming/Degree/html5/style.css",
-		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list_new.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/views.py",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/static/med/style.css",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/models.py",
@@ -221,38 +253,11 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "med/templates/med/trained_list_new.html",
-					"settings":
-					{
-						"buffer_size": 1407,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								945,
-								945
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 360.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "med/static/med/style.css",
 					"settings":
 					{
@@ -263,8 +268,8 @@
 						"selection":
 						[
 							[
-								2620,
-								2620
+								2289,
+								2289
 							]
 						],
 						"settings":
@@ -279,7 +284,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "med/templates/med/cls_list_new_form.html",
 					"settings":
 					{
@@ -290,8 +295,8 @@
 						"selection":
 						[
 							[
-								1227,
-								1227
+								873,
+								873
 							]
 						],
 						"settings":
@@ -300,7 +305,94 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 315.0,
+						"translation.y": 360.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "med/views.py",
+					"settings":
+					{
+						"buffer_size": 5512,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5191,
+								5191
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1980.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "med/classification.py",
+					"settings":
+					{
+						"buffer_size": 605,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								81,
+								81
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 4,
+					"file": "/home/tolkjen/Documents/Programming/Degree/Classifier/src/TemporaryReader.hpp",
+					"settings":
+					{
+						"buffer_size": 472,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								248,
+								248
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -325,11 +417,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.5,
 			1.0
 		],
 		"rows":
@@ -353,6 +452,10 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"view",
+				"med/views.py"
+			],
 			[
 				"new",
 				"med/templates/med/cls_list_new_form.html"
@@ -412,10 +515,6 @@
 			[
 				"form",
 				"protein/forms.py"
-			],
-			[
-				"view",
-				"protein/views.py"
 			]
 		],
 		"width": 0.0

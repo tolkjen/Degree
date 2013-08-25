@@ -30,6 +30,11 @@ NaiveClassifier::~NaiveClassifier()
 {
 }
 
+int NaiveClassifier::attributeCount()
+{
+	return _attrCount;
+}
+
 void NaiveClassifier::deserialize(string s)
 {
 	_classifier->reset();

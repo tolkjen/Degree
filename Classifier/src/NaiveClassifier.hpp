@@ -23,6 +23,7 @@ public:
 	NaiveClassifier();
 	~NaiveClassifier();
 
+	int attributeCount();
 	virtual void deserialize(string s);
 	virtual string getCategory(TestData &data);
 	virtual string serialize();

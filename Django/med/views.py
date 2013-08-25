@@ -10,7 +10,8 @@ from datetime import datetime
 from med.models import ClassifierData, ClassificationResults
 from med.forms import NewClassifierDataForm, NewClassificationForm
 
-import classifier
+from classifier import TrainingDataVector
+from classification import Classifier
 
 # Decorators
 
@@ -102,11 +103,10 @@ def cls_list_new_form(request, id):
 def cls_list_preview(request, id):
 	classification = get_object_or_404(ClassificationResults, pk=id)
 	rows = get_classification_rows(classification)
-	dataFactory = classifier.TemporaryFactory()
 
 	return render(request, 'med/cls_list_preview.html', {
-		'attributes' : dataFactory.attributes,
-		'category' : dataFactory.category,
+		'attributes' : ['Str', 'Dex', 'Int'],
+		'category' : 'Class',
 		'results': classification,
 		'rows' : rows,
 	})
@@ -119,7 +119,7 @@ def cls_list_delete(request, id):
 # Helper methods
 
 def get_classification_rows(classification):
-	example_data = classifier.TrainingDataVector()
+	example_data = TrainingDataVector()
 	example_data.deserialize(classification.result_rows.encode('iso8859_2', 'ignore'))
 	return example_data.to_list()
 
@@ -127,16 +127,13 @@ def create_classfication(form, data):
 	classifier_data = data
 	name = form.cleaned_data['name']
 	date_started = datetime.now()
-	date_finished = datetime.now()
 
 	filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
-	factory = classifier.TemporaryFactory()
-	test_data = factory.readTestData(filepath)
-
-	nc = classifier.NaiveClassifier()
 	encoded_state = data.classifier_state.encode('iso8859_2', 'ignore')
-	nc.deserialize(encoded_state)
-	result_rows = nc.getCategories(test_data).serialize()
+
+	cl = Classifier(encoded_state)
+	result_rows = cl.get_categories(filepath).serialize()
+	date_finished = datetime.now()
 
 	return ClassificationResults(
 		name=name,
@@ -149,15 +146,14 @@ def create_classfication(form, data):
 def create_classifier_data(form):
 	name = form.cleaned_data['name']
 	date_started = datetime.now()
-	date_finished = datetime.now()
 
 	filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
-	factory = classifier.TemporaryFactory()
-	training_data = factory.readTrainingData(filepath)
 
-	nc = classifier.NaiveClassifier()
-	nc.train(training_data, 4)
-	state = nc.serialize()
+	cl = Classifier(3)
+	cl.train(filepath)
+
+	state = cl.serialize()
+	date_finished = datetime.now()
 
 	return ClassifierData(
 		name=name, 
