@@ -23,12 +23,12 @@ public:
 	NaiveClassifier();
 	~NaiveClassifier();
 
-	int attributeCount();
 	virtual void deserialize(string s);
+	int getAttributeCount();
 	virtual string getCategory(TestData &data);
 	virtual string serialize();
+	void setDescreteLevels(int lvls);
 	virtual void train(TrainingSet &data);
-	void train(TrainingSet &data, int dCount);
 
 private:
 	class Range
@@ -59,7 +59,7 @@ private:
 private:
 	shared_ptr<NB> _classifier;
 	vector<Range> _ranges;
-	int _domainCount, _attrCount;
+	int _levels, _attrCount;
 };
 
 #endif

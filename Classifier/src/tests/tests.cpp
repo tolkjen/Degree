@@ -159,10 +159,8 @@ static TestData createTestData(double *d, int count)
 
 template <int length>
 static NaiveClassifier trainClassifier(double attr[][length], string cat[], 
-	int count)
+	int count, int levels)
 {
-	const int domainCount = 6;
-
 	NaiveClassifier::TrainingSet trainingSet;
 	for (int i = 0; i < count; i++) {
 		TrainingData example = createTrainingData(attr[i], length, cat[i]);
@@ -170,7 +168,8 @@ static NaiveClassifier trainClassifier(double attr[][length], string cat[],
 	}
 
 	NaiveClassifier cl;
-	cl.train(trainingSet, domainCount);
+	cl.setDescreteLevels(levels);
+	cl.train(trainingSet);
 	return cl;
 }
 
@@ -178,6 +177,7 @@ BOOST_AUTO_TEST_CASE( NaiveClassifierMajorCategory )
 {
 	const int exampleCount = 3;
 	const int exampleLength = 3;
+	const int levels = 6;
 
 	double trainAttr[exampleCount][exampleLength] = {
 		{3, 1, 0},
@@ -190,7 +190,8 @@ BOOST_AUTO_TEST_CASE( NaiveClassifierMajorCategory )
 		"mage",
 	};
 
-	NaiveClassifier cl = trainClassifier(trainAttr, trainCat, exampleCount);
+	NaiveClassifier cl = trainClassifier(trainAttr, trainCat, exampleCount,
+		levels);
 
 	for (int i = 0; i < exampleCount; i++) {
 		TestData test = createTestData(trainAttr[i], exampleLength);
@@ -202,6 +203,7 @@ BOOST_AUTO_TEST_CASE( NaiveClassifierSerialization )
 {
 	const int exampleCount = 3;
 	const int exampleLength = 3;
+	const int levels = 6;
 
 	double trainAttr[exampleCount][exampleLength] = {
 		{3, 1, 0},
@@ -214,10 +216,9 @@ BOOST_AUTO_TEST_CASE( NaiveClassifierSerialization )
 		"mage",
 	};
 
-	NaiveClassifier clFirst = trainClassifier(trainAttr, trainCat, exampleCount);
+	NaiveClassifier clFirst = trainClassifier(trainAttr, trainCat, exampleCount,
+		levels);
 	string serialized = clFirst.serialize();
-
-	// cout << serialized;
 
 	NaiveClassifier clSecond;
 	clSecond.deserialize(serialized);
@@ -225,5 +226,20 @@ BOOST_AUTO_TEST_CASE( NaiveClassifierSerialization )
 	for (int i = 0; i < exampleCount; i++) {
 		TestData test = createTestData(trainAttr[i], exampleLength);
 		BOOST_CHECK_EQUAL(clSecond.getCategory(test), trainCat[i]);
+	}
+}
+
+BOOST_AUTO_TEST_CASE( NaiveClassifierOneDescreteLevel )
+{
+	TemporaryReader reader(3);
+	NaiveClassifier cl;
+
+	auto trainingSet = reader.readTrainingData("training_input_01.txt");
+	cl.setDescreteLevels( 1 );
+	cl.train( trainingSet );
+
+	auto testSet = reader.readTestData("test_input_01.txt");
+	for (TestData &test : testSet) {
+		cl.getCategory(test);
 	}
 }

@@ -131,7 +131,8 @@ def create_classfication(form, data):
 	filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
 	encoded_state = data.classifier_state.encode('iso8859_2', 'ignore')
 
-	cl = Classifier(encoded_state)
+	cl = Classifier()
+	cl.deserialize(encoded_state)
 	result_rows = cl.get_categories(filepath).serialize()
 	date_finished = datetime.now()
 
@@ -144,20 +145,19 @@ def create_classfication(form, data):
 	)
 
 def create_classifier_data(form):
-	name = form.cleaned_data['name']
 	date_started = datetime.now()
 
 	filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
+	levels = form.cleaned_data['levels']
 
 	cl = Classifier(3)
-	cl.train(filepath)
-
+	cl.train(filepath, levels)
 	state = cl.serialize()
-	date_finished = datetime.now()
 
 	return ClassifierData(
-		name=name, 
+		name=form.cleaned_data['name'], 
 		date_started=date_started, 
-		date_finished=date_finished, 
-		classifier_state=state
+		date_finished=datetime.now(), 
+		classifier_state=state,
+		descrete_levels=levels
 	)

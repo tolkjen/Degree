@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"Tr",
+				"TrainingDataVector"
+			],
+			[
+				"cl",
+				"classifier"
+			],
+			[
+				"enc",
+				"encoded_state"
+			],
+			[
+				"att",
+				"attributeCount"
+			],
+			[
+				"Nai",
+				"NaiveClassifierWrapper"
+			],
+			[
 				"Cla",
 				"Classifier"
 			],
@@ -120,26 +140,10 @@
 	"buffers":
 	[
 		{
-			"file": "med/static/med/style.css",
-			"settings":
-			{
-				"buffer_size": 3223,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "med/templates/med/cls_list_new_form.html",
-			"settings":
-			{
-				"buffer_size": 1560,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "med/views.py",
 			"settings":
 			{
-				"buffer_size": 5512,
+				"buffer_size": 5203,
 				"line_ending": "Windows"
 			}
 		},
@@ -147,15 +151,23 @@
 			"file": "med/classification.py",
 			"settings":
 			{
-				"buffer_size": 605,
+				"buffer_size": 732,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/home/tolkjen/Documents/Programming/Degree/Classifier/src/TemporaryReader.hpp",
+			"file": "med/models.py",
 			"settings":
 			{
-				"buffer_size": 472,
+				"buffer_size": 523,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "med/forms.py",
+			"settings":
+			{
+				"buffer_size": 299,
 				"line_ending": "Windows"
 			}
 		}
@@ -184,22 +196,29 @@
 	},
 	"file_history":
 	[
+		"/home/tolkjen/Documents/Programming/Degree/Classifier/src/NaiveClassifier.cpp",
+		"/home/tolkjen/Documents/Programming/Degree/Classifier/src/NaiveClassifier.hpp",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list_new.html",
+		"/home/tolkjen/Documents/Programming/Degree/Classifier/src/classifier.cpp",
+		"/home/tolkjen/Documents/Programming/Degree/Classifier/src/AbstractReader.cpp",
+		"/home/tolkjen/Documents/Programming/Degree/Classifier/src/AbstractReader.hpp",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/static/med/style.css",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_new_form.html",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/classification.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/med/forms.py",
+		"/home/tolkjen/Documents/Programming/Degree/Django/skeleton/settings.py",
+		"/home/tolkjen/Documents/Programming/Degree/Classifier/src/TemporaryReader.hpp",
 		"/home/tolkjen/Documents/Programming/Degree/html5/index.html",
 		"/home/tolkjen/Documents/Programming/Degree/html5/style.css",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/views.py",
-		"/home/tolkjen/Documents/Programming/Degree/Django/med/static/med/style.css",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/models.py",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/trained_list.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/index.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_preview.html",
-		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_new_form.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/urls.py",
-		"/home/tolkjen/Documents/Programming/Degree/Django/med/forms.py",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_delete.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/med/templates/med/cls_list_new.html",
-		"/home/tolkjen/Documents/Programming/Degree/Django/skeleton/settings.py",
 		"/home/tolkjen/Documents/Programming/Degree/Django/protein/algorithms.py",
 		"/home/tolkjen/Documents/Programming/Degree/Django/protein/templates/protein/upload.html",
 		"/home/tolkjen/Documents/Programming/Degree/Django/protein/forms.py",
@@ -253,77 +272,23 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "med/static/med/style.css",
-					"settings":
-					{
-						"buffer_size": 3223,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2289,
-								2289
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2700.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "med/templates/med/cls_list_new_form.html",
-					"settings":
-					{
-						"buffer_size": 1560,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								873,
-								873
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 360.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "med/views.py",
 					"settings":
 					{
-						"buffer_size": 5512,
+						"buffer_size": 5203,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5191,
-								5191
+								901,
+								901
 							]
 						],
 						"settings":
@@ -332,25 +297,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1980.0,
+						"translation.y": 315.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 1,
 					"file": "med/classification.py",
 					"settings":
 					{
-						"buffer_size": 605,
+						"buffer_size": 732,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								81,
-								81
+								732,
+								732
 							]
 						],
 						"settings":
@@ -363,33 +328,53 @@
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
+				},
 				{
-					"buffer": 4,
-					"file": "/home/tolkjen/Documents/Programming/Degree/Classifier/src/TemporaryReader.hpp",
+					"buffer": 2,
+					"file": "med/models.py",
 					"settings":
 					{
-						"buffer_size": 472,
+						"buffer_size": 523,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								248,
-								248
+								523,
+								523
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.tmLanguage",
+							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "med/forms.py",
+					"settings":
+					{
+						"buffer_size": 299,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								167,
+								167
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -417,18 +402,11 @@
 				0,
 				1,
 				1
-			],
-			[
-				1,
-				0,
-				2,
-				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.5,
 			1.0
 		],
 		"rows":
@@ -453,6 +431,26 @@
 		"selected_items":
 		[
 			[
+				"class",
+				"med/classification.py"
+			],
+			[
+				"train",
+				"med/templates/med/trained_list_new.html"
+			],
+			[
+				"forms",
+				"med/forms.py"
+			],
+			[
+				"form",
+				"med/forms.py"
+			],
+			[
+				"mode",
+				"med/models.py"
+			],
+			[
 				"view",
 				"med/views.py"
 			],
@@ -469,20 +467,12 @@
 				"med/static/med/style.css"
 			],
 			[
-				"train",
-				"med/templates/med/trained_list_new.html"
-			],
-			[
 				"tr",
 				"med/templates/med/trained_list_new.html"
 			],
 			[
 				"tra",
 				"med/templates/med/trained_list_new.html"
-			],
-			[
-				"mode",
-				"med/models.py"
 			],
 			[
 				"cls",
@@ -511,10 +501,6 @@
 			[
 				"uplo",
 				"protein/templates/protein/upload.html"
-			],
-			[
-				"form",
-				"protein/forms.py"
 			]
 		],
 		"width": 0.0

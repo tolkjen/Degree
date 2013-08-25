@@ -83,9 +83,9 @@ public:
 		cl.deserialize(s);
 	}
 
-	int attributeCount()
+	int getAttributeCount()
 	{
-		return cl.attributeCount();
+		return cl.getAttributeCount();
 	}
 
 	string getCategory(TestData &data)
@@ -111,9 +111,14 @@ public:
 		return cl.serialize();
 	}
 
-	void train(TrainingDataVector &v, int dCount)
+	void setLevels(int lvls)
 	{
-		cl.train(v.data, dCount);
+		cl.setDescreteLevels(lvls);
+	}
+
+	void train(TrainingDataVector &v)
+	{
+		cl.train(v.data);
 	}
 
 private:
@@ -206,11 +211,12 @@ BOOST_PYTHON_MODULE(classifier)
 	class_<TestDataVector>("TestDataVector");
 
 	class_<NaiveClassifierWrapper>("NaiveClassifier", init<>())
-		.def_readonly("attributes", &NaiveClassifierWrapper::attributeCount)
+		.def_readonly("attributes", &NaiveClassifierWrapper::getAttributeCount)
 		.def("deserialize", &NaiveClassifierWrapper::deserialize)
 		.def("getCategory", &NaiveClassifierWrapper::getCategory)
 		.def("getCategories", &NaiveClassifierWrapper::getCategories)
 		.def("serialize", &NaiveClassifierWrapper::serialize)
+		.def("set_levels", &NaiveClassifierWrapper::setLevels)
 		.def("train", &NaiveClassifierWrapper::train)
 	;
 

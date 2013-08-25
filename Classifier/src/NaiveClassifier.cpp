@@ -21,18 +21,13 @@ using namespace faif::ml;
 
 NaiveClassifier::NaiveClassifier()
 {
-	_domainCount = 2;
+	_levels = 2;
 	_attrCount = 1;
 	_classifier = shared_ptr<NB>(new NB());
 }
 
 NaiveClassifier::~NaiveClassifier()
 {
-}
-
-int NaiveClassifier::attributeCount()
-{
-	return _attrCount;
 }
 
 void NaiveClassifier::deserialize(string s)
@@ -43,8 +38,13 @@ void NaiveClassifier::deserialize(string s)
 	boost::archive::xml_iarchive ia(iss);
 	ia >> boost::serialization::make_nvp("NBC", *_classifier);
 	ia >> BOOST_SERIALIZATION_NVP(_ranges);
-	ia >> BOOST_SERIALIZATION_NVP(_domainCount);
+	ia >> BOOST_SERIALIZATION_NVP(_levels);
 	ia >> BOOST_SERIALIZATION_NVP(_attrCount);
+}
+
+int NaiveClassifier::getAttributeCount()
+{
+	return _attrCount;
 }
 
 string NaiveClassifier::getCategory(TestData &data)
@@ -59,9 +59,14 @@ string NaiveClassifier::serialize()
 	boost::archive::xml_oarchive oa(oss);
 	oa << boost::serialization::make_nvp("NBC", *_classifier);
 	oa << BOOST_SERIALIZATION_NVP(_ranges);
-	oa << BOOST_SERIALIZATION_NVP(_domainCount);
+	oa << BOOST_SERIALIZATION_NVP(_levels);
 	oa << BOOST_SERIALIZATION_NVP(_attrCount);
 	return oss.str();
+}
+
+void NaiveClassifier::setDescreteLevels(int lvls)
+{
+	_levels = lvls;
 }
 
 void NaiveClassifier::train(TrainingSet &data)
@@ -94,14 +99,14 @@ void NaiveClassifier::train(TrainingSet &data)
 
 	// Create attributes array and categories array for creation of the 
 	// classifier.
-	string domainNames[_domainCount];
-	for (int i = 0; i < _domainCount; i++)
+	string domainNames[_levels];
+	for (int i = 0; i < _levels; i++)
 		domainNames[i] = buildDomainName(i);
 
 	Domains attribs;
 	for (int i = 0; i < _attrCount; i++)
 		attribs.push_back( createDomain("", domainNames, 
-			domainNames + _domainCount) );
+			domainNames + _levels) );
 
 	string catArray[catSet.size()];
 	int i = 0;
@@ -122,19 +127,6 @@ void NaiveClassifier::train(TrainingSet &data)
 	_classifier->train(ex);
 }
 
-void NaiveClassifier::train(TrainingSet &data, int dCount)
-{
-	// Store domain count and replace it by argument value.
-	int tmp = _domainCount;
-	_domainCount = dCount;
-
-	// Run training
-	train(data);
-
-	// Load back previous domain count
-	_domainCount = tmp;
-}
-
 string NaiveClassifier::buildDomainName(int i)
 {
 	return to_string(i);
@@ -146,10 +138,10 @@ NaiveClassifier::createTrainingExample(TrainingData &data)
 	vector<string> discrete;
 	for (int i = 0; i < _attrCount; i++) {
 		double realData = max(data[i], 0.0);
-		double domainLength = (double) (_ranges[i].end - _ranges[i].start) / _domainCount;
+		double domainLength = (double) (_ranges[i].end - _ranges[i].start) / _levels;
 
 		int index = floor((realData - _ranges[i].start) / domainLength);
-		int normalizedIndex = min(_domainCount - 1, index);
+		int normalizedIndex = min(_levels - 1, index);
 
 		discrete.push_back( buildDomainName(normalizedIndex) );
 	}
@@ -157,19 +149,30 @@ NaiveClassifier::createTrainingExample(TrainingData &data)
 		data.getCategory(), *_classifier);
 }
 
+#include <iostream>
+
 typename NaiveClassifier::ExampleTest 
 NaiveClassifier::createTestExample(TestData &data)
 {
 	vector<string> discrete;
 	for (int i = 0; i < _attrCount; i++) {
 		double realData = max(data[i], 0.0);
-		double domainLength = (double) (_ranges[i].end - _ranges[i].start) / _domainCount;
+		double domainLength = (double) (_ranges[i].end - _ranges[i].start) / _levels;
 
 		int index = floor((realData - _ranges[i].start) / domainLength);
-		int normalizedIndex = min(_domainCount - 1, index);
+		int normalizedIndex = min(_levels - 1, index);
 
 		discrete.push_back( buildDomainName(normalizedIndex) );
 	}
+
+	cout << "(";
+	for (int i = 0; i < data.size(); i++)
+		cout << data[i] << ", ";
+	cout << ") --> (";
+	for (int i = 0; i < discrete.size(); i++)
+		cout << discrete[i] << ", ";
+	cout << ")" << endl;
+
 	return faif::ml::createExample(discrete.begin(), discrete.end(), 
 		*_classifier);
 }

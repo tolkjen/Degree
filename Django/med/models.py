@@ -5,6 +5,7 @@ class ClassifierData(models.Model):
 	date_started = models.DateTimeField()
 	date_finished = models.DateTimeField()
 	classifier_state = models.TextField()
+	descrete_levels = models.PositiveIntegerField()
 
 class ClassificationResults(models.Model):
 	classifier_data = models.ForeignKey(ClassifierData)
