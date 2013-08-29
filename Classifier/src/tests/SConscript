@@ -13,13 +13,9 @@ src_files=[
 	'../TemporaryFactory.cpp',
 	'../DataFactory.cpp'
 ]
-libs=[
-	'boost_python', 
-	'boost_unit_test_framework', 
-	'boost_serialization'
-]
+libs=
 
-env = Environment(TARGET_ARCH = 'x64')
+env = Environment(TARGET_ARCH = 'x86')
 env.Append(CPPPATH=src_path)
 env.Append(CCFLAGS=['-std=c++11'])
 
@@ -27,7 +23,7 @@ if platform.system() == "Windows":
 	pass
 else:
 	env.ParseConfig('pkg-config --cflags --libs python')
-	env.Append(LIBS=libs)
+	env.Append(LIBS=['boost_python', 'boost_unit_test_framework', 'boost_serialization'])
 
 env.Program(target='tests', source=src_files)
 

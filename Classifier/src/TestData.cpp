@@ -2,7 +2,7 @@
 
 #include "TestData.hpp"
 
-typename TestData::Iterator TestData::begin()
+TestData::Iterator TestData::begin()
 {
 	return values.begin();
 }
@@ -12,7 +12,7 @@ bool TestData::empty()
 	return values.empty();
 }
 
-typename TestData::Iterator TestData::end()
+TestData::Iterator TestData::end()
 {
 	return values.end();
 }

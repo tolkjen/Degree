@@ -6,7 +6,7 @@ DataFactory::DataFactory()
 	_category = "";
 }
 
-typename DataFactory::StringVector
+DataFactory::StringVector
 DataFactory::attributes()
 {
 	return _attributes;

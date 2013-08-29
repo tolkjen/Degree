@@ -3,7 +3,7 @@ src_files = [
 	'TripletBase.cpp'
 ]
 
-env = Environment(TARGET_ARCH = 'x64')
+env = Environment(TARGET_ARCH = 'x86')
 if env['PLATFORM'] == 'win32':
 	env.Append(LIBPATH=['C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\lib\\shared_all', 'C:\\Python27\\libs'])
 	env.Append(CPPPATH=['C:\\Users\\tolkjen\\Documents\\boost_1_53_0', 'C:\\Python27\\include'])

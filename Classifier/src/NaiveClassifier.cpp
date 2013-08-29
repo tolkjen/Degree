@@ -99,7 +99,7 @@ void NaiveClassifier::train(TrainingSet &data)
 
 	// Create attributes array and categories array for creation of the 
 	// classifier.
-	string domainNames[_levels];
+	string* domainNames = new string[_levels];
 	for (int i = 0; i < _levels; i++)
 		domainNames[i] = buildDomainName(i);
 
@@ -108,7 +108,7 @@ void NaiveClassifier::train(TrainingSet &data)
 		attribs.push_back( createDomain("", domainNames, 
 			domainNames + _levels) );
 
-	string catArray[catSet.size()];
+	string* catArray = new string[catSet.size()];
 	int i = 0;
 	for (auto it = catSet.begin(); it != catSet.end(); ++it) {
 		catArray[i] = *it;
@@ -117,6 +117,9 @@ void NaiveClassifier::train(TrainingSet &data)
 
 	AttrDomain cat = createDomain("", catArray, catArray + catSet.size());
 	_classifier = shared_ptr<NB>(new NB(attribs, cat));
+
+	delete [] catArray;
+	delete [] domainNames;
 
 	// Create discrete training examples from floating point data and train
 	// the classifier.
@@ -132,7 +135,7 @@ string NaiveClassifier::buildDomainName(int i)
 	return to_string(i);
 }
 
-typename NaiveClassifier::ExampleTrain 
+NaiveClassifier::ExampleTrain 
 NaiveClassifier::createTrainingExample(TrainingData &data)
 {
 	vector<string> discrete;
@@ -151,7 +154,7 @@ NaiveClassifier::createTrainingExample(TrainingData &data)
 
 #include <iostream>
 
-typename NaiveClassifier::ExampleTest 
+NaiveClassifier::ExampleTest 
 NaiveClassifier::createTestExample(TestData &data)
 {
 	vector<string> discrete;

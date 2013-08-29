@@ -11,13 +11,13 @@ TemporaryFactory::TemporaryFactory()
 	_reader = shared_ptr<TemporaryReader>(new TemporaryReader(count));
 }
 
-typename TemporaryFactory::TrainingSet
+TemporaryFactory::TrainingSet
 TemporaryFactory::readTrainingData(string path)
 {
 	return _reader->readTrainingData(path);
 }
 
-typename TemporaryFactory::TestSet
+TemporaryFactory::TestSet
 TemporaryFactory::readTestData(string path)
 {
 	return _reader->readTestData(path);
