@@ -1,0 +1,112 @@
+Return-Path: <SRS0=ldTN=QT=o2.pl=tolkjen@elka.pw.edu.pl>
+X-Original-To: rnowak2@elka.pw.edu.pl
+Delivered-To: rnowak2@elektron.elka.pw.edu.pl
+Received: from moh3-ve3.go2.pl (cerberek.elka.pw.edu.pl [194.29.160.94])
+	by elektron.elka.pw.edu.pl (Postfix) with ESMTP id 8BF69120093
+	for <rnowak2@elka.pw.edu.pl>; Fri,  5 Jul 2013 20:34:46 +0200 (CEST)
+Received: from moh3-ve3.go2.pl ([193.17.41.87] helo=moh3-ve3.go2.pl) by
+	cerberek.ASSP with SMTP (2.3.3); 5 Jul 2013 20:34:46 +0200
+Received: from moh3-ve3.go2.pl (unknown [10.0.0.158])
+	by moh3-ve3.go2.pl (Postfix) with ESMTP id 5845AB5A71E
+	for <rnowak2@elka.pw.edu.pl>; Fri,  5 Jul 2013 20:34:46 +0200 (CEST)
+Received: from o2.pl (unknown [10.0.0.7])
+	by moh3-ve3.go2.pl (Postfix) with SMTP
+	for <rnowak2@elka.pw.edu.pl>; Fri,  5 Jul 2013 20:34:46 +0200 (CEST)
+Subject: =?UTF-8?Q?Praca_magisterska_-_wymagania_funkcjonalne?=
+From: =?UTF-8?Q?Tolkjen?= <tolkjen@o2.pl>
+To: =?UTF-8?Q?rnowak2?=<rnowak2@elka.pw.edu.pl>
+Mime-Version: 1.0
+Message-ID: <754ad347.84f9e65.51d711c6.4ece8@o2.pl>
+Date: Fri, 05 Jul 2013 20:34:46 +0200
+X-Originator: 37.7.230.222
+Content-Type: multipart/alternative;
+	boundary="==o2.pl-WebMail-62dd2b6a.461ad38f.4ecef=="
+X-Assp-ID: cerberek.ASSP m1-49286-11646
+X-Assp-Session: 7FD1E1ACE650 (mail 1)
+X-Assp-Envelope-From: tolkjen@o2.pl
+X-Assp-Intended-For: rnowak2@elka.pw.edu.pl
+X-Assp-Version: 2.3.3(13160) on cerberek.ASSP
+X-Assp-Message-Score: -15 (In Penalty White Box)
+X-Original-Authentication-Results: cerberek.ASSP; spf=pass
+X-Assp-Message-Score: -10 (SPF pass)
+X-Assp-IP-Score: -10 (SPF pass)
+
+--==o2.pl-WebMail-62dd2b6a.461ad38f.4ecef==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Dobry=20wiecz=C3=B3r,
+=C2=A0
+W=20poni=C5=BCszej=20li=C5=9Bcie=20przedstawiam=20okre=C5=9Blone=20przeze=
+=20mnie=20wymagania=20funkcjonalne,=20kt=C3=B3re=20zamierzam=20zrealizowa=
+=C4=87=20do=20ko=C5=84ca=20wrze=C5=9Bnia:
+Aplikacja=20pozwala=20na=20zaklasyfikowanie=20rekord=C3=B3w=20danych=20do=
+starczonych=20przez=20u=C5=BCytkownika=20za=20pomoc=C4=85=20jednego=20alg=
+orytmu=20sztucznej=20inteligencji.
+System=20umo=C5=BCliwia=20wprowadzanie=20i=20zapami=C4=99tywanie=20wielu=20=
+zestaw=C3=B3w=20danych=20trenuj=C4=85cych.
+Aplikacja=20pozwala=20na=20przeprowadzenie=20klasyfikacji=20w=20oparciu=20=
+o=20wybrany,=20wcze=C5=9Bniej=20wprowadzony=20zestaw=20danych=20trenuj=C4=
+=85cych.
+Po=20zako=C5=84czeniu=20oblicze=C5=84=20u=C5=BCytkownik=20mo=C5=BCe=20pod=
+ejrze=C4=87=20wyniki=20wybieraj=C4=85c=20je=20z=20listy=20przeprowadzonyc=
+h=20operacji.
+Wyniki=20klasyfikacji=20przedstawione=20s=C4=85=20w=20postaci=20tabeli=20=
+zawieraj=C4=85cej=20badane=20rekordy=20oraz=20przyporz=C4=85dkowane=20im=20=
+klasy.
+System=20przechowuje=20wyniki=20poprzednich=20klasyfikacji=20i=20umo=C5=BC=
+liwia=20do=20nich=20dost=C4=99p=20poprzez=20wyb=C3=B3r=20z=20listy=20prze=
+prowadzonych=20operacji.
+Aplikacja=20jest=20dost=C4=99pna=20przez=20przegl=C4=85dark=C4=99=20inter=
+netow=C4=85.
+Aplikacja=20oferuje=20jednakow=C4=85=20funkcjonalno=C5=9B=C4=87=20w=20naj=
+nowszych=20przegl=C4=85darkach=20Chrome,=20Mozilla=20Firefox,=20Opera=20i=
+=20Internet=20Explorer.
+Serwer=20aplikacji=20mo=C5=BCe=20zosta=C4=87=20uruchomiony=20na=20systema=
+ch=20operacyjnych=20z=20rodziny=20Linux=20oraz=20Microsoft=20Windows.Pozd=
+rawiam,
+Piotr=20T=C4=85kiel
+--==o2.pl-WebMail-62dd2b6a.461ad38f.4ecef==
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Dobry=20wiecz=C3=B3r,<br=20/>
+=C2=A0<br=20/>
+W=20poni=C5=BCszej=20li=C5=9Bcie=20przedstawiam=20okre=C5=9Blone=20przeze=
+=20mnie=20wymagania=20funkcjonalne,=20kt=C3=B3re=20zamierzam=20zrealizowa=
+=C4=87=20do=20ko=C5=84ca=20wrze=C5=9Bnia:<br=20/>
+<ol>
+<li>Aplikacja=20pozwala=20na=20zaklasyfikowanie=20rekord=C3=B3w=20danych=20=
+dostarczonych=20przez=20u=C5=BCytkownika=20za=20pomoc=C4=85=20jednego=20a=
+lgorytmu=20sztucznej=20inteligencji.</li>
+<ol>
+<li>System=20umo=C5=BCliwia=20wprowadzanie=20i=20zapami=C4=99tywanie=20wi=
+elu=20zestaw=C3=B3w=20danych=20trenuj=C4=85cych.</li>
+<li>Aplikacja=20pozwala=20na=20przeprowadzenie=20klasyfikacji=20w=20oparc=
+iu=20o=20wybrany,=20wcze=C5=9Bniej=20wprowadzony=20zestaw=20danych=20tren=
+uj=C4=85cych.</li>
+<li>Po=20zako=C5=84czeniu=20oblicze=C5=84=20u=C5=BCytkownik=20mo=C5=BCe=20=
+podejrze=C4=87=20wyniki=20wybieraj=C4=85c=20je=20z=20listy=20przeprowadzo=
+nych=20operacji.</li>
+<li>Wyniki=20klasyfikacji=20przedstawione=20s=C4=85=20w=20postaci=20tabel=
+i=20zawieraj=C4=85cej=20badane=20rekordy=20oraz=20przyporz=C4=85dkowane=20=
+im=20klasy.</li>
+<li>System=20przechowuje=20wyniki=20poprzednich=20klasyfikacji=20i=20umo=C5=
+=BCliwia=20do=20nich=20dost=C4=99p=20poprzez=20wyb=C3=B3r=20z=20listy=20p=
+rzeprowadzonych=20operacji.</li>
+</ol>
+<li>Aplikacja=20jest=20dost=C4=99pna=20przez=20przegl=C4=85dark=C4=99=20i=
+nternetow=C4=85.</li>
+<ol>
+<li>Aplikacja=20oferuje=20jednakow=C4=85=20funkcjonalno=C5=9B=C4=87=20w=20=
+najnowszych=20przegl=C4=85darkach=20Chrome,=20Mozilla=20Firefox,=20Opera=20=
+i=20Internet=20Explorer.</li>
+</ol>
+<li>Serwer=20aplikacji=20mo=C5=BCe=20zosta=C4=87=20uruchomiony=20na=20sys=
+temach=20operacyjnych=20z=20rodziny=20Linux=20oraz=20Microsoft=20Windows.=
+</li>
+</ol>
+Pozdrawiam,<br=20/>
+Piotr=20T=C4=85kiel<br=20/>
+--==o2.pl-WebMail-62dd2b6a.461ad38f.4ecef==--
+

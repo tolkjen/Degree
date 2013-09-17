@@ -4,9 +4,9 @@ import platform
 
 src_path='#src'
 src_files=[
-	'tests.cpp', 
-	'../TrainingData.cpp', 
-	'../TestData.cpp', 
+	'tests.cpp',
+	'../TrainingData.cpp',
+	'../TestData.cpp',
 	'../TemporaryReader.cpp',
 	'../AbstractReader.cpp',
 	'../NaiveClassifier.cpp',
@@ -14,9 +14,10 @@ src_files=[
 	'../DataFactory.cpp'
 ]
 libs=[
-	'boost_python', 
-	'boost_unit_test_framework', 
-	'boost_serialization'
+	'boost_python',
+	'boost_unit_test_framework',
+	'boost_serialization',
+	'boost_system'
 ]
 
 env = Environment(TARGET_ARCH = 'x64')
@@ -31,16 +32,16 @@ else:
 
 env.Program(target='tests', source=src_files)
 
-# Copy test files 
+# Copy test files
 
 test_files = [
-	'test_input_00.txt', 
+	'test_input_00.txt',
 	'test_input_01.txt',
 	'training_input_00.txt',
 	'training_input_01.txt'
 ]
 
 for test_file in test_files:
-	Command('#bin/tests/' + test_file, 
-			'#src/tests/' + test_file, 
+	Command('#bin/tests/' + test_file,
+			'#src/tests/' + test_file,
 			Copy('$TARGET', '$SOURCE'))

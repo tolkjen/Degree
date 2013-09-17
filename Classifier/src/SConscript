@@ -21,7 +21,7 @@ if platform.system() == "Windows":
 	pass
 else:
 	env.ParseConfig('pkg-config --cflags --libs python')
-	env.Append(LIBS=['boost_python', 'boost_serialization'])
+	env.Append(LIBS=['boost_python', 'boost_serialization', 'boost_system'])
 	env.Append(LINKFLAGS=['-fPIC'])
 
 env.SharedLibrary(target='classifier', source=src_files)
