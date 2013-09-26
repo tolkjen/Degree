@@ -24,7 +24,7 @@ if platform.system() == "Windows":
 	env.Append(CCFLAGS=['/MD', '/EHsc'])
 else:
 	env.ParseConfig('pkg-config --cflags --libs python')
-	env.Append(LIBS=['boost_python', 'boost_serialization'])
+	env.Append(LIBS=['boost_python', 'boost_serialization', 'boost_system'])
 	env.Append(LINKFLAGS=['-fPIC'])
 	env.Append(CCFLAGS=['-std=c++11'])
 
