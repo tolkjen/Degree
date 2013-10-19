@@ -29,6 +29,9 @@ namespace reader
 
 		virtual TrainingSet readTrainingData(string path) = 0;
 		virtual TestSet readTestData(string path) = 0;
+
+	protected:
+		int _attrCount;
 	};
 };
 

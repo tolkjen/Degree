@@ -18,9 +18,6 @@ namespace reader
 
 		virtual TrainingSet readTrainingData(string path);
 		virtual TestSet readTestData(string path);
-
-	protected:
-		int _attrCount;
 	};
 }
 
