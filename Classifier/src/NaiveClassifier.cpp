@@ -168,14 +168,6 @@ NaiveClassifier::createTestExample(TestData &data)
 		discrete.push_back( buildDomainName(normalizedIndex) );
 	}
 
-	cout << "(";
-	for (int i = 0; i < data.size(); i++)
-		cout << data[i] << ", ";
-	cout << ") --> (";
-	for (int i = 0; i < discrete.size(); i++)
-		cout << discrete[i] << ", ";
-	cout << ")" << endl;
-
 	return faif::ml::createExample(discrete.begin(), discrete.end(), 
 		*_classifier);
 }
