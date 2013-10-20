@@ -23,13 +23,17 @@ libs=[
 
 env = Environment(TARGET_ARCH = 'x86')
 env.Append(CPPPATH=src_path)
-env.Append(CCFLAGS=['-std=c++11'])
 
 if platform.system() == "Windows":
-	pass
+	env.Append(LIBPATH=['C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\lib\\shared_all', 
+		'C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\stage\\lib', 
+		'C:\\Python27\\libs'])
+	env.Append(CPPPATH=['C:\\Users\\tolkjen\\Documents\\boost_1_53_0', 'C:\\Python27\\include'])
+	env.Append(CCFLAGS=['/MD', '/EHsc'])
 else:
 	env.ParseConfig('pkg-config --cflags --libs python')
 	env.Append(LIBS=['boost_python', 'boost_unit_test_framework', 'boost_serialization'])
+	env.Append(CCFLAGS=['-std=c++11'])
 
 env.Program(target='tests', source=src_files)
 
