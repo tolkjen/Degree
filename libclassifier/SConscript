@@ -1,0 +1,41 @@
+import platform
+
+# Set environment variables according to OS platform
+env = Environment(TARGET_ARCH = 'x86')
+if platform.system() == "Windows":
+	env.Append(LIBPATH = [
+		'C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\lib\\shared_all', 
+		'C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\stage\\lib', 
+		'C:\\Python27\\libs'
+	])
+	env.Append(CPPPATH = [
+		'C:\\Users\\tolkjen\\Documents\\boost_1_53_0', 
+		'C:\\Python27\\include'
+	])
+	env.Append(CPPPATH = ['#libclassifier/src', '#libclassifier/src/lib'])
+	env.Append(CCFLAGS = ['/MD', '/EHsc'])
+
+# Add more SConscripts
+(static_lib, shared_lib) = SConscript('src/lib/SConscript', 
+	exports = ['env'], 
+	variant_dir = 'bin/lib',
+	duplicate = 0)
+tests = SConscript('src/tests/SConscript', 
+	exports = ['env', 'static_lib'],
+	variant_dir = 'bin/tests',
+	duplicate = 0)
+
+# Dependencies
+Depends(tests, static_lib)
+
+# Aliases
+Alias('lib', shared_lib)
+Alias('buildtests', tests)
+binaries = Alias('all', [static_lib, shared_lib, tests])
+
+# Cleanup
+Clean(shared_lib, 'bin/lib')
+Clean(tests, 'bin/tests')
+Clean(binaries, 'bin')
+
+Return('shared_lib', 'tests')
