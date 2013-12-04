@@ -1,0 +1,204 @@
+<Project>
+  <Name>Magisterka</Name>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>Cpp</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>AbstractClassifier</Name>
+        <Access>Public</Access>
+        <Location left="344" top="150" />
+        <Size width="225" height="151" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public abstract void deserialize(string s)</Member>
+        <Member type="Method">public abstract string getCategory(TestData data)</Member>
+        <Member type="Method">public abstract string serialize()</Member>
+        <Member type="Method">public abstract void train(TrainingSet data)</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>DataFactory</Name>
+        <Access>Public</Access>
+        <Location left="926" top="150" />
+        <Size width="250" height="179" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">protected StringVector attributes</Member>
+        <Member type="Field">protected string category</Member>
+        <Member type="Method">public StringVector attributes()</Member>
+        <Member type="Method">public string category()</Member>
+        <Member type="Method">public abstract TrainingSet readTrainingData(string path)</Member>
+        <Member type="Method">public abstract TestSet readTestData(string path)</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NaiveClassifier</Name>
+        <Access>Public</Access>
+        <Location left="292" top="518" />
+        <Size width="322" height="298" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private int levels</Member>
+        <Member type="Field">private int attrCount</Member>
+        <Member type="Constructor">public NaiveClassifier()</Member>
+        <Member type="Method">public void deserialize(string s)</Member>
+        <Member type="Method">public int getAttributeCount()</Member>
+        <Member type="Method">public string getCategory(TestData data)</Member>
+        <Member type="Method">public string serialize()</Member>
+        <Member type="Method">public void setDescreteLevels(int lvls)</Member>
+        <Member type="Method">public void train(TrainingSet data)</Member>
+        <Member type="Method">private string buildDomainName()</Member>
+        <Member type="Method">private ExampleTrain createTrainingExample(TrainingData data)</Member>
+        <Member type="Method">private ExampleTest createTestExample(TestData data)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Range</Name>
+        <Access>Public</Access>
+        <Location left="678" top="594" />
+        <Size width="179" height="149" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public double start</Member>
+        <Member type="Field">public double end</Member>
+        <Member type="Constructor">public Range()</Member>
+        <Member type="Constructor">public Range(double s, double e)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>TemporaryFactory</Name>
+        <Access>Public</Access>
+        <Location left="926" top="389" />
+        <Size width="250" height="138" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public TemporaryFactory()</Member>
+        <Member type="Method">public TrainingSet readTrainingData(string path)</Member>
+        <Member type="Method">public TestSet readTestData(string path)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>AbstractReader</Name>
+        <Access>Public</Access>
+        <Location left="1253" top="150" />
+        <Size width="249" height="123" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public abstract TrainingSet readTrainingData(string path)</Member>
+        <Member type="Method">public abstract TestSet readTestData(string path)</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>TemporaryReader</Name>
+        <Access>Public</Access>
+        <Location left="1253" top="389" />
+        <Size width="249" height="145" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">protected int attrCount</Member>
+        <Member type="Constructor">public TemporaryReader()</Member>
+        <Member type="Method">public TrainingSet readTrainingData(string path)</Member>
+        <Member type="Method">public TestSet readTestData(string path)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NaiveBayesian</Name>
+        <Access>Public</Access>
+        <Location left="678" top="772" />
+        <Size width="179" height="77" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>TestData</Name>
+        <Access>Public</Access>
+        <Location left="678" top="150" />
+        <Size width="179" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private vector&lt;double&gt; values</Member>
+        <Member type="Method">public iterator begin()</Member>
+        <Member type="Method">public bool empty()</Member>
+        <Member type="Method">public iterator end()</Member>
+        <Member type="Method">public void insert(double s)</Member>
+        <Member type="Method">public double operator(int index)</Member>
+        <Member type="Method">public int size()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>TrainingData</Name>
+        <Access>Public</Access>
+        <Location left="678" top="417" />
+        <Size width="179" height="128" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private string category</Member>
+        <Member type="Method">public string getCategory()</Member>
+        <Member type="Method">public void setCategory(string s)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Comment">
+        <Text>Usunac informacje o nazwach kolumn z DataFactory</Text>
+        <Location left="926" top="576" />
+        <Size width="330" height="128" />
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Generalization" first="2" second="0">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>455</X>
+          <Y>493</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Generalization" first="4" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="6" second="5">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="2" second="7">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="4" second="6">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="2" second="3">
+        <Label>vector</Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Dependency" first="0" second="8">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>611</X>
+          <Y>194</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>644</X>
+          <Y>194</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Generalization" first="9" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Dependency" first="0" second="9">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>515</X>
+          <Y>330</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>652</X>
+          <Y>452</Y>
+        </BendPoint>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+</Project>

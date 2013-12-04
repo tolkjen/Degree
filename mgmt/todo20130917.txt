@@ -1,4 +1,4 @@
-﻿* skrypty do uruchamiania, tworzenia bazy danych, uruchamiania testów, np. scons run, scons test, scons syncdb (albo inaczej)
+﻿[OK] skrypty do uruchamiania, tworzenia bazy danych, uruchamiania testów, np. scons run, scons test, scons syncdb (albo inaczej)
 * testy jednostkowe django
 * testy integracyjne biblioteki (wolanie w Pythonie funkcji biblioteki C++)
 * testy systemowe (wołanie serwisów django wewnątrz testów)
