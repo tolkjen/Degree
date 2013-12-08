@@ -3,6 +3,7 @@
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
 
 #include "TestData.hpp"
 #include "TrainingData.hpp"
@@ -191,10 +192,26 @@ private:
 	TemporaryFactory _factory;
 };
 
+class Test {
+public:
+	void func(boost::python::list rows) {
+		boost::python::stl_input_iterator<string> begin(rows), end;
+		std::list<string> rowList(begin, end);
+		for (auto it = rowList.begin(); it != rowList.end(); ++it) {
+			cout << *it << " ";
+		}
+		cout << endl;
+	}
+};
+
 BOOST_PYTHON_MODULE(classifier)
 {
 	register_exception_translator<ReadingException>
 		(&ReadingException::translate);
+
+	class_<Test>("Test")
+		.def("func", &Test::func)
+	;
 
 	class_<TestData>("TestData");
 
