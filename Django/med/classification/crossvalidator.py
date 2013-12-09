@@ -1,7 +1,5 @@
 import math
 
-from sample import Sample
-
 class FakeClassifier:
 	rows = []
 
@@ -36,8 +34,3 @@ class KCrossValidator:
 			score = score + sum(map(classification_score, test_rows))
 
 		return score / len(data_rows)
-
-if __name__ == "__main__":
-	data_sample = Sample.fromFile('data.xls')
-	validator = KCrossValidator(FakeClassifier(), 4)
-	print validator.validate(data_sample.rows())
