@@ -32,7 +32,25 @@
 	</ul>
 </div>
 <div class="content">
-	<h1>Strona główna</h1>
+	<h1>Walidacja krzyżowa - wybór pliku</h1>
+	<p>Instrukcje</p>
+	<form id="form" name="form" method="post" action="{% url 'med:validate_post' %}" enctype="multipart/form-data">
+	<div>
+		{% csrf_token %}
+
+		<div>
+		<label>Liczba podzbiorów uczących:</label>
+		<input class="cool" type="text" name="groups" maxlength="12" autocomplete="off" />
+		</div>
+
+		<div>
+		<label>Dane wejściowe:</label>
+		<input type="file" name="uploaded_file" />
+		</div>
+
+		<button type="submit">Wyślij dane</button>
+	</div>
+	</form>
 </div>
 <div class="footer">
 	<p>Piotr Tąkiel 2013</p>
@@ -41,3 +59,8 @@
 </body>
 
 </html>
+
+
+
+
+

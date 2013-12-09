@@ -8,3 +8,7 @@ class NewClassifierDataForm(forms.Form):
 class NewClassificationForm(forms.Form):
 	name = forms.CharField(max_length=64)
 	uploaded_file  = forms.FileField()
+
+class NewValidationForm(forms.Form):
+    uploaded_file  = forms.FileField()
+    groups = forms.IntegerField()

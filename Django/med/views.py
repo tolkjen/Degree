@@ -8,10 +8,13 @@ from django.utils.cache import patch_cache_control
 from datetime import datetime
 
 from med.models import ClassifierData, ClassificationResults
-from med.forms import NewClassifierDataForm, NewClassificationForm
+from med.forms import NewClassifierDataForm, NewClassificationForm, NewValidationForm
 
 from classifier import TrainingDataVector
 from classification import Classifier
+
+from sample import Sample
+from crossvalidator import KCrossValidator, FakeClassifier
 
 # Decorators
 
@@ -38,7 +41,6 @@ def trained_list(request):
 		error = request.session['trained_list_error']
 		del request.session['trained_list_error']
 		return render(request, 'med/trained_list.html', {'trained': trained, 'error': error})
-	print "trained list size: %d" % len(trained)
 	return render(request, 'med/trained_list.html', {'trained': trained})
 
 def trained_list_new(request):
@@ -71,13 +73,11 @@ def trained_list_delete(request, id):
 @no_browser_cache
 def cls_list(request):
 	results = ClassificationResults.objects.all()
-	print "cls_list: %d" % len(results)
 	return render(request, 'med/cls_list.html', {'cls_list': results})
 
 @no_browser_cache
 def cls_list_new(request):
 	trained = ClassifierData.objects.all()
-	print "cls_list_new: %d" % len(trained)
 	return render(request, 'med/cls_list_new.html', {'trained': trained})
 
 def cls_list_new_form(request, id):
@@ -115,6 +115,25 @@ def cls_list_delete(request, id):
 	classification = get_object_or_404(ClassificationResults, pk=id)
 	classification.delete()
 	return HttpResponseRedirect(reverse('med:cls_list'))
+
+# Validation views
+
+def validate_new(request):
+	return render(request, 'med/validate_new.html')
+
+def validate_post(request):
+	if request.method == 'POST':
+		form = NewValidationForm(request.POST, request.FILES)
+		if form.is_valid():
+			filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
+			group_count = form.cleaned_data['groups']
+
+			sample = Sample.fromXls(filepath)
+			validator = KCrossValidator(FakeClassifier(), group_count)
+			score = validator.validate(sample.rows())
+			return render(request, 'med/validate_result.html', {'result': score})
+
+	return render(request, 'med/validate_new.html')
 
 # Helper methods
 
