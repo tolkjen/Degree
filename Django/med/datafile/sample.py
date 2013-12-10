@@ -9,21 +9,18 @@ class Sample:
 
 	@staticmethod
 	def fromFile(filepath):
-		ext = os.path.splitext(filepath)[1].lower()
-		if ext == '.xls' or ext == '.xlsx':
-			return Sample.fromXls(filepath)
-		else:
-			return None
+		return Sample.fromXls(filepath)
 
 	@staticmethod
 	def fromXls(filepath):
 		datafile = xlsfile.XlsFile(filepath)
+		datafile.read()
 
 		class_column_index = 0
 		try:
 			class_column_index = [s.lower() for s in datafile.columns()].index('index')
 		except:
-			return None
+			raise Exception('Plik nie posiada kolumny o nazwie "Index".')
 
 		sample = Sample()
 		sample.column_count = len(datafile.columns())

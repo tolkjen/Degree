@@ -1,21 +1,31 @@
+# coding=utf-8
+
 import xlrd
 
 class XlsFile:
 	column_names = []
 	row_list = []
+	workbook = None
 
 	def __init__(self, filepath):
-		workbook = xlrd.open_workbook(filepath)
+		try:
+			self.workbook = xlrd.open_workbook(filepath)
+		except:
+			raise Exception('Nieprawidłowy format pliku.')
+
+	def read(self):
+		if (self.workbook == None):
+			raise Exception('Nie można odczytać pliku.')
 
 		datasheet = None
-		worksheets = workbook.sheets()
+		worksheets = self.workbook.sheets()
 		for worksheet in worksheets:
 			if worksheet.ncols > 0:
 				datasheet = worksheet
 				break
 
 		if datasheet == None:
-			raise Exception('Workbook doesn\'t contain any data.')
+			raise Exception('Plik nie zawiera żadnych danych.')
 
 		header_column_indices = []
 		header_row = datasheet.row(0)
@@ -25,7 +35,7 @@ class XlsFile:
 				self.column_names.append(str(cell.value))
 
 		if (header_column_indices == []):
-			raise Exception('Workbook doesn\'t contain column header')
+			raise Exception('Plik nie zawiera wiersza z nazwami kolumn.')
 
 		row_index = 1
 		while row_index < datasheet.nrows:
@@ -40,7 +50,4 @@ class XlsFile:
 
 	def rows(self):
 		return self.row_list
-
-if __name__ == "__main__":
-	reader = XlsFile("data.xls")
-	print reader.columns()
+		
