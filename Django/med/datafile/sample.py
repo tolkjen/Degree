@@ -4,9 +4,6 @@ import os
 from transform import RangeNumberTransform, StringTransform
 
 class Sample:
-	data_rows = []
-	column_count = 0
-
 	@staticmethod
 	def fromFile(filepath):
 		return Sample.fromXls(filepath)
@@ -37,6 +34,10 @@ class Sample:
 			return True
 		except:
 			return False
+
+	def __init__(self):
+		self.data_rows = []
+		self.column_count = 0
 
 	def rows(self):
 		return self.data_rows

@@ -10,6 +10,7 @@
 #include "TemporaryReader.hpp"
 #include "NaiveClassifier.hpp"
 #include "TemporaryFactory.hpp"
+#include "SuperClassifier.hpp"
 
 using namespace boost::python;
 using namespace reader;
@@ -204,37 +205,12 @@ public:
 	}
 };
 
-class SuperClassifier {
-public:
-	void train(boost::python::list trainingRows) {
-		boost::python::stl_input_iterator<boost::python::tuple> rowsBegin(trainingRows), rowsEnd;
-		std::list<boost::python::tuple> rowsList(rowsBegin, rowsEnd);
-
-		vector<vector<string>> attributeVector;
-		vector<string> classVector;
-
-		for (auto it = rowsList.begin(); it != rowsList.end(); ++it) {
-			auto attrList = boost::python::extract<boost::python::list>( (*it)[0] );
-			boost::python::stl_input_iterator<string> attrBegin(attrList), attrEnd;
-			vector<string> attributes(attrBegin, attrEnd);
-			attributeVector.push_back(attributes);
-
-			auto value = boost::python::extract<string>( (*it)[1] );
-			classVector.push_back(value);
-		}
-	}
-
-	string classify(object testRow) {
-		return "1.0";
-	}
-};
-
 BOOST_PYTHON_MODULE(classifier)
 {
 	register_exception_translator<ReadingException>
 		(&ReadingException::translate);
 
-	class_<SuperClassifier>("SuperClassifier")
+	class_<SuperClassifier>("SuperClassifier", init<boost::python::list>())
 		.def("train", &SuperClassifier::train)
 		.def("classify", &SuperClassifier::classify)
 	;

@@ -1,26 +1,26 @@
 import math
 
 class FakeClassifier:
-	rows = []
+	def __init__(self, data_rows):
+		pass
 
 	def train(self, training_rows):
-		self.rows = training_rows
+		pass
 
 	def classify(self, test_row):
 		return '1.0'
 
 class KCrossValidator:
-	classifier = None
-	k = 0
-
-	def __init__(self, classifier, k):
-		self.classifier = classifier
+	def __init__(self, classifier_type, k):
+		self.classifier_type = classifier_type
 		self.k = k
 
 	def validate(self, data_rows):
+		classifier = self.classifier_type(data_rows)
+
 		score = 0.0
-		range_length = int(math.ceil(len(data_rows) / self.k))
-		classification_score = lambda (data, value): self.classifier.classify(data) == value
+		range_length = int(math.ceil(float(len(data_rows)) / self.k))
+		classification_score = lambda (data, value): classifier.classify(data) == value
 
 		for i in xrange(0, len(data_rows), range_length):
 			is_for_test = lambda (index, row): index >= i and index <= i + range_length - 1
@@ -30,7 +30,7 @@ class KCrossValidator:
 			test_rows = map(lambda (index, row): row, filter(is_for_test, enumerated_data))
 			training_rows = map(lambda (index, row): row, filter(is_for_training, enumerated_data))
 
-			self.classifier.train(training_rows)
+			classifier.train(training_rows)
 			score = score + sum(map(classification_score, test_rows))
 
 		return score / len(data_rows)

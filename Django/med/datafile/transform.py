@@ -12,11 +12,9 @@ class StringTransform:
 		return str_value
 
 class RangeNumberTransform:
-	maximum_value = sys.float_info.min
-	minimum_value = sys.float_info.max
-	buckets = 1
-
 	def __init__(self, number):
+		self.maximum_value = sys.float_info.min
+		self.minimum_value = sys.float_info.max
 		self.buckets = number
 
 	def clone(self):

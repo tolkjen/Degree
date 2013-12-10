@@ -26,7 +26,7 @@ def validate_post(request):
 			except Exception, e:
 				return render(request, 'med/validate_new.html', {'error': e})
 
-			validator = KCrossValidator(SuperClassifier(), group_count)
+			validator = KCrossValidator(SuperClassifier, group_count)
 			score = validator.validate(sample.rows())
 			return render(request, 'med/validate_result.html', {'result': score})
 		else:

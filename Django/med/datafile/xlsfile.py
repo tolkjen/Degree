@@ -3,11 +3,11 @@
 import xlrd
 
 class XlsFile:
-	column_names = []
-	row_list = []
-	workbook = None
-
 	def __init__(self, filepath):
+		self.column_names = []
+		self.row_list = []
+		self.workbook = None
+
 		try:
 			self.workbook = xlrd.open_workbook(filepath)
 		except:
