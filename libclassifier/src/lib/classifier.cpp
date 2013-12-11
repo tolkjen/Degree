@@ -10,7 +10,7 @@
 #include "TemporaryReader.hpp"
 #include "NaiveClassifier.hpp"
 #include "TemporaryFactory.hpp"
-#include "SuperClassifier.hpp"
+#include "SuperNaiveClassifier.hpp"
 
 using namespace boost::python;
 using namespace reader;
@@ -210,9 +210,9 @@ BOOST_PYTHON_MODULE(classifier)
 	register_exception_translator<ReadingException>
 		(&ReadingException::translate);
 
-	class_<SuperClassifier>("SuperClassifier", init<boost::python::list>())
-		.def("train", &SuperClassifier::train)
-		.def("classify", &SuperClassifier::classify)
+	class_<SuperNaiveClassifier>("SuperClassifier", init<boost::python::list>())
+		.def("train", &SuperNaiveClassifier::train)
+		.def("classify", &SuperNaiveClassifier::classify)
 	;
 
 	class_<TestData>("TestData");

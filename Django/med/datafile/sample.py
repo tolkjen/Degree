@@ -13,17 +13,17 @@ class Sample:
 		datafile = xlsfile.XlsFile(filepath)
 		datafile.read()
 
-		class_column_index = 0
+		category_column_index = 0
 		try:
-			class_column_index = [s.lower() for s in datafile.columns()].index('index')
+			category_column_index = [s.lower() for s in datafile.columns()].index('index')
 		except:
 			raise Exception('Plik nie posiada kolumny o nazwie "Index".')
 
 		sample = Sample()
 		sample.column_count = len(datafile.columns())
 		for row in datafile.rows():
-			attributes = row[:class_column_index] + row[class_column_index+1:]
-			sample.data_rows.append( (attributes, row[class_column_index]) )
+			attributes = row[:category_column_index] + row[category_column_index+1:]
+			sample.data_rows.append( (attributes, row[category_column_index]) )
 
 		return sample
 
