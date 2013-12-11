@@ -73,13 +73,13 @@ def setup_database_func(target, source, env):
 	if run_postgres_query("GRANT ALL PRIVILEGES ON DATABASE skeleton_base to skeleton;"):
 		successes = successes + 1
 
-	print 'Creating tables in database...',
+	print 'Creating tables in database...'
 	command = '{0}/Django/manage.py syncdb'.format(Dir('.').abspath)
 	if run_in_shell(command) == 0:
 		successes = successes + 1
-		print 'success!'
+		print 'Creating tables in database was successful!'
 	else:
-		print 'failure!'
+		print 'Creating tables in database failed!'
 
 	if successes == 4:
 		print "Database setup completed!"

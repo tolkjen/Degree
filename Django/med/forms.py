@@ -10,5 +10,6 @@ class NewClassificationForm(forms.Form):
 	uploaded_file  = forms.FileField()
 
 class NewValidationForm(forms.Form):
-    uploaded_file  = forms.FileField()
-    groups = forms.IntegerField()
+	name = forms.CharField(max_length=64)
+	uploaded_file  = forms.FileField()
+	k_groups = forms.IntegerField()

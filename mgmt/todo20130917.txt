@@ -6,6 +6,6 @@
 * zapoznać się z bibliotekami badającymi pokrycie kodu testami (dla Pythona coverage.py, dla C++ gcov)
 * dodać walidację krzyżową (np. z faif), parametry (podaje użytkownik): ilość cykli walidacji, stosunek podziału danych na zbiór trenujący/testujący
 * dodać dodatkowe klasyfikatory (faif ma klasyfikator drzewiasty i klasyfikator KNN)
-* odczyt danych wejściowych z xls albo z csv
-* wczytać dane z pliku HW483_raw_data.xls (albo z pliku csv, który powstał na podstawie tego pliku), podać jakość klasyfikacji uwzględniając wszystkie atrybuty (też wiek), klasa w kolumnie 'Index'
+[OK] odczyt danych wejściowych z xls albo z csv
+[OK] wczytać dane z pliku HW483_raw_data.xls (albo z pliku csv, który powstał na podstawie tego pliku), podać jakość klasyfikacji uwzględniając wszystkie atrybuty (też wiek), klasa w kolumnie 'Index'
 [OK] usunąć zbędny kod (np. katalog protein)

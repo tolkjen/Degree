@@ -26,8 +26,13 @@
 		{% csrf_token %}
 
 		<div>
+		<label>Nazwa przeprowadzanej walidacji:</label>
+		<input class="cool" type="text" name="name" maxlength="64" autocomplete="off" />
+		</div>
+
+		<div>
 		<label>Liczba podzbiorów uczących:</label>
-		<input class="cool" type="text" name="groups" maxlength="12" autocomplete="off" />
+		<input class="cool" type="text" name="k_groups" maxlength="12" autocomplete="off" />
 		</div>
 
 		<div>

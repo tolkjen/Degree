@@ -11,6 +11,8 @@ urlpatterns = patterns('',
 
 	url(r'^validate/new/$', views.validate_new, name='validate_new'),
 	url(r'^validate/post/$', views.validate_post, name='validate_post'),
+	url(r'^validate/list/$', views.validate_list, name='validate_list'),
+	url(r'^validate/delete/(?P<id>\d+)$', views.validate_delete, name='validate_delete'),
 
 	url(r'^results/$', views.cls_list, name='cls_list'),
 	url(r'^results/new/$', views.cls_list_new, name='cls_list_new'),
