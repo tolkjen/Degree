@@ -1,4 +1,4 @@
-#include "SuperClassifier.hpp"
+#include "ClassifierAdapter.hpp"
 
 #include <boost/python/stl_iterator.hpp>
 #include <vector>
@@ -7,7 +7,7 @@
 using namespace boost::python;
 using namespace std;
 
-void SuperClassifier::train(boost::python::list trainingRows) {
+void ClassifierAdapter::train(boost::python::list trainingRows) {
 	vector<vector<string>> attributeRows;
 	vector<string> categories;
 
@@ -15,14 +15,14 @@ void SuperClassifier::train(boost::python::list trainingRows) {
 	trainClassifier(attributeRows, categories);
 }
 
-string SuperClassifier::classify(boost::python::list testRow) {
+string ClassifierAdapter::classify(boost::python::list testRow) {
 	boost::python::stl_input_iterator<string> attrBegin(testRow), attrEnd;
 	vector<string> testVector(attrBegin, attrEnd);
 
 	return classifyData(testVector);
 }
 
-void SuperClassifier::translateTrainingData(boost::python::list &rows, 
+void ClassifierAdapter::translateTrainingData(boost::python::list &rows, 
 		vector<vector<string>> &attributeRows, vector<string> &categories) {
 
 	boost::python::stl_input_iterator<boost::python::tuple> 

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class SuperClassifier {
+class ClassifierAdapter {
 public:
 	void train(boost::python::list trainingRows);
 	string classify(boost::python::list testRow);

@@ -9,7 +9,7 @@ from datetime import datetime
 from med.forms import NewValidationForm
 from med.models import CrossValidation
 
-from classifier import SuperClassifier
+from classifier import NaiveClassifier, TreeClassifier
 
 from datafile.sample import Sample
 from datafile.transform import StringTransform, RangeNumberTransform
@@ -26,7 +26,7 @@ def validate_post(request):
 			group_count = form.cleaned_data['k_groups']
 
 			try:
-				validator = KCrossValidator(SuperClassifier, group_count)
+				validator = KCrossValidator(TreeClassifier, group_count)
 				sample = Sample.fromFile(filepath)
 				sample.transform_attributes(StringTransform(), RangeNumberTransform(group_count))
 				score = validator.validate(sample.rows())
