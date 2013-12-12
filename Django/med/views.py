@@ -4,8 +4,6 @@ from django.shortcuts import render
 from django.utils.cache import patch_cache_control
 
 from views_validation import *
-from views_training import *
-from views_classification import *
 
 # Decorators
 

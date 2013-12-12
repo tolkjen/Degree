@@ -34,9 +34,6 @@ Import('*')
 
 source = Glob('*.cpp')
 
-# Build static library
-static_lib = env.StaticLibrary('classifier-static', source)
-
 # Build shared library
 shared_lib_bin = env.SharedLibrary('classifier', source)
 
@@ -44,4 +41,4 @@ shared_lib_bin = env.SharedLibrary('classifier', source)
 shared_lib = Command('#Django/med/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
 Depends(shared_lib, shared_lib_bin)
 
-Return('static_lib', 'shared_lib')
+Return('shared_lib')

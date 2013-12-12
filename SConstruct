@@ -14,7 +14,7 @@ Type: 'scons' or 'scons server' to start HTTP server,
 Decider('MD5-timestamp')
 
 # Add SConscript 
-(shared_lib, tests) = SConscript('libclassifier/SConscript')
+shared_lib = SConscript('libclassifier/SConscript')
 
 # Database management
 def run_postgres_query(query):
@@ -45,7 +45,8 @@ def run_tests_func(target, source, env):
 |           Unit tests          |
 +-------------------------------+
 """
-	run_in_shell(tests[0].abspath)
+	# run_in_shell(tests[0].abspath)
+	pass
 
 def run_server_func(target, source, env):
 	print """
@@ -101,8 +102,6 @@ Default(run_server_obj)
 Alias(['test', 'tests', 'unittest', 'unittests'], run_tests_obj)
 Alias(['setupdb', 'db', 'postgres'], setup_database_obj)
 Alias(['server', 'runserver', 'django'], run_server_obj)
-AlwaysBuild(tests)
 
 # Dependencies
-Depends(run_tests_obj, tests)
 Depends(run_server_obj, shared_lib)
