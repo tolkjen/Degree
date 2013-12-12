@@ -2,26 +2,21 @@
 #define __SUPERNAIVECLASSIFIER_H__
 
 #include "ClassifierAdapter.hpp"
+#include <faif/learning/Classifier.hpp>
 
-#include <vector>
 #include <list>
 #include <set>
 #include <memory>
 
 using namespace std;
-using namespace boost::python;
-
-#include <faif/learning/Classifier.hpp>
-#include <faif/learning/NaiveBayesian.hpp>
-#include <faif/learning/Validator.hpp>
-
 using namespace faif;
 using namespace faif::ml;
+using namespace boost::python;
 
-template<template<class> class TClassifier>
+template<typename TClassifier>
 class FaifClassifierAdapter : public ClassifierAdapter {
 public:
-	typedef TClassifier<ValueNominal<string>> CLS;
+	typedef TClassifier CLS;
 	typedef typename CLS::AttrDomain AttrDomain;
 	typedef typename CLS::Domains Domains;
 

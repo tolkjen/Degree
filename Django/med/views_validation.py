@@ -9,7 +9,7 @@ from datetime import datetime
 from med.forms import NewValidationForm
 from med.models import CrossValidation
 
-from classifier import NaiveClassifier, TreeClassifier
+from classifier import NaiveClassifier, TreeClassifier, KNNClassifier
 
 from datafile.sample import Sample
 from datafile.transform import StringTransform, RangeNumberTransform
@@ -25,7 +25,11 @@ def validate_post(request):
 			filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
 			group_count = form.cleaned_data['k_groups']
 
-			classifier_mapping = {'bayes': NaiveClassifier, 'tree': TreeClassifier}
+			classifier_mapping = {
+				'bayes': NaiveClassifier, 
+				'tree': TreeClassifier, 
+				'knn': KNNClassifier
+			}
 			classifier_type = classifier_mapping[ form.cleaned_data['classifier'] ]
 
 			try:
@@ -48,7 +52,11 @@ def validate_post(request):
 
 def validate_list(request):
 	def change_classifier_name(validation):
-		mapping = {'tree': 'Drzewo decyzyjne', 'bayes': 'Naiwny Bayesowski'}
+		mapping = {
+			'tree': 'Drzewo decyzyjne', 
+			'bayes': 'Naiwny Bayesowski',
+			'knn': 'Najbliższy sąsiad'
+		}
 		validation.classifier = mapping[ validation.classifier ]
 		return validation
 

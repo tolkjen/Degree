@@ -4,6 +4,7 @@
 #include <faif/learning/Classifier.hpp>
 #include <faif/learning/NaiveBayesian.hpp>
 #include <faif/learning/DecisionTree.hpp>
+#include <faif/learning/KNearestNeighbor.hpp>
 
 #include "FaifClassifierAdapter.hpp"
 
@@ -13,13 +14,21 @@ using namespace faif::ml;
 
 BOOST_PYTHON_MODULE(classifier)
 {
-	class_<FaifClassifierAdapter<NaiveBayesian>>("NaiveClassifier", init<boost::python::list>())
-		.def("train", &FaifClassifierAdapter<NaiveBayesian>::train)
-		.def("classify", &FaifClassifierAdapter<NaiveBayesian>::classify)
+	typedef NaiveBayesian<ValueNominal<string>> NB;
+	class_<FaifClassifierAdapter<NB>>("NaiveClassifier", init<boost::python::list>())
+		.def("train", &FaifClassifierAdapter<NB>::train)
+		.def("classify", &FaifClassifierAdapter<NB>::classify)
 	;
 
-	class_<FaifClassifierAdapter<DecisionTree>>("TreeClassifier", init<boost::python::list>())
-		.def("train", &FaifClassifierAdapter<DecisionTree>::train)
-		.def("classify", &FaifClassifierAdapter<DecisionTree>::classify)
+	typedef DecisionTree<ValueNominal<string>> TR;
+	class_<FaifClassifierAdapter<TR>>("TreeClassifier", init<boost::python::list>())
+		.def("train", &FaifClassifierAdapter<TR>::train)
+		.def("classify", &FaifClassifierAdapter<TR>::classify)
+	;
+
+	typedef KNearestNeighbor<ValueNominal<string>> KNN;
+	class_<FaifClassifierAdapter<KNN>>("KNNClassifier", init<boost::python::list>())
+		.def("train", &FaifClassifierAdapter<KNN>::train)
+		.def("classify", &FaifClassifierAdapter<KNN>::classify)
 	;
 }
