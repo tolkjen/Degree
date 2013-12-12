@@ -20,11 +20,12 @@
 	{% if validations %}
 		<a href="{% url 'med:validate_new' %}">Nowa walidacja krzyżowa</a>
 		<table>
-			<tr class="header"><td>Czas operacji</td><td>Nazwa walidacji</td><td>Liczba podgrup</td><td>Wynik</td><td>Operacje</td></tr>
+			<tr class="header"><td>Czas operacji</td><td>Nazwa walidacji</td><td>Klasyfikator</td><td>Liczba podgrup</td><td>Wynik</td><td>Operacje</td></tr>
 			{% for validation in validations %}
 			<tr>
 				<td>{{ validation.date }}</td>
 				<td>{{ validation.name }}</td>
+				<td>{{ validation.classifier }}</td>
 				<td>{{ validation.k_groups }}</td>
 				<td>{{ validation.result }}</td>
 				<td><a href="{% url 'med:validate_delete' validation.id %}">Usuń</a></td>

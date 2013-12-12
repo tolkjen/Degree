@@ -25,8 +25,11 @@ def validate_post(request):
 			filepath = form.cleaned_data['uploaded_file'].temporary_file_path()
 			group_count = form.cleaned_data['k_groups']
 
+			classifier_mapping = {'bayes': NaiveClassifier, 'tree': TreeClassifier}
+			classifier_type = classifier_mapping[ form.cleaned_data['classifier'] ]
+
 			try:
-				validator = KCrossValidator(TreeClassifier, group_count)
+				validator = KCrossValidator(classifier_type, group_count)
 				sample = Sample.fromFile(filepath)
 				sample.transform_attributes(StringTransform(), RangeNumberTransform(group_count))
 				score = validator.validate(sample.rows())
@@ -44,8 +47,15 @@ def validate_post(request):
 	return render(request, 'med/validate_new.html')
 
 def validate_list(request):
+	def change_classifier_name(validation):
+		mapping = {'tree': 'Drzewo decyzyjne', 'bayes': 'Naiwny Bayesowski'}
+		validation.classifier = mapping[ validation.classifier ]
+		return validation
+
 	validations = CrossValidation.objects.order_by('-date')
-	return render(request, 'med/validate_list.html', {'validations': validations})
+	return render(request, 'med/validate_list.html', 
+		{'validations': map(change_classifier_name, validations)}
+	)
 
 def validate_delete(request, id):
 	validation = get_object_or_404(CrossValidation, pk=id)
@@ -57,5 +67,6 @@ def create_cross_validation(form, result):
 		name = form.cleaned_data['name'],
 		k_groups = form.cleaned_data['k_groups'],
 		result = result,
-		date = datetime.now()
+		date = datetime.now(),
+		classifier = form.cleaned_data['classifier']
 	)
