@@ -37,8 +37,14 @@ source = Glob('*.cpp')
 # Build shared library
 shared_lib_bin = env.SharedLibrary('classifier', source)
 
+# Copy library to unittests directory
+shared_lib_tests = Command('../../unittests/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
+
 # Copy shared library to Django directory
 shared_lib = Command('#Django/med/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
+
+# Dependencies
 Depends(shared_lib, shared_lib_bin)
+Depends(shared_lib, shared_lib_tests)
 
 Return('shared_lib')

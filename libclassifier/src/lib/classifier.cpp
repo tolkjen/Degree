@@ -1,7 +1,5 @@
 #include <boost/python.hpp>
-#include <boost/python/stl_iterator.hpp>
 
-#include <faif/learning/Classifier.hpp>
 #include <faif/learning/NaiveBayesian.hpp>
 #include <faif/learning/DecisionTree.hpp>
 #include <faif/learning/KNearestNeighbor.hpp>

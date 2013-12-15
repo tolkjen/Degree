@@ -10,9 +10,6 @@ Type: 'scons' or 'scons server' to start HTTP server,
       'scons tests' to build and run unit tests.
 """)
 
-# Decider - MD5 mixed with timestamps
-Decider('MD5-timestamp')
-
 # Add SConscript 
 shared_lib = SConscript('libclassifier/SConscript')
 
@@ -42,11 +39,11 @@ def run_in_shell(filepath):
 def run_tests_func(target, source, env):
 	print """
 +-------------------------------+
-|           Unit tests          |
+|    libclassifier unit tests   |
 +-------------------------------+
 """
-	# run_in_shell(tests[0].abspath)
-	pass
+	command = '{0}/libclassifier/unittests/tests.py'.format(Dir('.').abspath)
+	run_in_shell(command)
 
 def run_server_func(target, source, env):
 	print """
@@ -73,6 +70,8 @@ def setup_database_func(target, source, env):
 	print 'Granting privileges...',
 	if run_postgres_query("GRANT ALL PRIVILEGES ON DATABASE skeleton_base to skeleton;"):
 		successes = successes + 1
+	if run_postgres_query("ALTER USER skeleton CREATEDB;"):
+		successes = successes + 1
 
 	print 'Creating tables in database...'
 	command = '{0}/Django/manage.py syncdb'.format(Dir('.').abspath)
@@ -82,7 +81,7 @@ def setup_database_func(target, source, env):
 	else:
 		print 'Creating tables in database failed!'
 
-	if successes == 4:
+	if successes == 5:
 		print "Database setup completed!"
 	else:
 		print 'Problems during database setup.'
@@ -99,9 +98,10 @@ run_server_obj = env.RunServer('server', None)
 Default(run_server_obj)
 
 # Aliases
-Alias(['test', 'tests', 'unittest', 'unittests'], run_tests_obj)
+Alias(['ut', 'unittest', 'unittests'], run_tests_obj)
 Alias(['setupdb', 'db', 'postgres'], setup_database_obj)
 Alias(['server', 'runserver', 'django'], run_server_obj)
 
 # Dependencies
 Depends(run_server_obj, shared_lib)
+Depends(run_tests_obj, shared_lib)
