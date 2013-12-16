@@ -60,9 +60,3 @@ class Sample:
 			new_attributes = [transformers[i].transform(attr) for (i, attr) in enumerate(attributes)]
 			new_rows.append( (new_attributes, value) )
 		self.data_rows = new_rows
-
-if __name__ == "__main__":
-	sample = Sample.fromFile('data.xls')
-	sample.transform_attributes(StringTransform(), RangeNumberTransform(5))
-	for row in sample.rows():
-		print row

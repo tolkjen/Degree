@@ -1,21 +1,17 @@
 import math
 
-class FakeClassifier:
-	def __init__(self, data_rows):
-		pass
-
-	def train(self, training_rows):
-		pass
-
-	def classify(self, test_row):
-		return '1.0'
-
 class KCrossValidator:
 	def __init__(self, classifier_type, k):
 		self.classifier_type = classifier_type
+
+		if k <= 0:
+			raise Exception('Liczba podgrup musi byc wieksza od zera.')
 		self.k = k
 
 	def validate(self, data_rows):
+		if len(data_rows) == 0:
+			raise Exception('Dane wejsciowe nie moga byc puste.')
+
 		classifier = self.classifier_type(data_rows)
 
 		score = 0.0

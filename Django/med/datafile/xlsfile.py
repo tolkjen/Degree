@@ -11,7 +11,7 @@ class XlsFile:
 		try:
 			self.workbook = xlrd.open_workbook(filepath)
 		except:
-			raise Exception('Nieprawidłowy format pliku.')
+			raise Exception('Nie można otworzyć pliku.')
 
 	def read(self):
 		if (self.workbook == None):

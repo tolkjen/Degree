@@ -41,7 +41,7 @@ shared_lib_bin = env.SharedLibrary('classifier', source)
 shared_lib_tests = Command('../../unittests/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
 
 # Copy shared library to Django directory
-shared_lib = Command('#Django/med/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
+shared_lib = Command('#Django/med/classification/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
 
 # Dependencies
 Depends(shared_lib, shared_lib_bin)

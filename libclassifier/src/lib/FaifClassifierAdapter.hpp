@@ -1,8 +1,9 @@
 #ifndef __SUPERNAIVECLASSIFIER_H__
 #define __SUPERNAIVECLASSIFIER_H__
 
-#include "ClassifierAdapter.hpp"
 #include <faif/learning/Classifier.hpp>
+#include "ClassifierAdapter.hpp"
+#include "ClassifierException.hpp"
 
 #include <list>
 #include <set>
@@ -20,37 +21,57 @@ public:
 	typedef typename CLS::AttrDomain AttrDomain;
 	typedef typename CLS::Domains Domains;
 
-	FaifClassifierAdapter(boost::python::list rows) {
+	FaifClassifierAdapter(boost::python::list rows) 
+		: _domainsCreated(false), _trained(false)
+	{
 		vector<vector<string>> attributeRows;
 		vector<string> categories;
 
 		translateTrainingData(rows, attributeRows, categories);
 
-		Domains attributeDomains = createAttributeDomains(attributeRows);
-		AttrDomain categoryDomain = createCategoryDomain(categories);
-		_classifier = shared_ptr<CLS>(new CLS(attributeDomains, categoryDomain));
+		if (attributeRows.size() > 0 && categories.size() > 0) {
+			Domains attributeDomains = createAttributeDomains(attributeRows);
+			AttrDomain categoryDomain = createCategoryDomain(categories);
+			_classifier = shared_ptr<CLS>(new CLS(attributeDomains, categoryDomain));
+			_domainsCreated = true;
+		}
 	}
 
 protected:
 	string classifyData(vector<string> &testRow) {
-		auto example = faif::ml::createExample(
-			testRow.begin(), testRow.end(), *_classifier);
-		return _classifier->getCategory(example)->get();
+		if (_trained) {
+			auto example = faif::ml::createExample(
+				testRow.begin(), testRow.end(), *_classifier);
+			return _classifier->getCategory(example)->get();		
+		} else {
+			throw ClassifierException("Klasyfikator nie zostal nauczony.");
+		}
 	}
 
 	void trainClassifier(
 		vector<vector<string>> &attributeRows, vector<string> &categories) {
 
+		if (!_domainsCreated) {
+			throw ClassifierException("Klasyfikator nie posiada wiedzy o dziedzinach atrybutow.");
+		}
+
 		CLS::ExamplesTrain ex;
-		for (int i = 0; i < attributeRows.size(); i++) {
-			auto example = faif::ml::createExample(
-				attributeRows[i].begin(), attributeRows[i].end(), categories[i], 
-				*_classifier);
-			ex.push_back(example);
+		try {
+			for (int i = 0; i < attributeRows.size(); i++) {
+				auto example = faif::ml::createExample(
+					attributeRows[i].begin(), attributeRows[i].end(), categories[i], 
+					*_classifier);
+				ex.push_back(example);
+			}
+		}
+		catch (exception &e) {
+			throw ClassifierException("Dziedziny danych trenujacych nie odpowiadaja poznanym dziedzinom.");
 		}
 
 		_classifier->reset();
 		_classifier->train(ex);
+		
+		_trained = true;
 	}
 
 private:
@@ -99,6 +120,7 @@ private:
 
 private:
 	shared_ptr<CLS> _classifier;
+	bool _trained, _domainsCreated;
 };
 
 #endif

@@ -31,19 +31,28 @@ def run_postgres_query(query):
 	return True
 
 # Shell operations
-def run_in_shell(filepath):
-	p = subprocess.Popen(filepath, cwd=dirname(filepath), shell=True)
+def run_in_shell(filepath, directory=None):
+	if directory == None:
+		directory = dirname(filepath)
+	p = subprocess.Popen(filepath, cwd=directory, shell=True)
 	return p.wait()
 
 # Custom builders
 def run_tests_func(target, source, env):
 	print """
 +-------------------------------+
-|    libclassifier unit tests   |
+|          Unit tests           |
 +-------------------------------+
 """
+	print 'Running classifier unit tests...'
 	command = '{0}/libclassifier/unittests/tests.py'.format(Dir('.').abspath)
-	run_in_shell(command)
+	if run_in_shell(command) != 0:
+		return
+
+	print '\nRunning django app unit tests...'
+	directory = '{0}/Django'.format(Dir('.').abspath)
+	run_in_shell('python -m med.tests.unittests', directory)
+	print ''
 
 def run_server_func(target, source, env):
 	print """
