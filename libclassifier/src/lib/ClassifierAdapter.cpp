@@ -4,7 +4,7 @@
 #include <vector>
 #include <list>
 
-using namespace boost::python;
+// using namespace boost::python;
 using namespace std;
 
 void ClassifierAdapter::train(boost::python::list trainingRows) {
@@ -35,7 +35,7 @@ void ClassifierAdapter::translateTrainingData(boost::python::list &rows,
 		vector<string> attributes(attrBegin, attrEnd);
 		attributeRows.push_back(attributes);
 
-		auto value = boost::python::extract<string>( (*it)[1] );
+		const auto & value = boost::python::extract<string>( (*it)[1] );
 		categories.push_back(value);
 	}
 }

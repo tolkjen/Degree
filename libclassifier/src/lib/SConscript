@@ -1,34 +1,4 @@
-# import platform
-
-# # Compile shared library
-
-# src_files=[
-# 	'classifier.cpp', 
-# 	'TrainingData.cpp', 
-# 	'TestData.cpp', 
-# 	'TemporaryReader.cpp',
-# 	'AbstractReader.cpp',
-# 	'NaiveClassifier.cpp',
-# 	'TemporaryFactory.cpp',
-# 	'DataFactory.cpp'
-# ]
-
-# env = Environment(TARGET_ARCH = 'x86')
-# env.Append(CPPPATH=['#src'])
-
-# if platform.system() == "Windows":
-# 	env.Append(LIBPATH=['C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\lib\\shared_all', 
-# 		'C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\stage\\lib', 
-# 		'C:\\Python27\\libs'])
-# 	env.Append(CPPPATH=['C:\\Users\\tolkjen\\Documents\\boost_1_53_0', 'C:\\Python27\\include'])
-# 	env.Append(CCFLAGS=['/MD', '/EHsc'])
-# else:
-# 	env.ParseConfig('pkg-config --cflags --libs python')
-# 	env.Append(LIBS=['boost_python', 'boost_serialization', 'boost_system'])
-# 	env.Append(LINKFLAGS=['-fPIC'])
-# 	env.Append(CCFLAGS=['-std=c++11'])
-
-# env.SharedLibrary(target='classifier', source=src_files)
+import platform
 
 Import('*')
 
@@ -37,11 +7,18 @@ source = Glob('*.cpp')
 # Build shared library
 shared_lib_bin = env.SharedLibrary('classifier', source)
 
-# Copy library to unittests directory
-shared_lib_tests = Command('../../unittests/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
+if platform.system() == "Windows":
+	# Copy library to unittests directory
+	shared_lib_tests = Command('../../unittests/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
 
-# Copy shared library to Django directory
-shared_lib = Command('#Django/med/classification/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
+	# Copy shared library to Django directory
+	shared_lib = Command('#Django/med/classification/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
+else:
+	# Copy library to unittests directory
+	shared_lib_tests = Command('../../unittests/classifier.so', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
+
+	# Copy shared library to Django directory
+	shared_lib = Command('#Django/med/classification/classifier.so', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
 
 # Dependencies
 Depends(shared_lib, shared_lib_bin)

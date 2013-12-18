@@ -55,7 +55,7 @@ protected:
 			throw ClassifierException("Klasyfikator nie posiada wiedzy o dziedzinach atrybutow.");
 		}
 
-		CLS::ExamplesTrain ex;
+		typename CLS::ExamplesTrain ex;
 		try {
 			for (int i = 0; i < attributeRows.size(); i++) {
 				auto example = faif::ml::createExample(

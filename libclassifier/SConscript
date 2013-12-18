@@ -14,6 +14,12 @@ if platform.system() == "Windows":
 	])
 	env.Append(CPPPATH = ['#libclassifier/src', '#libclassifier/src/lib'])
 	env.Append(CCFLAGS = ['/MD', '/EHsc'])
+else:
+	env.Append(CPPPATH = ['#libclassifier/src', '#libclassifier/src/lib'])
+	env.ParseConfig('pkg-config --cflags --libs python')
+	env.Append(LIBS=['boost_python', 'boost_system'])
+	env.Append(LINKFLAGS=['-fPIC'])
+	env.Append(CCFLAGS=['-std=c++11'])
 
 # Add more SConscripts
 shared_lib = SConscript('src/lib/SConscript', 
