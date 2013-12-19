@@ -49,10 +49,17 @@ def run_tests_func(target, source, env):
 	if run_in_shell(command) != 0:
 		return
 
-	print '\nRunning django app unit tests...'
+	print '\nRunning django utilities unit tests...'
 	directory = '{0}/Django'.format(Dir('.').abspath)
-	run_in_shell('python -m med.tests.unittests', directory)
+	if run_in_shell('python -m med.unittests.tests', directory) != 0:
+		return
 	print ''
+
+	print 'Running django app unit tests...'
+	directory = '{0}/Django'.format(Dir('.').abspath)
+	if run_in_shell('manage.py test med', directory) != 0:
+		return
+	print '\nAll tests passed!\n'
 
 def run_server_func(target, source, env):
 	print """
