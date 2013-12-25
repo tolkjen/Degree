@@ -13,6 +13,14 @@ if platform.system() == "Windows":
 
 	# Copy shared library to Django directory
 	shared_lib = Command('#Django/med/classification/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
+
+	# Copy Dll and set as a dependency
+	dll = Command(
+		'#Django/med/classification/boost_python-vc110-mt-1_53.dll', 
+		'#libclassifier/import/boost_python-vc110-mt-1_53.dll', 
+		Copy("$TARGET", "$SOURCE")
+	)
+	Depends(shared_lib, dll)
 else:
 	# Copy library to unittests directory
 	shared_lib_tests = Command('../../unittests/classifier.so', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
@@ -20,7 +28,7 @@ else:
 	# Copy shared library to Django directory
 	shared_lib = Command('#Django/med/classification/classifier.so', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
 
-# Dependencies
+# Common dependencies
 Depends(shared_lib, shared_lib_bin)
 Depends(shared_lib, shared_lib_tests)
 

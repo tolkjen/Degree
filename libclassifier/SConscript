@@ -29,10 +29,9 @@ shared_lib = SConscript('src/lib/SConscript',
 
 # Aliases
 Alias('lib', shared_lib)
-binaries = Alias('all', [shared_lib])
 
 # Cleanup
 Clean(shared_lib, 'bin/lib')
-Clean(binaries, 'bin')
+Clean(shared_lib, 'bin')
 
 Return('shared_lib')

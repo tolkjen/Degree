@@ -1,5 +1,6 @@
 import subprocess
 import psycopg2
+import platform
 from os.path import dirname, abspath
 
 # Custom help message
@@ -114,7 +115,17 @@ Default(run_server_obj)
 Alias(['ut', 'unittest', 'unittests'], run_tests_obj)
 Alias(['setupdb', 'db', 'postgres'], setup_database_obj)
 Alias(['server', 'runserver', 'django'], run_server_obj)
+Alias('all', [run_tests_obj, shared_lib])
 
 # Dependencies
 Depends(run_server_obj, shared_lib)
 Depends(run_tests_obj, shared_lib)
+
+# Copy boost dll to libclassifier unittests directory
+if platform.system() == "Windows":
+	ut_dll = Command(
+		'#libclassifier/unittests/boost_python-vc110-mt-1_53.dll', 
+		'#libclassifier/import/boost_python-vc110-mt-1_53.dll', 
+		Copy("$TARGET", "$SOURCE")
+	)
+	Depends(run_tests_obj, ut_dll)
