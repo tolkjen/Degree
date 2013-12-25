@@ -7,7 +7,7 @@ Help("""
 Type: 'scons' or 'scons server' to start HTTP server,
       'scons db' to setup database,
       'scons lib' to build shared library,
-      'scons tests' to build and run unit tests.
+      'scons ut' to build and run unit tests.
 """)
 
 # Add SConscript 
@@ -34,6 +34,8 @@ def run_postgres_query(query):
 def run_in_shell(filepath, directory=None):
 	if directory == None:
 		directory = dirname(filepath)
+	else:
+		directory = '{0}/{1}'.format(Dir('.').abspath, directory)
 	p = subprocess.Popen(filepath, cwd=directory, shell=True)
 	return p.wait()
 
@@ -45,19 +47,16 @@ def run_tests_func(target, source, env):
 +-------------------------------+
 """
 	print 'Running classifier unit tests...'
-	command = '{0}/libclassifier/unittests/tests.py'.format(Dir('.').abspath)
-	if run_in_shell(command) != 0:
+	if run_in_shell('python tests.py', 'libclassifier/unittests') != 0:
 		return
 
 	print '\nRunning django utilities unit tests...'
-	directory = '{0}/Django'.format(Dir('.').abspath)
-	if run_in_shell('python -m med.unittests.tests', directory) != 0:
+	if run_in_shell('python -m med.unittests.tests', 'Django') != 0:
 		return
 	print ''
 
 	print 'Running django app unit tests...'
-	directory = '{0}/Django'.format(Dir('.').abspath)
-	if run_in_shell('manage.py test med', directory) != 0:
+	if run_in_shell('python manage.py test med', 'Django') != 0:
 		return
 	print '\nAll tests passed!\n'
 
@@ -67,8 +66,7 @@ def run_server_func(target, source, env):
 |         Django server         |
 +-------------------------------+
 """
-	command = '{0}/Django/manage.py runserver'.format(Dir('.').abspath)
-	run_in_shell(command)
+	run_in_shell('python manage.py runserver', 'Django')
 
 def setup_database_func(target, source, env):
 	print """
@@ -90,8 +88,7 @@ def setup_database_func(target, source, env):
 		successes = successes + 1
 
 	print 'Creating tables in database...'
-	command = '{0}/Django/manage.py syncdb'.format(Dir('.').abspath)
-	if run_in_shell(command) == 0:
+	if run_in_shell('python manage.py syncdb', 'Django') == 0:
 		successes = successes + 1
 		print 'Creating tables in database was successful!'
 	else:
