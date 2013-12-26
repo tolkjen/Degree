@@ -1,10 +1,10 @@
 import unittest
 from os.path import dirname, realpath
 
-from med.classification.crossvalidator import KCrossValidator
-from med.classification.classifier import NaiveClassifier
-from med.datafile.xlsfile import XlsFile
-from med.datafile.sample import Sample
+from med.utility.crossvalidator import KCrossValidator
+from med.utility.classifier import NaiveClassifier
+from med.utility.datafile.xlsfile import XlsFile
+from med.utility.datafile.sample import Sample
 
 def make_filepath(filename):
 	directory = dirname(realpath(__file__))

@@ -9,10 +9,10 @@ from datetime import datetime
 from med.forms import NewValidationForm
 from med.models import CrossValidation
 
-from datafile.sample import Sample
-from datafile.transform import StringTransform, RangeNumberTransform
-from classification.crossvalidator import KCrossValidator
-from classification.classifier import NaiveClassifier, TreeClassifier, KNNClassifier
+from utility.crossvalidator import KCrossValidator
+from utility.classifier import NaiveClassifier, TreeClassifier, KNNClassifier
+from utility.datafile.sample import Sample
+from utility.datafile.transform import StringTransform, RangeNumberTransform
 
 def validate_new(request):
 	return render(request, 'med/validate_new.html')

@@ -1,8 +1,8 @@
 ﻿[OK] skrypty do uruchamiania, tworzenia bazy danych, uruchamiania testów, np. scons run, scons test, scons syncdb (albo inaczej)
 [OK] testy jednostkowe django
 [OK] testy integracyjne biblioteki (wolanie w Pythonie funkcji biblioteki C++)
-* testy systemowe (wołanie serwisów django wewnątrz testów)
-* testy akceptacyjne (testwanie calej aplikacji przy pomocy biblioteki umozliwiajacej 'klikanie' i analizę pól w html)
+[OK] testy systemowe (wołanie serwisów django wewnątrz testów)
+[OK] testy akceptacyjne (testwanie calej aplikacji przy pomocy biblioteki umozliwiajacej 'klikanie' i analizę pól w html)
 * zapoznać się z bibliotekami badającymi pokrycie kodu testami (dla Pythona coverage.py, dla C++ gcov)
 [OK] dodać walidację krzyżową (np. z faif), parametry (podaje użytkownik): ilość cykli walidacji, stosunek podziału danych na zbiór trenujący/testujący
 [OK] dodać dodatkowe klasyfikatory (faif ma klasyfikator drzewiasty i klasyfikator KNN)

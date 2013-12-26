@@ -40,41 +40,28 @@ def run_in_shell(filepath, directory=None):
 	p = subprocess.Popen(filepath, cwd=directory, shell=True)
 	return p.wait()
 
-# Custom builders
-def run_tests_func(target, source, env):
-	print """
-+-------------------------------+
-|          Unit tests           |
-+-------------------------------+
-"""
+def run_ut_classifier_func(target, source, env):
 	print 'Running classifier unit tests...'
-	if run_in_shell('python tests.py', 'libclassifier/unittests') != 0:
-		return
+	run_in_shell('python tests.py', 'libclassifier/unittests')
 
-	print '\nRunning django utilities unit tests...'
-	if run_in_shell('python -m med.unittests.tests', 'Django') != 0:
-		return
-	print ''
+def run_ut_utility_func(target, source, env):
+	print 'Running web app utility unit tests...'
+	run_in_shell('python -m med.unittests.tests', 'Django')
 
-	print 'Running django app unit tests...'
-	if run_in_shell('python manage.py test med', 'Django') != 0:
-		return
-	print '\nAll tests passed!\n'
+def run_ut_webapp_func(target, source, env):
+	print 'Running web app tests...'
+	run_in_shell('python manage.py test med.ValidationViewTests', 'Django')
+
+def run_ut_webui_func(target, source, env):
+	print 'Running web UI tests...'
+	run_in_shell('python manage.py test med.SeleniumTests --liveserver=localhost:8100', 'Django')
 
 def run_server_func(target, source, env):
-	print """
-+-------------------------------+
-|         Django server         |
-+-------------------------------+
-"""
+	print "Running Django server..."
 	run_in_shell('python manage.py runserver', 'Django')
 
 def setup_database_func(target, source, env):
-	print """
-+-------------------------------+
-|         Database setup        |
-+-------------------------------+
-"""
+	print "Setting up the database..."
 	successes = 0
 	print 'Creating database...',
 	if run_postgres_query('CREATE DATABASE skeleton_base;'):
@@ -101,10 +88,16 @@ def setup_database_func(target, source, env):
 		print 'Problems during database setup.'
 
 env = DefaultEnvironment()
-env.Append(BUILDERS = {'RunTests' : Builder(action = run_tests_func)})
+env.Append(BUILDERS = {'RunUTClassifier' : Builder(action = run_ut_classifier_func)})
+env.Append(BUILDERS = {'RunUTUtility' : Builder(action = run_ut_utility_func)})
+env.Append(BUILDERS = {'RunUTWebApp' : Builder(action = run_ut_webapp_func)})
+env.Append(BUILDERS = {'RunUTWebUI' : Builder(action = run_ut_webui_func)})
 env.Append(BUILDERS = {'SetupDatabase' : Builder(action = setup_database_func)})
 env.Append(BUILDERS = {'RunServer' : Builder(action = run_server_func)})
-run_tests_obj = env.RunTests('runtests', None)
+run_ut_classifier_obj = env.RunUTClassifier('Classifier unit tests', None)
+run_ut_utility_obj = env.RunUTUtility('Web app utility unit tests', None)
+run_ut_webapp_obj = env.RunUTWebApp('Web app unit tests', None)
+run_ut_webui_obj = env.RunUTWebUI('Web app ui tests', None)
 setup_database_obj = env.SetupDatabase('database', None)
 run_server_obj = env.RunServer('server', None)
 
@@ -112,14 +105,18 @@ run_server_obj = env.RunServer('server', None)
 Default(run_server_obj)
 
 # Aliases
-Alias(['ut', 'unittest', 'unittests'], run_tests_obj)
-Alias(['setupdb', 'db', 'postgres'], setup_database_obj)
-Alias(['server', 'runserver', 'django'], run_server_obj)
-Alias('all', [run_tests_obj, shared_lib])
+Alias(['ut-classifier'], run_ut_classifier_obj)
+Alias(['ut-utility'], run_ut_utility_obj)
+Alias(['ut-webapp'], run_ut_webapp_obj)
+Alias(['ut-webui'], run_ut_webui_obj)
+Alias(['ut', 'tests'], [run_ut_classifier_obj, run_ut_utility_obj, run_ut_webapp_obj,
+	run_ut_webui_obj])
+Alias(['setupdb', 'db', 'postgres', 'database'], setup_database_obj)
+Alias(['server', 'runserver', 'django', 'webapp', 'app'], run_server_obj)
 
 # Dependencies
 Depends(run_server_obj, shared_lib)
-Depends(run_tests_obj, shared_lib)
+Depends(run_ut_classifier_obj, shared_lib)
 
 # Copy boost dll to libclassifier unittests directory
 if platform.system() == "Windows":
@@ -128,4 +125,4 @@ if platform.system() == "Windows":
 		'#libclassifier/import/boost_python-vc110-mt-1_53.dll', 
 		Copy("$TARGET", "$SOURCE")
 	)
-	Depends(run_tests_obj, ut_dll)
+	Depends([run_ut_webapp_obj, run_ut_webui_obj, run_ut_classifier_obj], ut_dll)
