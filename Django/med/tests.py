@@ -2,6 +2,7 @@
 
 from datetime import datetime, tzinfo, timedelta
 from os.path import dirname, realpath
+import pytz
 
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.common.exceptions import TimeoutException
@@ -84,7 +85,7 @@ class ValidationViewTests(TestCase):
 			name='test name',
 			k_groups=1,
 			result=1.0,
-			date=datetime(2013, 12, 16, tzinfo=WarsawTimeZone()),
+			date=datetime.utcnow().replace(tzinfo = pytz.utc),
 			classifier='bayes'
 		)
 
@@ -96,7 +97,7 @@ class ValidationViewTests(TestCase):
 			name='test name',
 			k_groups=1,
 			result=1.0,
-			date=datetime(2013, 12, 16, tzinfo=WarsawTimeZone()),
+			date=datetime.utcnow().replace(tzinfo = pytz.utc),
 			classifier='bayes'
 		)
 
@@ -150,7 +151,7 @@ class SeleniumTests(LiveServerTestCase):
 			name='test name',
 			k_groups=1,
 			result=1.0,
-			date=datetime(2013, 12, 16, tzinfo=WarsawTimeZone()),
+			date=datetime.utcnow().replace(tzinfo = pytz.utc),
 			classifier='bayes'
 		)
 

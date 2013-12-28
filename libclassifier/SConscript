@@ -18,8 +18,8 @@ else:
 	env.Append(CPPPATH = ['#libclassifier/src', '#libclassifier/src/lib'])
 	env.ParseConfig('pkg-config --cflags --libs python')
 	env.Append(LIBS=['boost_python', 'boost_system'])
-	env.Append(LINKFLAGS=['-fPIC'])
-	env.Append(CCFLAGS=['-std=c++11'])
+	env.Append(LINKFLAGS=['-fPIC', '-fprofile-arcs'])
+	env.Append(CCFLAGS=['-std=c++11', '-fprofile-arcs', '-ftest-coverage'])
 
 # Add more SConscripts
 shared_lib = SConscript('src/lib/SConscript', 

@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 
 from datetime import datetime
+import pytz
 
 from med.forms import NewValidationForm
 from med.models import CrossValidation
@@ -74,6 +75,6 @@ def create_cross_validation(form, result):
 		name = form.cleaned_data['name'],
 		k_groups = form.cleaned_data['k_groups'],
 		result = result,
-		date = datetime.now(),
+		date = datetime.utcnow().replace(tzinfo = pytz.utc),
 		classifier = form.cleaned_data['classifier']
 	)
