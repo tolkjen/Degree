@@ -1,0 +1,33 @@
+import platform
+
+Import('*')
+
+source = Glob('*.cpp')
+
+# Add profiling and instrumentation flags
+env = env.Clone()
+env.Append(LINKFLAGS=['-fprofile-arcs'])
+env.Append(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+
+# Build test library
+shared_lib_tests_bin = env.SharedLibrary('classifier', source)
+
+if platform.system() == "Windows":
+	# Copy shared library to Django directory
+	shared_lib_tests = Command('#Django/med/utility/classifier.pyd', shared_lib_tests_bin, Copy("$TARGET", "$SOURCE"))
+
+	# Copy Dll and set as a dependency
+	dll = Command(
+		'#libclassifier/unittests/boost_python-vc110-mt-1_53.dll', 
+		'#libclassifier/import/boost_python-vc110-mt-1_53.dll', 
+		Copy("$TARGET", "$SOURCE")
+	)
+
+	Depends(shared_lib_tests, shared_lib_tests_bin)
+	Depends(shared_lib_tests, dll)
+else:
+	# Copy shared library to Django directory
+	shared_lib_tests = Command('#libclassifier/unittests/classifier.so', shared_lib_tests_bin, Copy("$TARGET", "$SOURCE"))
+	Depends(shared_lib_tests, shared_lib_tests_bin)
+
+Return('shared_lib_tests')

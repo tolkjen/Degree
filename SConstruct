@@ -13,7 +13,7 @@ Type: 'scons' or 'scons server' to start HTTP server,
 """)
 
 # Add SConscript 
-shared_lib = SConscript('libclassifier/SConscript')
+shared_lib, shared_lib_tests = SConscript('libclassifier/SConscript')
 
 # Database management
 def run_postgres_query(query):
@@ -127,16 +127,10 @@ Alias(['ut', 'tests'], [run_ut_classifier_obj, run_ut_utility_obj, run_ut_webapp
 	run_ut_webui_obj])
 Alias(['setupdb', 'db', 'postgres', 'database'], setup_database_obj)
 Alias(['server', 'runserver', 'django', 'webapp', 'app'], run_server_obj)
+Alias(['all'], [run_ut_classifier_obj, run_ut_utility_obj, run_ut_webapp_obj,
+	run_ut_webui_obj, shared_lib])
 
 # Dependencies
 Depends(run_server_obj, shared_lib)
-Depends(run_ut_classifier_obj, shared_lib)
-
-# Copy boost dll to libclassifier unittests directory
-if platform.system() == "Windows":
-	ut_dll = Command(
-		'#libclassifier/unittests/boost_python-vc110-mt-1_53.dll', 
-		'#libclassifier/import/boost_python-vc110-mt-1_53.dll', 
-		Copy("$TARGET", "$SOURCE")
-	)
-	Depends([run_ut_webapp_obj, run_ut_webui_obj, run_ut_classifier_obj], ut_dll)
+Depends(run_ut_classifier_obj, shared_lib_tests)
+Depends([run_ut_utility_obj, run_ut_webapp_obj, run_ut_webui_obj], shared_lib)

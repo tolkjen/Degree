@@ -18,13 +18,17 @@ else:
 	env.Append(CPPPATH = ['#libclassifier/src', '#libclassifier/src/lib'])
 	env.ParseConfig('pkg-config --cflags --libs python')
 	env.Append(LIBS=['boost_python', 'boost_system'])
-	env.Append(LINKFLAGS=['-fPIC', '-fprofile-arcs'])
-	env.Append(CCFLAGS=['-std=c++11', '-fprofile-arcs', '-ftest-coverage'])
+	env.Append(LINKFLAGS=['-fPIC'])
+	env.Append(CCFLAGS=['-std=c++11'])
 
 # Add more SConscripts
 shared_lib = SConscript('src/lib/SConscript', 
 	exports = ['env'], 
 	variant_dir = 'bin/lib',
+	duplicate = 0)
+shared_lib_tests = SConscript('src/lib/SConscriptTests', 
+	exports = ['env'], 
+	variant_dir = 'bin/unittests',
 	duplicate = 0)
 
 # Aliases
@@ -32,6 +36,7 @@ Alias('lib', shared_lib)
 
 # Cleanup
 Clean(shared_lib, 'bin/lib')
-Clean(shared_lib, 'bin')
+Clean(shared_lib_tests, 'bin/unittests')
+Clean([shared_lib, shared_lib_tests], 'bin')
 
-Return('shared_lib')
+Return('shared_lib', 'shared_lib_tests')
