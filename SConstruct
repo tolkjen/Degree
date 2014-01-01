@@ -11,7 +11,7 @@ Help("""
 Type: 'scons' or 'scons server' to start HTTP server,
       'scons db' to setup database,
       'scons lib' to build shared library,
-      'scons tests' to build and run unit tests.
+      'scons ut' to build and run unit tests.
 """)
 
 # Add SConscript 
@@ -35,7 +35,11 @@ def run_postgres_query(query):
 	return True
 
 # Colored printing
-print_cyan = lambda x: cprint(x, 'cyan')
+def print_cyan(text):
+	if platform.system() == "Linux":
+		cprint(text, "cyan")
+	else:
+		print text
 
 # Printing data in table format
 def print_in_columns(data, headers):
@@ -77,14 +81,15 @@ def run_ut_classifier_func(target, source, env):
 	print_cyan('Running classifier unit tests...')
 	run_in_shell('python tests.py', 'libclassifier/unittests')
 
-	code, output = run_in_shell_get_stdout('gcov -rn classifier.gcda', 'libclassifier/bin/unittests')
-	matches = re.findall('^File \'(.*?)\'.*?:(.*?)$', output, re.MULTILINE | re.DOTALL)
-	sources = [x.name for x in Glob('libclassifier/src/lib/*.*pp')]
-	true_matches = filter(lambda (path, r): basename(path) in sources, matches)
+	if platform.system() == "Linux":
+		code, output = run_in_shell_get_stdout('gcov -rn classifier.gcda', 'libclassifier/bin/unittests')
+		matches = re.findall('^File \'(.*?)\'.*?:(.*?)$', output, re.MULTILINE | re.DOTALL)
+		sources = [x.name for x in Glob('libclassifier/src/lib/*.*pp')]
+		true_matches = filter(lambda (path, r): basename(path) in sources, matches)
 
-	print ''
-	print_in_columns(true_matches, ['Name', 'Stmts'])
-	print ''
+		print ''
+		print_in_columns(true_matches, ['Name', 'Stmts'])
+		print ''
 
 def run_ut_utility_func(target, source, env):
 	print_cyan('Running web app utility unit tests...')
@@ -103,7 +108,7 @@ def run_ut_webapp_func(target, source, env):
 
 def run_ut_webui_func(target, source, env):
 	print_cyan('Running web UI tests...')
-	run_in_shell('python manage.py test med.SeleniumTests --liveserver=localhost:8100', 'Django')
+	run_in_shell('python manage.py test med.SeleniumTests --liveserver=127.0.0.1:8100', 'Django')
 	print ''
 
 def run_server_func(target, source, env):

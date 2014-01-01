@@ -6,15 +6,17 @@ source = Glob('*.cpp')
 
 # Add profiling and instrumentation flags
 env = env.Clone()
-env.Append(LINKFLAGS=['-fprofile-arcs'])
-env.Append(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+
+if platform.system() == "Linux":
+	env.Append(LINKFLAGS=['-fprofile-arcs'])
+	env.Append(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
 
 # Build test library
 shared_lib_tests_bin = env.SharedLibrary('classifier', source)
 
 if platform.system() == "Windows":
 	# Copy shared library to Django directory
-	shared_lib_tests = Command('#Django/med/utility/classifier.pyd', shared_lib_tests_bin, Copy("$TARGET", "$SOURCE"))
+	shared_lib_tests = Command('#libclassifier/unittests/classifier.pyd', shared_lib_tests_bin, Copy("$TARGET", "$SOURCE"))
 
 	# Copy Dll and set as a dependency
 	dll = Command(
