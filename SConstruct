@@ -1,7 +1,9 @@
 import subprocess
 import psycopg2
 import platform
-from os.path import dirname, abspath
+import re
+
+from os.path import dirname, basename, abspath
 from termcolor import cprint
 
 # Custom help message
@@ -35,18 +37,53 @@ def run_postgres_query(query):
 # Colored printing
 print_cyan = lambda x: cprint(x, 'cyan')
 
+# Printing data in table format
+def print_in_columns(data, headers):
+	def print_rows(data, lengths):
+		for row in data:
+			print ''.join(word.ljust(lengths[i]) for i, word in enumerate(row))
+
+	lengths = []
+	for i in range(len(data[0])):
+		lengths.append(max(len(row[i]) for row in data) + 2)
+
+	separator = '-' * (sum(lengths)-2)
+	print_rows([headers], lengths)
+	print separator
+	print_rows(data, lengths)
+	print separator
+
 # Shell operations
 def run_in_shell(filepath, directory=None):
 	if directory == None:
 		directory = dirname(filepath)
 	else:
 		directory = '{0}/{1}'.format(Dir('.').abspath, directory)
+
 	p = subprocess.Popen(filepath, cwd=directory, shell=True)
 	return p.wait()
+
+def run_in_shell_get_stdout(filepath, directory=None):
+	if directory == None:
+		directory = dirname(filepath)
+	else:
+		directory = '{0}/{1}'.format(Dir('.').abspath, directory)
+
+	p = subprocess.Popen(filepath, cwd=directory, shell=True, stdout=subprocess.PIPE)
+	output, errors = p.communicate()
+	return (p.returncode, output)
 
 def run_ut_classifier_func(target, source, env):
 	print_cyan('Running classifier unit tests...')
 	run_in_shell('python tests.py', 'libclassifier/unittests')
+
+	code, output = run_in_shell_get_stdout('gcov -rn classifier.gcda', 'libclassifier/bin/unittests')
+	matches = re.findall('^File \'(.*?)\'.*?:(.*?)$', output, re.MULTILINE | re.DOTALL)
+	sources = [x.name for x in Glob('libclassifier/src/lib/*.*pp')]
+	true_matches = filter(lambda (path, r): basename(path) in sources, matches)
+
+	print ''
+	print_in_columns(true_matches, ['Name', 'Stmts'])
 	print ''
 
 def run_ut_utility_func(target, source, env):
