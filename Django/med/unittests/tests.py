@@ -90,6 +90,16 @@ class SampleTestCase(unittest.TestCase):
 		for (index, row) in enumerate(sample.rows()):
 			self.assertEqual(row, data[index])
 
+	def test_xls_pass_rows_with_empty_fields(self):
+		sample = Sample.fromFile(make_filepath('empty.fields.xlsx'))
+		self.assertEqual(len(sample.rows()), 2)
+		data = [
+			(['Adam', '20.0'], '1.0'),
+			(['Maciek', '15.0'], '0.0')
+		]
+		for (index, row) in enumerate(sample.rows()):
+			self.assertEqual(row, data[index])
+
 def suite():
 	suites = map(unittest.TestLoader().loadTestsFromTestCase,
 		[KCrossValidatorTestCase, XlsFileTestCase, SampleTestCase])

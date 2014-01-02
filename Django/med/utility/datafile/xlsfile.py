@@ -11,11 +11,11 @@ class XlsFile:
 		try:
 			self.workbook = xlrd.open_workbook(filepath)
 		except:
-			raise Exception('Nie można otworzyć pliku.')
+			raise Exception('Nie można otworzyć pliku lub nieprawidłowy rodzaj pliku.')
 
 	def read(self):
 		if (self.workbook == None):
-			raise Exception('Nie można odczytać pliku.')
+			raise Exception('Nie można odczytać pliku lub nieprawidłowy rodzaj pliku.')
 
 		datasheet = None
 		worksheets = self.workbook.sheets()

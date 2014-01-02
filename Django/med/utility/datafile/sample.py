@@ -20,10 +20,15 @@ class Sample:
 			raise Exception('Plik nie posiada kolumny o nazwie "Index".')
 
 		sample = Sample()
-		sample.column_count = len(datafile.columns())
+		sample.attribute_column_count = len(datafile.columns()) - 1
 		for row in datafile.rows():
 			attributes = row[:category_column_index] + row[category_column_index+1:]
-			sample.data_rows.append( (attributes, row[category_column_index]) )
+
+			attr_not_empty = reduce(lambda a, b: a and b != '', attributes, True)
+			cat_not_empty = row[category_column_index] != ''
+
+			if attr_not_empty and cat_not_empty:
+				sample.data_rows.append( (attributes, row[category_column_index]) )
 
 		return sample
 
@@ -37,13 +42,13 @@ class Sample:
 
 	def __init__(self):
 		self.data_rows = []
-		self.column_count = 0
+		self.attribute_column_count = 0
 
 	def rows(self):
 		return self.data_rows
 
 	def transform_attributes(self, str_trans, num_trans):
-		column_numeric = [True] * self.column_count
+		column_numeric = [True] * self.attribute_column_count
 		for (attributes, value) in self.data_rows:
 			for (index, attribute) in enumerate(attributes):
 				if column_numeric[index]:

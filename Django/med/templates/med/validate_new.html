@@ -17,11 +17,14 @@
 	{% left_menu %}
 </div>
 <div class="content">
-	<h1>Walidacja krzyżowa - wybór pliku</h1>
+	<h1>Nowa walidacja krzyżowa</h1>
 	{% if error %}
 	<div class="error">{{ error }}</div>
 	{% endif %}
-	<p>Instrukcje</p>
+	<p>W celu przeprowadzenia nowej walidacji krzyżowej, wypełnij poniższe pola, wybierz plik z danymi oraz kliknij 
+	<i>Wyślij dane</i>.</p>
+	<p>Aplikacja obsługuje pliki MS Excel (format *.xls oraz *.xlsx). </p>
+	<p>Pole <i>Liczba podzbiorów uczących</i> oznacza liczbę podzbiorów na którą zostanie podzielony zbiór danych uczących, w celu przeprowadzenia walidacji krzyżowej metodą K-krotną.</p>
 	<form id="form" name="form" method="post" action="{% url 'med:validate_post' %}" enctype="multipart/form-data">
 	<div>
 		{% csrf_token %}
