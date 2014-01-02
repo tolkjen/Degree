@@ -29,9 +29,7 @@ def run_postgres_query(query):
 		finally:
 			conn.close()
 	except Exception, e:
-		print "failed!"
 		return False
-	print "success!"
 	return True
 
 # Colored printing
@@ -118,18 +116,25 @@ def run_server_func(target, source, env):
 
 def setup_database_func(target, source, env):
 	print_cyan("Setting up the database...")
+
+	run_postgres_query('DROP DATABASE skeleton_base;')
+	run_postgres_query('DROP USER skeleton')
+
 	successes = 0
-	print_cyan('Creating database...')
 	if run_postgres_query('CREATE DATABASE skeleton_base;'):
 		successes = successes + 1
-	print_cyan('Adding user...')
 	if run_postgres_query("CREATE USER skeleton WITH PASSWORD 'skeleton'"):
 		successes = successes + 1
-	print_cyan('Granting privileges...')
 	if run_postgres_query("GRANT ALL PRIVILEGES ON DATABASE skeleton_base to skeleton;"):
 		successes = successes + 1
 	if run_postgres_query("ALTER USER skeleton CREATEDB;"):
 		successes = successes + 1
+
+	if successes == 4:
+		print "Success!"
+	else:
+		print "Failure!"
+		return
 
 	print_cyan('Creating tables in database...')
 	if run_in_shell('python manage.py syncdb', 'Django') == 0:
