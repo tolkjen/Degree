@@ -1,0 +1,136 @@
+X-Gnus-Coding-System: -*- coding: utf-8; -*-
+
+From: Tolkjen <tolkjen@o2.pl>
+Subject: Re: Praca magisterska
+To: rnowak2@elka.pw.edu.pl
+Date: Thu, 02 Jan 2014 05:49:13 +0100 (2 weeks, 8 hours, 58 minutes ago)
+
+Dobry wieczór,
+
+Ukończyłem prace nad aplikacją (naturalnie w zakresie, w jakim się
+umówiliśmy):
+
+* Umożliwiłem zarządzanie aplikacją poprzez scons. Korzystając z tego
+  narzędzia można uruchomić serwer, zbudować bibliotekę, skonfigurować
+  bazę danych oraz uruchomić testy (opis w scons -h). 
+
+* Dodałem możliwość przeprowadzania walidacji krzyżowej danych w
+  oparciu o metodą K-krotną. Jedynym parametrem walidacji jest liczba
+  grup, na które ma zostać podzielony zbiór danych. 
+
+* Dodałem dwa nowe klasyfikatory z biblioteki Faif - drzewo decyzyjne
+  i najbliższy sąsiad. 
+
+* Dane są wczytywane z plików Excela. 
+
+* Przygotowałem testy jednostkowe, systemowe oraz akceptacyjne: 
+
+* Testy jednostkowe obejmują sprawdzanie poprawności działania
+  biblioteki napisanej w C++ oraz modułów aplikacji w Pythonie: 
+
+* Biblioteka C++ (libclassifier) stanowi póki co adapter
+  klasyfikatorów z biblioteki Faif dla Pythona. Dlatego też testy
+  libclassifier odbywają się z poziomu Pythona. 
+
+* Moduły Pythonowe zawierają użyteczne klasy wykorzystane w Django
+  (np. moduł xlsfile pozwala na odczyt plików z Excela). 
+
+* Testy systemowe sprawdzają funkcjonowanie konkretnych operacji z
+  punktu widzenia użytkownika aplikacji, np. po dodaniu walidacji
+  krzyżowej wynik powinien pojawić się na oddzielnej stronie. 
+
+* Testy akceptacyjne stanowią powtórzenie testów systemowych z użyciem
+  biblioteki umożliwiającej bezpośrednią pracę na przeglądarce (testy
+  wymagają przeglądarki Chrome/Chromium). 
+
+* Dodałem sprawdzanie pokrycia kodu testami dla testów jednostkowych
+  oraz systemowych. 
+
+* Usunąłem zbędny kod. 
+
+Uwagi:
+
+* W celu uruchomienia aplikacji konieczne jest zainstalowanie
+  dodatkowego oprogramowania. Chodzi przede wszystkim o: 
+
+* Django (wersja 1.5) 
+
+* Postgresql. Po zainstalowaniu bazy należy zmienić metodę
+  uwierzytelnienia użytkownika postgres (powinna być "trust"). Opis
+  tutaj:
+  http://blog.milczarek.it/2012/09/install-postgresql-on-opensuse-12-1/ 
+
+* Selenium - framework pozwalający na testowanie aplikacji w
+  przeglądarce. 
+
+* Chrome-driver - niezbędny dla funkcjonowanie Selenium, gdy używamy
+  przeglądarki Chrome/Chromium. 
+
+* Moduły Pythona (najprościej korzystając z pip, np. "pip install
+  xlrd"): 
+
+* xlrd 
+
+* termcolor 
+
+* coverage 
+
+* pytz 
+
+* selenium 
+
+* Pokrycie kodu dla biblioteki libclassifier działa tylko pod Linuxem,
+  ponieważ korzystam z gcov. 
+
+Uruchomienie aplikacji po raz pierwszy (konfiguracja):
+
+1 Instalujemy wymienione wyżej oprogramowanie. 
+
+2 Konfigurujemy dostęp do postgresql i restartujemy serwer postgresql. 
+
+3 Konfigurujemy bazę danych aplikacji wpisując "scons db" w katalogu
+  "Degree". 
+
+4 Przechodzimy do "Uruchomienia aplikacji". 
+
+Uruchomienie aplikacji:
+
+1 Wpisujemy "scons" w katalogu "Degree". 
+
+Pozdrawiam i życzę wszystkiego najlepszego z okazji Nowego Roku!
+Piotr Tąkiel
+
+Dnia 11 grudnia 2013 12:49 rnowak2@elka.pw.edu.pl napisał(a):
+
+    Dzień dobry,
+    
+    może Pan założyć, że nie będzie potrzeby przechowywać stanu
+    klasyfikatorów.
+    
+    Pozdrawiam,
+    Robert Nowak
+    
+    Tolkjen <tolkjen@o2.pl> writes:
+    
+    > Dzień dobry,
+    >
+    > Prace nad projektem z pracowni magisterskiej idą naprzód. Przez
+    > ostatnie dwa miesiące byłem mocno zaabsorbowany pracą nad
+    przedmiotem
+    > WPAM, dlatego też do kontynuowania pracowni przystąpiłem dosyć
+    > niedawno. 
+    >
+    > Czy po zaimplementowaniu walidacji krzyżowej nadal będziemy
+    > potrzebować funkcjonalności polegającej na zapisywaniu stanu
+    > klasyfikatora oraz wyników klasyfikacji? Jestem w trakcie
+    > przeprowadzania dużej refaktoryzacji i, jeżeli powyższe nie jest
+    > wymagane, moje obecne zadanie znacznie się uprości.
+    >
+    > Pozdrawiam,
+    > Piotr
+    >
+    >
+    
+
+
+

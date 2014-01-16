@@ -1,0 +1,61 @@
+X-Gnus-Coding-System: -*- coding: utf-8; -*-
+
+From: Tolkjen <tolkjen@o2.pl>
+Subject: Re: Praca magisterska - postęp
+To: rnowak2<rnowak2@elka.pw.edu.pl>, R.M.Nowak@elka.pw.edu.pl, rbmnowak@gmail.com
+Date: Tue, 10 Sep 2013 20:20:37 +0200 (1 week, 12 hours, 40 minutes ago)
+
+Dobry wieczór,
+
+ 
+
+Chciałbym umówić się z Panem na spotkanie w celu zaprezentowania tego,
+co zrobiłem przez lato. Dogodnym dla mnie terminem byłby wtorek 17.09
+w godzinach porannych.
+
+ 
+
+Pozdrawiam,
+
+Piotr Tąkiel
+
+Dnia 4 września 2013 15:46 Tolkjen <tolkjen@o2.pl> napisał(a):
+
+    
+        Dzień dobry,
+
+     
+
+    Piszę do Pana, aby poinformować, że wakacyjna część pracy
+    magisterskiej jest już niemalże gotowa. Jedyne, co zostało do
+    ustalenia, to szczegóły dotyczące klasyfikowanych danych:
+
+    * Liczba atrybutów, np. 3 
+
+    * Nazwy atrybutów, np. "Wzrost", "Waga", "Wiek" 
+
+    * Nazwa klasy, do której rekordy są klasyfikowane, np.
+      "Dolegliwość" 
+
+    * Nazwy elementów klasy, np. "Wrzody", "Reumatyzm" 
+
+    Kod aplikacji można bardzo łatwo przystosować do ww. szczegółów.
+    Starałem się samemu dojść do tego, jakie wartości należy ustawić,
+    ale otrzymane dokumenty medyczne okazały się zbyt mało czytelne.
+    Czy mógłby mi Pan podpowiedzieć, o jakie wartości parametrów
+    klasyfikacji chodzi?
+
+     
+
+    Jednocześnie chciałbym się umówić na prezentację dotychczasowej
+    pracy, najlepiej 17 września (wtorek).
+
+     
+
+    Pozdrawiam,
+
+    Piotr Tąkiel
+
+
+
+
