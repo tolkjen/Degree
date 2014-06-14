@@ -1,4 +1,11 @@
 import platform
+import os
+
+def get_boost_python_filename():
+	for file in os.listdir(os.getenv('BOOSTPATH') + '\\stage\\lib'):
+		if file.startswith('boost_python') and file.endswith('.dll'):
+			return file
+	raise Exception('boost_python DLL was not found!')
 
 Import('*')
 
@@ -12,9 +19,10 @@ if platform.system() == "Windows":
 	shared_lib = Command('#Django/med/utility/classifier.pyd', shared_lib_bin, Copy("$TARGET", "$SOURCE"))
 
 	# Copy Dll and set as a dependency
+	dll_filename = get_boost_python_filename()
 	dll = Command(
-		'#Django/med/utility/boost_python-vc110-mt-1_53.dll', 
-		'#libclassifier/import/boost_python-vc110-mt-1_53.dll', 
+		'#Django/med/utility/' + dll_filename, 
+		os.getenv('BOOSTPATH') + '\\stage\\lib\\' + dll_filename, 
 		Copy("$TARGET", "$SOURCE")
 	)
 	Depends(shared_lib, dll)

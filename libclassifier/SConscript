@@ -1,16 +1,16 @@
 import platform
+import os
 
 # Set environment variables according to OS platform
 env = Environment(TARGET_ARCH = 'x86')
 if platform.system() == "Windows":
 	env.Append(LIBPATH = [
-		'C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\lib\\shared_all', 
-		'C:\\Users\\tolkjen\\Documents\\boost_1_53_0\\stage\\lib', 
-		'C:\\Python27\\libs'
+		os.getenv('BOOSTPATH') + '\\stage\\lib', 
+		os.getenv('PYTHONPATH') + '\\libs'
 	])
 	env.Append(CPPPATH = [
-		'C:\\Users\\tolkjen\\Documents\\boost_1_53_0', 
-		'C:\\Python27\\include'
+		os.getenv('BOOSTPATH'), 
+		os.getenv('PYTHONPATH') + '\\include'
 	])
 	env.Append(CPPPATH = ['#libclassifier/src', '#libclassifier/src/lib'])
 	env.Append(CCFLAGS = ['/MD', '/EHsc'])
