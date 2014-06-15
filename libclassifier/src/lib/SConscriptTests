@@ -1,4 +1,5 @@
 import platform
+import os
 
 Import('*')
 
@@ -19,9 +20,10 @@ if platform.system() == "Windows":
 	shared_lib_tests = Command('#libclassifier/unittests/classifier.pyd', shared_lib_tests_bin, Copy("$TARGET", "$SOURCE"))
 
 	# Copy Dll and set as a dependency
+	dll_filename = get_boost_python_filename()
 	dll = Command(
-		'#libclassifier/unittests/boost_python-vc110-mt-1_53.dll', 
-		'#libclassifier/import/boost_python-vc110-mt-1_53.dll', 
+		'#libclassifier/unittests/' + dll_filename, 
+		os.getenv('BOOSTPATH') + '\\stage\\lib\\' + dll_filename, 
 		Copy("$TARGET", "$SOURCE")
 	)
 

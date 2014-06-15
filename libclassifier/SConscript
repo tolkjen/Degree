@@ -1,6 +1,12 @@
 import platform
 import os
 
+def get_boost_python_filename():
+	for file in os.listdir(os.getenv('BOOSTPATH') + '\\stage\\lib'):
+		if file.startswith('boost_python') and file.endswith('.dll'):
+			return file
+	raise Exception('boost_python DLL was not found!')
+
 # Set environment variables according to OS platform
 env = Environment(TARGET_ARCH = 'x86')
 if platform.system() == "Windows":
@@ -23,11 +29,11 @@ else:
 
 # Add more SConscripts
 shared_lib = SConscript('src/lib/SConscript', 
-	exports = ['env'], 
+	exports = ['env', 'get_boost_python_filename'], 
 	variant_dir = 'bin/lib',
 	duplicate = 0)
 shared_lib_tests = SConscript('src/lib/SConscriptTests', 
-	exports = ['env'], 
+	exports = ['env', 'get_boost_python_filename'], 
 	variant_dir = 'bin/unittests',
 	duplicate = 0)
 

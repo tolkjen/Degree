@@ -1,12 +1,6 @@
 import platform
 import os
 
-def get_boost_python_filename():
-	for file in os.listdir(os.getenv('BOOSTPATH') + '\\stage\\lib'):
-		if file.startswith('boost_python') and file.endswith('.dll'):
-			return file
-	raise Exception('boost_python DLL was not found!')
-
 Import('*')
 
 source = Glob('*.cpp')
