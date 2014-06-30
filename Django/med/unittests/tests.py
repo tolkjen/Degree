@@ -5,10 +5,50 @@ from med.utility.crossvalidator import KCrossValidator
 from med.utility.classifier import NaiveClassifier
 from med.utility.datafile.xlsfile import XlsFile
 from med.utility.datafile.sample import Sample
+from med.utility.subsetgenerator import RangeSubsetGenerator, RandomSubsetGenerator
 
 def make_filepath(filename):
 	directory = dirname(realpath(__file__))
 	return directory + "/" + filename
+
+class SubsetGeneratorTestCase(unittest.TestCase):
+
+	SubsetGeneratorType = None
+
+	def test_empty_dataset(self):
+		self.assertRaises(Exception, self.SubsetGeneratorType, [], 1)
+
+	def test_one_element(self):
+		self.assertRaises(Exception, self.SubsetGeneratorType, [1], 1)
+
+	def test_subsets_less_than_two(self):
+		self.assertRaises(Exception, self.SubsetGeneratorType, [1, 2, 3], 0)
+		self.assertRaises(Exception, self.SubsetGeneratorType, [1, 2, 3], 1)
+
+	def test_more_subsets_than_elements(self):
+		self.assertRaises(Exception, self.SubsetGeneratorType, [1, 2, 3], 10)
+
+class RangeSubsetGeneratorTestCase(SubsetGeneratorTestCase):
+
+	SubsetGeneratorType = RangeSubsetGenerator
+
+	def test_two_elements(self):
+		sg = self.SubsetGeneratorType([1, 2], 2)
+		results = [x for x in sg.generate()]
+		self.assertEqual(len(results), 2)
+		self.assertDictEqual(results[0], {"test" : [1], "training" : [2]})
+		self.assertDictEqual(results[1], {"test" : [2], "training" : [1]})
+
+class RandomSubsetGeneratorTestCase(SubsetGeneratorTestCase):
+
+	SubsetGeneratorType = RandomSubsetGenerator
+
+	def test_subsets_use_whole_dataset(self):
+		dataset = range(20)
+		sg = self.SubsetGeneratorType(dataset, 6)
+		results = [x for x in sg.generate()]
+		results_test = set(reduce(lambda x, y: x + y, [subset["test"] for subset in results], []))
+		self.assertEqual(len(dataset), len(results_test))
 
 class KCrossValidatorTestCase(unittest.TestCase):
 
@@ -19,11 +59,14 @@ class KCrossValidatorTestCase(unittest.TestCase):
 		validator = KCrossValidator(NaiveClassifier, 2)
 		self.assertRaises(Exception, validator.validate, [])
 
+	def test_specify_group_selection_type(self):
+		validator = KCrossValidator(NaiveClassifier, 2, KCrossValidator.GROUP_SELECTION_RANGE)
+		validator = KCrossValidator(NaiveClassifier, 2, KCrossValidator.GROUP_SELECTION_RANDOM)
+
 	def test_on_one_row(self):
 		validator = KCrossValidator(NaiveClassifier, 1)
 		sample = [ (['1'], '1') ]
-		score = validator.validate(sample)
-		self.assertTrue(self.is_score_in_range(score))
+		self.assertRaises(Exception, validator.validate, sample)
 
 	def test_on_one_category(self):
 		validator = KCrossValidator(NaiveClassifier, 2)
@@ -38,8 +81,7 @@ class KCrossValidatorTestCase(unittest.TestCase):
 	def test_k_greater_then_sample_length(self):
 		validator = KCrossValidator(NaiveClassifier, 2)
 		sample = [ (['1'], '1') ]
-		score = validator.validate(sample)
-		self.assertTrue(self.is_score_in_range(score))
+		self.assertRaises(Exception, validator.validate, sample)
 
 	def test_k_non_positive(self):
 		self.assertRaises(Exception, KCrossValidator, NaiveClassifier, 0)
@@ -102,7 +144,11 @@ class SampleTestCase(unittest.TestCase):
 
 def suite():
 	suites = map(unittest.TestLoader().loadTestsFromTestCase,
-		[KCrossValidatorTestCase, XlsFileTestCase, SampleTestCase])
+		[KCrossValidatorTestCase, 
+		XlsFileTestCase, 
+		SampleTestCase,
+		RangeSubsetGeneratorTestCase,
+		RandomSubsetGeneratorTestCase])
 	return unittest.TestSuite(suites)
 
 if __name__ == "__main__":

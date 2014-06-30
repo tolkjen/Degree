@@ -37,6 +37,7 @@ class ValidationViewTests(TestCase):
 		args = {
 			'name': 'test name', 
 			'classifier': 'bayes', 
+			'domain_subgroups': 10,
 			'k_groups': 5,
 			'uploaded_file': fp
 		}
@@ -85,6 +86,7 @@ class ValidationViewTests(TestCase):
 			name='test name',
 			k_groups=1,
 			result=1.0,
+			domain_subgroups=10,
 			date=datetime.utcnow().replace(tzinfo = pytz.utc),
 			classifier='bayes'
 		)
@@ -97,6 +99,7 @@ class ValidationViewTests(TestCase):
 			name='test name',
 			k_groups=1,
 			result=1.0,
+			domain_subgroups=10,
 			date=datetime.utcnow().replace(tzinfo = pytz.utc),
 			classifier='bayes'
 		)
@@ -151,6 +154,7 @@ class SeleniumTests(LiveServerTestCase):
 			name='test name',
 			k_groups=1,
 			result=1.0,
+			domain_subgroups=10,
 			date=datetime.utcnow().replace(tzinfo = pytz.utc),
 			classifier='bayes'
 		)

@@ -1,7 +1,9 @@
 import subprocess
 import psycopg2
 import platform
+import psutil
 import re
+import os
 
 from os.path import dirname, basename, abspath
 from termcolor import cprint
@@ -11,7 +13,11 @@ Help("""
 Type: 'scons' or 'scons server' to start HTTP server,
       'scons db' to setup database,
       'scons lib' to build shared library,
-      'scons ut' to build and run unit tests.
+      'scons ut' to build and run all unit tests,
+      'scons ut-classifier' to build and run classifier unit tests,
+      'scons ut-utility' to build and run utility unit tests,
+      'scons ut-webapp' to build and run webapp unit tests,
+      'scons ut-webui' to build and run webui unit tests,
 """)
 
 # Add SConscript 
@@ -56,6 +62,15 @@ def print_in_columns(data, headers):
 	print separator
 
 # Shell operations
+def kill_all(process_name):
+	running_process_pid = os.getpid()
+	for process in psutil.process_iter():
+		try:
+			if process.name() == process_name and process.pid != running_process_pid:
+				process.terminate()
+		except:
+			pass
+
 def run_in_shell(filepath, directory=None):
 	if directory == None:
 		directory = dirname(filepath)
@@ -114,6 +129,11 @@ def run_server_func(target, source, env):
 	run_in_shell('python manage.py runserver', 'Django')
 	print ''
 
+def kill_django_func(target, source, env):
+	kill_all("python.exe")
+	kill_all("python")
+	print ''
+
 def setup_database_func(target, source, env):
 	print_cyan("Setting up the database...")
 
@@ -155,12 +175,14 @@ env.Append(BUILDERS = {'RunUTWebApp' : Builder(action = run_ut_webapp_func)})
 env.Append(BUILDERS = {'RunUTWebUI' : Builder(action = run_ut_webui_func)})
 env.Append(BUILDERS = {'SetupDatabase' : Builder(action = setup_database_func)})
 env.Append(BUILDERS = {'RunServer' : Builder(action = run_server_func)})
+env.Append(BUILDERS = {'KillDjango' : Builder(action = kill_django_func)})
 run_ut_classifier_obj = env.RunUTClassifier('Classifier unit tests', None)
 run_ut_utility_obj = env.RunUTUtility('Web app utility unit tests', None)
 run_ut_webapp_obj = env.RunUTWebApp('Web app unit tests', None)
 run_ut_webui_obj = env.RunUTWebUI('Web app ui tests', None)
 setup_database_obj = env.SetupDatabase('database', None)
 run_server_obj = env.RunServer('server', None)
+kill_django_obj = env.KillDjango('kill django', None)
 
 # Try to run server by default
 Default(run_server_obj)
@@ -174,6 +196,7 @@ Alias(['ut', 'tests'], [run_ut_classifier_obj, run_ut_utility_obj, run_ut_webapp
 	run_ut_webui_obj])
 Alias(['setupdb', 'db', 'postgres', 'database'], setup_database_obj)
 Alias(['server', 'runserver', 'django', 'webapp', 'app'], run_server_obj)
+Alias(['stop'], kill_django_obj)
 Alias(['all'], [run_ut_classifier_obj, run_ut_utility_obj, run_ut_webapp_obj,
 	run_ut_webui_obj, shared_lib])
 

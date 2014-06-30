@@ -1,8 +1,23 @@
 import math
+import subsetgenerator
 
 class KCrossValidator:
-	def __init__(self, classifier_type, k):
+	
+	GROUP_SELECTION_RANGE = 0
+	GROUP_SELECTION_RANDOM = 1
+
+	def __init__(self, classifier_type, k, group_selection_type=GROUP_SELECTION_RANGE):
 		self.classifier_type = classifier_type
+
+		if not group_selection_type in [KCrossValidator.GROUP_SELECTION_RANGE, KCrossValidator.GROUP_SELECTION_RANDOM]:
+			raise Exception('Nieprawidlowy rodzaj wyboru grup uczacych i testowych.')
+		
+		subset_generator_types = {
+			KCrossValidator.GROUP_SELECTION_RANGE: subsetgenerator.RangeSubsetGenerator,
+			KCrossValidator.GROUP_SELECTION_RANDOM: subsetgenerator.RandomSubsetGenerator
+		}
+		self.group_selection_type = group_selection_type
+		self.subset_generator_type = subset_generator_types[self.group_selection_type]
 
 		if k <= 0:
 			raise Exception('Liczba podgrup musi byc wieksza od zera.')
@@ -12,21 +27,13 @@ class KCrossValidator:
 		if len(data_rows) == 0:
 			raise Exception('Dane wejsciowe nie moga byc puste.')
 
-		classifier = self.classifier_type(data_rows)
-
 		score = 0.0
-		range_length = int(math.ceil(float(len(data_rows)) / self.k))
+		classifier = self.classifier_type(data_rows)
 		classification_score = lambda (data, value): classifier.classify(data) == value
 
-		for i in xrange(0, len(data_rows), range_length):
-			is_for_test = lambda (index, row): index >= i and index <= i + range_length - 1
-			is_for_training = lambda (index, row): not is_for_test((index, row))
-
-			enumerated_data =  [(index, row) for (index, row) in enumerate(data_rows)]
-			test_rows = map(lambda (index, row): row, filter(is_for_test, enumerated_data))
-			training_rows = map(lambda (index, row): row, filter(is_for_training, enumerated_data))
-
-			classifier.train(training_rows)
-			score = score + sum(map(classification_score, test_rows))
+		subset_generator = self.subset_generator_type(data_rows, self.k)
+		for data_subsets in subset_generator.generate():
+			classifier.train(data_subsets['training'])
+			score = score + sum(map(classification_score, data_subsets['test']))
 
 		return score / len(data_rows)
