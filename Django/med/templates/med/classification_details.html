@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Szczegóły klasyfikacji</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/static/med/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/static/med/dashboard.css" rel="stylesheet">
+</head>
+<body>
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Aplikacja medyczna</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">O aplikacji</a></li>
+          <li><a href="#">Pomoc</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar">
+        <ul class="nav nav-sidebar">
+          <li class="active"><a href="{% url 'med:classification_list' 'date' %}">Wyniki klasyfikacji</a></li>
+          <li><a href="{% url 'med:classification_new' %}">Nowa klasyfikacja</a></li>
+        </ul>
+      </div><!-- col -->
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h1 class="page-header">Szczegóły klasyfikacji: {{classification.name}}</h1>
+        <a class="btn btn-default btn-md goback" href="{% url 'med:classification_list' sortby %}">
+          <span class="glyphicon glyphicon-chevron-left"></span> Powrót
+        </a> 
+        <div class="row">
+          <div class="col-sm-12 col-md-9 col-lg-6">
+            <div class="panel panel-default">
+            <div class="panel-heading">Dane ogólne</div>
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-xs-6 text-right"><p><strong>Rodzaj klasyfikacji</strong></p></div>
+                  <div class="col-xs-6">{{classification.classifier_name}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-6 text-right"><p><strong>Wynik walidacji</strong></p></div>
+                  <div class="col-xs-6">{{classification.validation_result}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-6 text-right"><p><strong>Liczba podzbiorów dziedziny</strong></p></div>
+                  <div class="col-xs-6">{{classification.subset_count}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-6 text-right"><p><strong>Wybór podzbiorów walidujących</strong></p></div>
+                  <div class="col-xs-6">{{description}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-6 text-right"><p><strong>Liczba walidacji</strong></p></div>
+                  <div class="col-xs-6">{{classification.k_count}}</div>
+                </div>
+              </div>
+            </div><!-- panel -->
+            <div class="panel panel-default">
+              <div class="panel-heading">Informacje o pliku</div>
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-xs-6 text-right"><p><strong>Nazwa pliku</strong></p></div>
+                  <div class="col-xs-6">{{classification.file_name}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-6 text-right"><p><strong>Liczba wierszy z danymi</strong></p></div>
+                  <div class="col-xs-6">{{classification.row_count}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-6 text-right"><p><strong>Odsetek zachorowań</strong></p></div>
+                  <div class="col-xs-6">{{classification.positive_percentage}}%</div>
+                </div>
+              </div>
+            </div><!-- panel -->
+          </div>
+        </div>
+      </div>
+    </div><!-- row -->
+  </div><!-- col -->
+</div><!-- row -->
+</div><!-- container -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="/static/med/js/bootstrap.min.js"></script>
+<script src="/static/med/js/docs.min.js"></script>
+</body>
+</html>

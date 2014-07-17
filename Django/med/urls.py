@@ -5,8 +5,9 @@ from med import views
 urlpatterns = patterns('',
 	url(r'^$', views.index, name='index'),
 
-	url(r'^validate/new/$', views.validate_new, name='validate_new'),
-	url(r'^validate/post/$', views.validate_post, name='validate_post'),
-	url(r'^validate/list/$', views.validate_list, name='validate_list'),
-	url(r'^validate/delete/(?P<id>\d+)$', views.validate_delete, name='validate_delete'),
+	url(r'^classification/new/$', views.classification_new, name='classification_new'),
+	url(r'^classification/create/$', views.classification_create, name='classification_create'),
+	url(r'^classification/list/orderby/(?P<sortby>.+)$', views.classification_list, name='classification_list'),
+	url(r'^classification/delete/(?P<id>\d+)/(?P<sortby>.+)$', views.classification_delete, name='classification_delete'),
+	url(r'^classification/details/(?P<id>\d+)/(?P<sortby>.+)$', views.classification_details, name='classification_details'),
 )

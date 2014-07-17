@@ -47,6 +47,9 @@ class Sample:
 	def rows(self):
 		return self.data_rows
 
+	def positive_count(self):
+		return sum([1 for (attributes, value) in self.data_rows if value == "1.0"])
+
 	def transform_attributes(self, str_trans, num_trans):
 		column_numeric = [True] * self.attribute_column_count
 		for (attributes, value) in self.data_rows:

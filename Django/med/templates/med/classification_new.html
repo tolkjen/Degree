@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Dashboard Template for Bootstrap</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/static/med/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/static/med/dashboard.css" rel="stylesheet">
+</head>
+<body>
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Aplikacja medyczna</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">O aplikacji</a></li>
+          <li><a href="#">Pomoc</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar">
+        <ul class="nav nav-sidebar">
+          <li><a href="{% url 'med:classification_list' 'date' %}">Wyniki klasyfikacji</a></li>
+          <li class="active"><a href="{% url 'med:classification_new' %}">Nowa klasyfikacja</a></li>
+        </ul>
+      </div><!-- col -->
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h1 class="page-header">Nowa klasyfikacja</h1>
+        {% if error %}
+        <div class="alert alert-danger" role="alert"><strong>Formularz jest niepoprawny!</strong> {{ error }}</div>
+        {% endif %}
+        <p>Wypełnij pola i naciśnij przycisk <em>Dalej</em> aby przeprowadzić klasyfikację.</p>
+        <br/>
+        <div class="row">
+          <div class="col-sm-12 col-md-9 col-lg-6">
+           <form class="form-horizontal" role="form" method="post" action="{% url 'med:classification_create' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="panel panel-default">
+              <div class="panel-heading">Ustawienia klasyfikacji</div>
+              <div class="panel-body">
+               <div class="form-group">
+                 <label for="name" class="col-sm-3 col-md-4 col-lg-5 control-label">Nazwa klasyfikacji</label>
+                 <div class="col-sm-9 col-md-7 col-lg-6">
+                  <input type="text" class="form-control" name="name" placeholder="Wpisz nazwę klasyfikacji" autocomplete="off">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="classifier_name" class="col-sm-3 col-md-4 col-lg-5 control-label">Rodzaj klasyfikacji</label>
+                <div class="col-sm-9 col-md-7 col-lg-6">
+                  <select class="form-control" name="classifier_name">
+                    {% for name in type_names %}
+                    <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="subset_count" class="col-sm-3 col-md-4 col-lg-5 control-label">Liczba podzbiorów</label>
+                <div class="col-sm-9 col-md-7 col-lg-6">
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="subset_count" placeholder="Wpisz liczbę podzbiorów" autocomplete="off">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info" type="button">?</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="uploaded_file" class="col-sm-3 col-md-4 col-lg-5 control-label">Plik z danymi</label>
+                <div class="col-sm-9 col-md-7 col-lg-6">
+                  <input type="file" class="form-control" name="uploaded_file" autocomplete="off">
+                </div>
+              </div>
+            </div>
+          </div><!-- panel -->
+          <div class="panel panel-default">
+            <div class="panel-heading">Ustawienia walidacji</div>
+            <div class="panel-body">
+              <div class="form-group">
+                <label for="k_selection" class="col-sm-3 col-md-4 col-lg-5 control-label">Wybór podzbiorów</label>
+                <div class="col-sm-9 col-md-7 col-lg-6">
+                  <div class="input-group">
+                    <select class="form-control" name="k_selection">
+                      <option value="1">Losowy</option>
+                      <option value="0">Sąsiednie przedziały</option>
+                    </select>
+                    <span class="input-group-btn">
+                      <button class="btn btn-info" type="button">?</button>
+                    </span>
+                  </div><!-- input group -->
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="k_count" class="col-sm-3 col-md-4 col-lg-5 control-label">Liczba walidacji</label>
+                <div class="col-sm-9 col-md-7 col-lg-6">
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="k_count" placeholder="Wpisz liczbę walidacji" autocomplete="off">
+                    <span class="input-group-btn">
+                      <button class="btn btn-info" type="button">?</button>
+                    </span>
+                  </div><!-- input group -->
+                </div>
+
+              </div>
+            </div>
+          </div><!-- panel -->
+          
+          <div class="form-group">
+            <div class="col-sm-9 col-md-7 col-lg-6">
+              <button type="submit" class="btn btn-primary">Dalej</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div><!-- row -->
+  </div><!-- col -->
+</div><!-- row -->
+</div><!-- container -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="/static/med/js/bootstrap.min.js"></script>
+<script src="/static/med/js/docs.min.js"></script>
+</body>
+</html>
