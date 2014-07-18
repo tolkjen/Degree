@@ -52,8 +52,12 @@
         <div class="row">
           <div class="col-sm-12 col-md-9 col-lg-6">
             <div class="panel panel-default">
-            <div class="panel-heading">Dane ogólne</div>
+              <div class="panel-heading">Dane ogólne</div>
               <div class="panel-body">
+                <div class="row">
+                <div class="col-xs-6 text-right"><p><strong>Data wykonania</strong></p></div>
+                  <div class="col-xs-6">{{classification.date|date:"d/m/y, H:i T"}}</div>
+                </div>
                 <div class="row">
                   <div class="col-xs-6 text-right"><p><strong>Rodzaj klasyfikacji</strong></p></div>
                   <div class="col-xs-6">{{classification.classifier_name}}</div>

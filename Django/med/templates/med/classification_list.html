@@ -69,7 +69,7 @@
           </tr>
           {% for classification in classifications %}
           <tr>
-            <td>{{ classification.date }}</td>
+            <td>{{ classification.date|date:"d/m/y, H:i T" }}</td>
             <td>{{ classification.name }}</td>
             <td>{{ classification.file_name }}</td>
             <td>{{ classification.validation_result }}</td>
