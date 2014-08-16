@@ -12,7 +12,7 @@ from med.models import CrossValidation, Classification
 from utility.crossvalidator import KCrossValidator
 from utility.classifierhelper import ClassifierHelper
 from utility.datafile.sample import Sample
-from utility.datafile.transform import StringTransform, RangeNumberTransform
+from utility.datafile.transform import StringTransform, NumberTransformHelper
 
 # Decorators
 
@@ -31,8 +31,11 @@ def index(request):
 	return HttpResponseRedirect(reverse('med:classification_list', kwargs={'sortby': 'date'}))
 
 def classification_new(request):
-	type_names = ClassifierHelper.get_type_names()
-	return render(request, 'med/classification_new.html', {'type_names': type_names})
+	classifier_type_names = ClassifierHelper.get_type_names()
+	return render(request, 'med/classification_new.html', {
+		'classifier_type_names': ClassifierHelper.get_type_names(),
+		'transform_type_names': NumberTransformHelper.get_type_names()
+	})
 
 def classification_create(request):
 	if request.method == 'POST':
@@ -43,7 +46,9 @@ def classification_create(request):
 				classifier_type = ClassifierHelper.get_classifier_type(form.cleaned_data['classifier_name'])
 				validator = KCrossValidator(classifier_type, form.cleaned_data['k_count'], form.cleaned_data['k_selection'])
 				sample = Sample.fromFile(filepath)
-				sample.transform_attributes(StringTransform(), RangeNumberTransform(form.cleaned_data['subset_count']))
+				number_transform = NumberTransformHelper.create_transform(
+					form.cleaned_data['quant_method'], form.cleaned_data['quant_arg'])
+				sample.transform_attributes(StringTransform(), number_transform)
 				score = validator.validate(sample.rows())
 
 				positive_percentage = 100 * float(sample.positive_count()) / len(sample.rows())

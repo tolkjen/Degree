@@ -38,7 +38,7 @@ class Classification(models.Model):
 		return Classification(
 			name = form.cleaned_data['name'],
 			classifier_name = form.cleaned_data['classifier_name'],
-			subset_count = form.cleaned_data['subset_count'],
+			subset_count = form.cleaned_data['quant_arg'],
 			k_selection = form.cleaned_data['k_selection'],
 			k_count = form.cleaned_data['k_count'],
 			date = datetime.utcnow().replace(tzinfo = pytz.utc),
