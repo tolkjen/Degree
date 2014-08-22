@@ -71,7 +71,15 @@
                   <div class="col-xs-6">{{classification.quant_method}}</div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-6 text-right"><p><strong>Argument kwantyzacji</strong></p></div>
+                  <div class="col-xs-6 text-right"><p><strong>
+                  {% if classification.quant_method == "Równy podział dziedziny" %}
+                    Liczba podziałów
+                  {% elif classification.quant_method == "Równa liczność grup" %}
+                    Liczba grup
+                  {% else %}
+                    Liczba klastrów
+                  {% endif %}
+                  </strong></p></div>
                   <div class="col-xs-6">{{classification.quant_arg}}</div>
                 </div>
                 <div class="row">
@@ -92,12 +100,16 @@
                   <div class="col-xs-6">{{classification.file_name}}</div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-6 text-right"><p><strong>Liczba wierszy z danymi</strong></p></div>
+                  <div class="col-xs-6 text-right"><p><strong>Liczność próbki</strong></p></div>
                   <div class="col-xs-6">{{classification.row_count}}</div>
                 </div>
                 <div class="row">
+                  <div class="col-xs-6 text-right"><p><strong>Liczba zachorowań</strong></p></div>
+                  <div class="col-xs-6">{{classification.positive_count}}</div>
+                </div>
+                <div class="row">
                   <div class="col-xs-6 text-right"><p><strong>Odsetek zachorowań</strong></p></div>
-                  <div class="col-xs-6">{{classification.positive_percentage}}%</div>
+                  <div class="col-xs-6">{{positive_percentage}}%</div>
                 </div>
               </div>
             </div><!-- panel -->

@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
-	url(r'^med/', include('med.urls', namespace="med")),
+	url(r'^medapp/', include('med.urls', namespace="med")),
 )

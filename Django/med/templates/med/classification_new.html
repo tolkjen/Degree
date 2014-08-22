@@ -46,8 +46,11 @@
       </div><!-- col -->
       <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <h1 class="page-header">Nowa klasyfikacja</h1>
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert"><strong>Błąd!</strong> Formularz jest niepoprawny!</div>
+        {% endif %}
         {% if error %}
-        <div class="alert alert-danger" role="alert"><strong>Formularz jest niepoprawny!</strong> {{ error }}</div>
+        <div class="alert alert-danger" role="alert"><strong>Błąd!</strong> {{ error }}</div>
         {% endif %}
         <p>Wypełnij pola i naciśnij przycisk <em>Dalej</em> aby przeprowadzić klasyfikację.</p>
         <br/>
@@ -61,13 +64,13 @@
                <div class="form-group">
                  <label for="name" class="col-sm-3 col-md-4 col-lg-5 control-label">Nazwa klasyfikacji</label>
                  <div class="col-sm-9 col-md-7 col-lg-6">
-                  <input type="text" class="form-control" name="name" placeholder="Wpisz nazwę klasyfikacji" autocomplete="off">
+                  <input type="text" class="form-control" id="name" name="name" placeholder="Wpisz nazwę klasyfikacji">
                 </div>
               </div>
               <div class="form-group">
                 <label for="classifier_name" class="col-sm-3 col-md-4 col-lg-5 control-label">Rodzaj klasyfikacji</label>
                 <div class="col-sm-9 col-md-7 col-lg-6">
-                  <select class="form-control" name="classifier_name">
+                  <select class="form-control" id="classifier_name" name="classifier_name">
                     {% for name in classifier_type_names %}
                     <option value="{{ name }}">{{ name }}</option>
                     {% endfor %}
@@ -77,19 +80,19 @@
               <div class="form-group">
                 <label for="uploaded_file" class="col-sm-3 col-md-4 col-lg-5 control-label">Plik z danymi</label>
                 <div class="col-sm-9 col-md-7 col-lg-6">
-                  <input type="file" class="form-control" name="uploaded_file" autocomplete="off">
+                  <input type="file" class="form-control" id="uploaded_file" name="uploaded_file" autocomplete="off">
                 </div>
               </div>
             </div>
           </div><!-- panel -->
           <div class="panel panel-default">
-            <div class="panel-heading">Ustawienia kwantyzacji</div>
+            <div class="panel-heading">Przetwarzanie wstępne</div>
             <div class="panel-body">
               <div class="form-group">
                 <label for="quant_method" class="col-sm-3 col-md-4 col-lg-5 control-label">Metoda kwantyzacji</label>
                 <div class="col-sm-9 col-md-7 col-lg-6">
                   <div class="input-group">
-                    <select class="form-control" name="quant_method">
+                    <select class="form-control" id="quant_method" name="quant_method">
                       {% for name in transform_type_names %}
                       <option value="{{ name }}">{{ name }}</option>
                       {% endfor %}
@@ -104,7 +107,8 @@
                 <label for="quant_arg" class="col-sm-3 col-md-4 col-lg-5 control-label">Argument kwantyzacji</label>
                 <div class="col-sm-9 col-md-7 col-lg-6">
                   <div class="input-group">
-                    <input type="text" class="form-control" name="quant_arg" placeholder="Podaj argument liczbowy" autocomplete="off">
+                    <input type="text" class="form-control" id="quant_arg" name="quant_arg"
+                           placeholder="Podaj argument liczbowy" autocomplete="off">
                     <span class="input-group-btn">
                       <button class="btn btn-info" type="button">?</button>
                     </span>
@@ -120,7 +124,7 @@
                 <label for="k_selection" class="col-sm-3 col-md-4 col-lg-5 control-label">Wybór podzbiorów</label>
                 <div class="col-sm-9 col-md-7 col-lg-6">
                   <div class="input-group">
-                    <select class="form-control" name="k_selection">
+                    <select class="form-control" id="k_selection" name="k_selection">
                       <option value="1">Losowy</option>
                       <option value="0">Sąsiednie przedziały</option>
                     </select>
@@ -134,7 +138,9 @@
                 <label for="k_count" class="col-sm-3 col-md-4 col-lg-5 control-label">Liczba walidacji</label>
                 <div class="col-sm-9 col-md-7 col-lg-6">
                   <div class="input-group">
-                    <input type="text" class="form-control" name="k_count" placeholder="Wpisz liczbę walidacji" autocomplete="off">
+                    <input type="text" class="form-control" id="k_count" name="k_count"
+                           placeholder="Wpisz liczbę walidacji" autocomplete="off"
+                           value="{% if form.k_count.value %}{{ form.k_count.value }}{% endif %}">
                     <span class="input-group-btn">
                       <button class="btn btn-info" type="button">?</button>
                     </span>
