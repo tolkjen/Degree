@@ -1,0 +1,103 @@
+X-Gnus-Coding-System: -*- coding: utf-8; -*-
+
+From: Tolkjen <tolkjen@o2.pl>
+Subject: Re: Praca dyplomowa
+To: r.m.nowak@elka.pw.edu.pl
+Date: Fri, 30 May 2014 03:27:06 +0200 (10 hours, 4 minutes, 45 seconds ago)
+
+Dzień dobry,
+
+Czy moglibyśmy przystąpić do omawiania dalszej części mojej pracy?
+
+Pozdrawiam,
+Piotr Tąkiel
+
+Dnia 21 maja 2014 8:32 Tolkjen <tolkjen@o2.pl> napisał(a):
+
+    
+    Od czasu ostatniej korespondencji z Panem nie wprowadziłem żadnych
+    zmian. Poniżej fragment emaila w którym szczegółowo opisałem stan
+    aplikacji:
+    
+    Ukończyłem prace nad aplikacją (naturalnie w zakresie, w jakim się
+    umówiliśmy):
+    
+    * Umożliwiłem zarządzanie aplikacją poprzez scons. Korzystając z
+      tego narzędzia można uruchomić serwer, zbudować bibliotekę,
+      skonfigurować bazę danych oraz uruchomić testy (opis w scons -
+      h). 
+
+    * Dodałem możliwość przeprowadzania walidacji krzyżowej danych w
+      oparciu o metodą K-krotną. Jedynym parametrem walidacji jest
+      liczba grup, na które ma zostać podzielony zbiór danych. 
+
+    * Dodałem dwa nowe klasyfikatory z biblioteki Faif - drzewo
+      decyzyjne i najbliższy sąsiad. 
+
+    * Dane są wczytywane z plików Excela. 
+
+    * Przygotowałem testy jednostkowe, systemowe oraz akceptacyjne: 
+
+    *       * Testy jednostkowe obejmują sprawdzanie poprawności
+        działania biblioteki napisanej w C++ oraz modułów aplikacji w
+        Pythonie: 
+
+      *         * Biblioteka C++ (libclassifier) stanowi póki co
+          adapter klasyfikatorów z biblioteki Faif dla Pythona.
+          Dlatego też testy libclassifier odbywają się z poziomu
+          Pythona. 
+
+        * Moduły Pythonowe zawierają użyteczne klasy wykorzystane w
+          Django (np. moduł xlsfile pozwala na odczyt plików z
+          Excela). 
+
+      * Testy systemowe sprawdzają funkcjonowanie konkretnych operacji
+        z punktu widzenia użytkownika aplikacji, np. po dodaniu
+        walidacji krzyżowej wynik powinien pojawić się na oddzielnej
+        stronie. 
+
+      * Testy akceptacyjne stanowią powtórzenie testów systemowych z
+        użyciem biblioteki umożliwiającej bezpośrednią pracę na
+        przeglądarce (testy wymagają przeglądarki Chrome/Chromium). 
+
+    * Dodałem sprawdzanie pokrycia kodu testami dla testów
+      jednostkowych oraz systemowych. 
+
+    * Usunąłem zbędny kod. 
+
+    Pozdrawiam,
+    Piotr Tąkiel
+    
+    Dnia 15 maja 2014 12:16 r.m.nowak@elka.pw.edu.pl napisał(a):
+    
+        Dzień dobry,
+        
+        może zacznijmy od e-maili. Proszę napisać jaki jest stan
+        bieżący.
+        
+        Pozdrawiam,
+        Robert Nowak
+        
+        Tolkjen <tolkjen@o2.pl> writes:
+        
+        > Dzień dobry,
+        >
+        > Chciałbym przystąpić do omawiania szczegółów części
+        magisterskiej
+        > mojej pracy dyplomowej. Jeżeli uważa Pan, że będzie to
+        trudne poprzez
+        > emaile, to mógłbym umówić się z Panem na rozmowę przez
+        Skype/Google
+        > Hangouts.
+        >
+        > Pozdrawiam,
+        > Piotr Tąkiel
+        >
+        >
+        
+
+    
+    
+
+
+
