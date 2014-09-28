@@ -34,7 +34,7 @@ class EqualDistributionClusterer(AbstractClusterer):
     def __init__(self, bucket_count):
         if bucket_count < 1:
             raise ClustererException('bucket_count must be a positive number.')
-        self._bucket_count = bucket_count
+        self._bucket_count = int(bucket_count)
 
     def transform(self, attributes):
         row_count, col_count = attributes.shape
@@ -68,7 +68,7 @@ class KMeansClusterer(AbstractClusterer):
     def __init__(self, bucket_count):
         if bucket_count < 1:
             raise ClustererException('bucket_count must be a positive number.')
-        self._bucket_count = bucket_count
+        self._bucket_count = int(bucket_count)
         self._initialization = 'random'
 
     def transform(self, attributes):
@@ -84,5 +84,5 @@ class KMeansPlusPlusClusterer(KMeansClusterer):
     def __init__(self, bucket_count):
         if bucket_count < 1:
             raise ClustererException('bucket_count must be a positive number.')
-        self._bucket_count = bucket_count
+        self._bucket_count = int(bucket_count)
         self._initialization = 'k-means++'

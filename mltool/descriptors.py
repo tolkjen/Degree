@@ -1,12 +1,14 @@
 __author__ = 'tolkjen'
 
 from sklearn.naive_bayes import GaussianNB
+
 from input.sample import Sample
 from input.clusterers import KMeansClusterer, KMeansPlusPlusClusterer, EqualDistributionClusterer
 
 
 class DescriptorException(Exception):
     def __init__(self, message):
+        super(Exception, self).__init__(message)
         self.message = message
 
     def __str__(self):

@@ -7,6 +7,7 @@ from xlsfile import XlsFile
 
 class SampleException(Exception):
     def __init__(self, message):
+        super(Exception, self).__init__(message)
         self.message = message
 
     def __str__(self):
@@ -105,6 +106,7 @@ class Sample:
         s = Sample()
         s.columns = columns
         s.attributes, s.categories = Sample._fix_methods[missing](attributes, categories)
+        s.nrows, s.ncols = s.attributes.shape
 
         return s
 
@@ -112,11 +114,14 @@ class Sample:
         self.attributes = array([])
         self.columns = []
         self.categories = array([])
+        self.nrows = 0
+        self.ncols = 0
 
     def remove_column(self, column_name):
         index = self._column_index(column_name)
         self.attributes = hstack((self.attributes[:, :index], self.attributes[:, index + 1:]))
         self.columns.remove(column_name)
+        self.ncols -= 1
 
     def normalize_column(self, column_name, normalize_range=(0.0, 1.0)):
         index = self._column_index(column_name)
@@ -150,6 +155,7 @@ class Sample:
 
         self.attributes = hstack((remaining, merged))
         self.columns = remaining_column_names + [new_column_name]
+        self.ncols = len(self.columns)
 
     def _create_new_column_name(self, columns_removed):
 
