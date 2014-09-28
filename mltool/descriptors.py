@@ -41,13 +41,13 @@ class QuantizationDescriptor:
 
 
 class PreprocessingDescriptor:
-    def __init__(self, missing_fix_method, removed_columns, normalized_columns, q_descriptors):
-        self.missing_fix_method = missing_fix_method
-        self.removed_columns = removed_columns
-        self.normalized_columns = normalized_columns
+    def __init__(self, fix_method, remove, normalize, q_descriptors):
+        self.missing_fix_method = fix_method
+        self.removed_columns = remove
+        self.normalized_columns = normalize
         self.quantization_descriptors = q_descriptors
 
-    def execute(self, filepath):
+    def generate_sample(self, filepath):
         sample = Sample.from_file(filepath, self.missing_fix_method)
         for col_name in self.removed_columns:
             sample.remove_column(col_name)

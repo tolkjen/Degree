@@ -44,3 +44,36 @@ def test_quant_descriptor_execute():
 
     expected_attributes = array([0, 1, 2, 0, 1, 2, 0, 1, 2]).reshape(9, 1)
     assert array_equiv(sample.attributes, expected_attributes)
+
+
+def test_pre_descriptor_validate():
+    d = PreprocessingDescriptor("remove", [], [], [])
+    d.validate()
+
+
+def test_pre_descriptor_wrong_fix():
+    d = PreprocessingDescriptor("????", [], [], [])
+    with pytest.raises(DescriptorException):
+        d.validate()
+
+
+def test_pre_descriptor_normalize_removed():
+    d = PreprocessingDescriptor("????", ["Col"], ["Col"], [])
+    with pytest.raises(DescriptorException):
+        d.validate()
+
+
+def test_pre_descriptor_merge_removed():
+    q = QuantizationDescriptor(["Col"], "k-means", [3])
+    d = PreprocessingDescriptor("????", ["Col"], [], [q])
+    with pytest.raises(DescriptorException):
+        d.validate()
+
+
+def test_pre_descriptor_generate_sample():
+    q = QuantizationDescriptor(["Weight"], "k-means", [1])
+    d = PreprocessingDescriptor(fix_method="remove", remove=["Height"], normalize=["Age"], q_descriptors=[q])
+    sample = d.generate_sample(from_current_dir("sample2.xlsx"))
+
+    expected_attributes = array([[0.0, 0], [0.5, 0], [1.0, 0]])
+    assert array_equiv(sample.attributes, expected_attributes)
