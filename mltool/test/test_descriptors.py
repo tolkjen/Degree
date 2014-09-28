@@ -3,7 +3,7 @@ __author__ = 'tolkjen'
 import os
 import pytest
 from numpy import array, array_equiv
-from ..descriptors import DescriptorException, QuantizationDescriptor, PreprocessingDescriptor
+from ..descriptors import DescriptorException, QuantizationDescriptor, PreprocessingDescriptor, ClassificationDescriptor
 from ..input.clusterers import KMeansClusterer
 from ..input.sample import Sample
 
@@ -77,3 +77,18 @@ def test_pre_descriptor_generate_sample():
 
     expected_attributes = array([[0.0, 0], [0.5, 0], [1.0, 0]])
     assert array_equiv(sample.attributes, expected_attributes)
+
+
+def test_class_descriptor_wrong_name():
+    with pytest.raises(DescriptorException):
+        ClassificationDescriptor("???", [1])
+
+
+def test_class_descriptor_wrong_arguments():
+    with pytest.raises(DescriptorException):
+        ClassificationDescriptor("gaussianNB", [1])
+
+
+def test_class_descriptor_create():
+    d = ClassificationDescriptor("gaussianNB", [])
+    d.create_classifier()

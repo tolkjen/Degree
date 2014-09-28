@@ -1,5 +1,6 @@
 __author__ = 'tolkjen'
 
+from sklearn.naive_bayes import GaussianNB
 from input.sample import Sample
 from input.clusterers import KMeansClusterer, KMeansPlusPlusClusterer, EqualDistributionClusterer
 
@@ -42,32 +43,52 @@ class QuantizationDescriptor:
 
 class PreprocessingDescriptor:
     def __init__(self, fix_method, remove, normalize, q_descriptors):
-        self.missing_fix_method = fix_method
-        self.removed_columns = remove
-        self.normalized_columns = normalize
-        self.quantization_descriptors = q_descriptors
+        self._fix_method = fix_method
+        self._removed_columns = remove
+        self._normalized_columns = normalize
+        self._quantization_descriptors = q_descriptors
 
     def generate_sample(self, filepath):
-        sample = Sample.from_file(filepath, self.missing_fix_method)
-        for col_name in self.removed_columns:
+        sample = Sample.from_file(filepath, self._fix_method)
+        for col_name in self._removed_columns:
             sample.remove_column(col_name)
-        for col_name in self.normalized_columns:
+        for col_name in self._normalized_columns:
             sample.normalize_column(col_name)
-        for descriptor in self.quantization_descriptors:
+        for descriptor in self._quantization_descriptors:
             descriptor.execute(sample)
         return sample
 
     def validate(self):
-        if not self.missing_fix_method in Sample.supported_fix_methods:
+        if not self._fix_method in Sample.supported_fix_methods:
             raise DescriptorException("Incorrect value of 'missing_fix_method' attribute.")
 
-        for col in self.normalized_columns:
-            if col in self.removed_columns:
+        for col in self._normalized_columns:
+            if col in self._removed_columns:
                 raise DescriptorException("Column {0} is supposed to be removed. It can't be normalized.".format(col))
 
-        for descriptor in self.quantization_descriptors:
+        for descriptor in self._quantization_descriptors:
             descriptor.validate()
             for col in descriptor.columns:
-                if col in self.removed_columns:
+                if col in self._removed_columns:
                     raise DescriptorException(
                         "Column {0} is supposed to be removed. It can't be used for quantization.".format(col))
+
+
+class ClassificationDescriptor:
+    _classifiers = {"gaussianNB": (GaussianNB, 0)}
+
+    def __init__(self, name, arguments):
+        if not name in ClassificationDescriptor._classifiers.keys():
+            raise DescriptorException("Incorrect classifier name.")
+
+        classifier_type, argument_count = ClassificationDescriptor._classifiers[name]
+        if len(arguments) != argument_count:
+            raise DescriptorException(
+                "Classifier '{0:s}' requires {1:d} parameters, not {2:d}.".format(name, argument_count, len(arguments)))
+
+        self._name = name
+        self._arguments = arguments
+
+    def create_classifier(self):
+        classifier_type, argument_count = ClassificationDescriptor._classifiers[self._name]
+        return classifier_type(*self._arguments)
