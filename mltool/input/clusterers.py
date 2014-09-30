@@ -23,8 +23,16 @@ class ClustererException(Exception):
         return self.message
 
 
-class AbstractClusterer:
+class AbstractClusterer(object):
+    """
+    Interface for all clusterers.
+    """
     def transform(self, attributes):
+        """
+        Transforms an array of attribute rows into a single column of values.
+        :param attributes: Array of attribute rows (width x height).
+        :return: Array of values (1 x height).
+        """
         pass
 
 
@@ -82,7 +90,5 @@ class KMeansPlusPlusClusterer(KMeansClusterer):
     param_count = 1
 
     def __init__(self, bucket_count):
-        if bucket_count < 1:
-            raise ClustererException('bucket_count must be a positive number.')
-        self._bucket_count = int(bucket_count)
+        super(KMeansPlusPlusClusterer, self).__init__(bucket_count)
         self._initialization = 'k-means++'

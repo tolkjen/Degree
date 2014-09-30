@@ -80,17 +80,19 @@ class ClassificationDescriptor:
     _classifiers = {"gaussianNB": (GaussianNB, 0)}
 
     def __init__(self, name, arguments):
-        if not name in ClassificationDescriptor._classifiers.keys():
-            raise DescriptorException("Incorrect classifier name.")
-
-        classifier_type, argument_count = ClassificationDescriptor._classifiers[name]
-        if len(arguments) != argument_count:
-            raise DescriptorException(
-                "Classifier '{0:s}' requires {1:d} parameters, not {2:d}.".format(name, argument_count, len(arguments)))
-
         self._name = name
         self._arguments = arguments
 
     def create_classifier(self):
         classifier_type, argument_count = ClassificationDescriptor._classifiers[self._name]
         return classifier_type(*self._arguments)
+
+    def validate(self):
+        if not self._name in ClassificationDescriptor._classifiers.keys():
+            raise DescriptorException("Incorrect classifier name.")
+
+        classifier_type, argument_count = ClassificationDescriptor._classifiers[self._name]
+        if len(self._arguments) != argument_count:
+            raise DescriptorException(
+                "Classifier '{0:s}' requires {1:d} parameters, not {2:d}.".format(self._name, argument_count,
+                                                                                  len(self._arguments)))

@@ -80,13 +80,15 @@ def test_pre_descriptor_generate_sample():
 
 
 def test_class_descriptor_wrong_name():
+    description = ClassificationDescriptor("???", [1])
     with pytest.raises(DescriptorException):
-        ClassificationDescriptor("???", [1])
+        description.validate()
 
 
 def test_class_descriptor_wrong_arguments():
+    description = ClassificationDescriptor("gaussianNB", [1])
     with pytest.raises(DescriptorException):
-        ClassificationDescriptor("gaussianNB", [1])
+        description.validate()
 
 
 def test_class_descriptor_create():

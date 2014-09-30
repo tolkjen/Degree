@@ -31,6 +31,13 @@ def _is_string(x):
 
 
 def _read_xls_columns(filepath):
+    """
+    Reads a XLS file and produces an array of attributes, column names and categories. All columns containing string
+    values are removed. The file must contain a column with "Index" header. Numerical values are converted to float,
+    empty values to None.
+    :param filepath: A path to the file.
+    :return: A tuple of (attributes, column names, categories).
+    """
     try:
         xlsfile = XlsFile(filepath)
         xlsfile.read()
@@ -72,6 +79,12 @@ def _read_xls_columns(filepath):
 
 
 def _fix_missing_remove(attributes, categories):
+    """
+    Handles attribute rows with missing values by removing those rows.
+    :param attributes: Array of attributes.
+    :param categories: Array of categories.
+    :return: A tuple of transformed (attributes, categories).
+    """
     attribute_buffer = empty((len(attributes), len(attributes[0])), dtype=float64)
     categories_buffer = empty((len(attributes)))
     count = 0
@@ -89,11 +102,20 @@ def _fix_missing_remove(attributes, categories):
 
 
 class Sample:
+    """
+    Represents data sample. Contains methods for data preprocessing.
+    """
     _fix_methods = {"remove": _fix_missing_remove}
     supported_fix_methods = _fix_methods.keys()
 
     @staticmethod
     def from_file(filepath, missing='remove'):
+        """
+        Creates a Sample object by reading contents of the specified file.
+        :param filepath: Path to the file.
+        :param missing: Method of handling missing values in the file.
+        :return: A Sample object.
+        """
         if not missing in Sample.supported_fix_methods:
             raise SampleException('Incorrect "missing" argument.')
 
@@ -118,12 +140,21 @@ class Sample:
         self.ncols = 0
 
     def remove_column(self, column_name):
+        """
+        Removes an attribute column from the Sample.
+        :param column_name: The name of the column which should be removed.
+        """
         index = self._column_index(column_name)
         self.attributes = hstack((self.attributes[:, :index], self.attributes[:, index + 1:]))
         self.columns.remove(column_name)
         self.ncols -= 1
 
     def normalize_column(self, column_name, normalize_range=(0.0, 1.0)):
+        """
+        Scales the attribute column's values to match the specified range.
+        :param column_name: The name of the column to be normalized.
+        :param normalize_range: The range of normalization.
+        """
         index = self._column_index(column_name)
         scale_min, scale_max = normalize_range
         maximum = max(self.attributes[:, index])
@@ -132,6 +163,12 @@ class Sample:
                                      for x in self.attributes[:, index]]
 
     def merge_columns(self, column_names, clusterer, new_column_name=None):
+        """
+        Transforms a group of columns into a new column by applying a clustering algorithm to their rows.
+        :param column_names: A list of column names to be transformed.
+        :param clusterer: Object implementing AbstractClusterer interface.
+        :param new_column_name: The name of the produced column. If not specified, the name will be auto-generated.
+        """
         if len(column_names) == 0:
             raise SampleException('List of column names can\'t be empty.')
 
