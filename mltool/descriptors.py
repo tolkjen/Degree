@@ -1,6 +1,8 @@
 __author__ = 'tolkjen'
 
 from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
 
 from input.sample import Sample
 from input.clusterers import KMeansClusterer, KMeansPlusPlusClusterer, EqualDistributionClusterer
@@ -77,15 +79,39 @@ class PreprocessingDescriptor:
 
 
 class ClassificationDescriptor:
-    _classifiers = {"gaussianNB": (GaussianNB, 0)}
+    """
+    Describes a classification algorithm together with its parameters.
+    """
+
+    def _create_gaussian_nb(self, params):
+        return GaussianNB()
+
+    def _create_decision_tree(selfself, params):
+        return DecisionTreeClassifier()
+
+    def _create_svc(self, params):
+        try:
+            c = float(params[0])
+            gamma = float(params[1])
+        except:
+            raise DescriptorException("Classifier parameters are incorrect.")
+        else:
+            return SVC(C=c, gamma=gamma)
+
+    # Each entry is:
+    #  - key: name for the classifier
+    #  - value: a tuple of (factory method, number of parameters accepted)
+    _classifiers = {"gaussianNB": (_create_gaussian_nb, 0),
+                    "tree": (_create_decision_tree, 0),
+                    "svc": (_create_svc, 2)}
 
     def __init__(self, name, arguments):
         self._name = name
         self._arguments = arguments
 
     def create_classifier(self):
-        classifier_type, argument_count = ClassificationDescriptor._classifiers[self._name]
-        return classifier_type(*self._arguments)
+        factory, count = ClassificationDescriptor._classifiers[self._name]
+        return factory(self, self._arguments)
 
     def validate(self):
         if not self._name in ClassificationDescriptor._classifiers.keys():

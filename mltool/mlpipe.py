@@ -65,7 +65,7 @@ class MlPipe:
 
         sample = preprocessor.generate_sample(args.filepath)
         classifier = classifier_descriptor.create_classifier()
-        scores = cross_validation.cross_val_score(classifier, sample.attributes, sample.categories, cv=5)
+        scores = cross_validation.cross_val_score(classifier, sample.attributes, sample.categories, cv=5, scoring="f1")
 
         return MlPipeResult(sample.nrows, scores.mean(), scores.std())
 
