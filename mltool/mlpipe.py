@@ -9,10 +9,11 @@ from input.sample import SampleException
 
 
 class MlPipeResult:
-    def __init__(self, row_count, accuracy_score, accuracy_std):
+    def __init__(self, row_count, accuracy_score, accuracy_std, columns):
         self.nrows = row_count
         self.accuracy_score = accuracy_score
         self.accuracy_std = accuracy_std
+        self.columns = columns
 
 
 class MlPipe:
@@ -67,7 +68,7 @@ class MlPipe:
         classifier = classifier_descriptor.create_classifier()
         scores = cross_validation.cross_val_score(classifier, sample.attributes, sample.categories, cv=5, scoring="f1")
 
-        return MlPipeResult(sample.nrows, scores.mean(), scores.std())
+        return MlPipeResult(sample.nrows, scores.mean(), scores.std(), sample.columns)
 
     def _parse_arguments(self):
         parser = argparse.ArgumentParser(description="Processes and classifies data.")
@@ -101,5 +102,10 @@ if __name__ == "__main__":
     except Exception, e:
         print "Unknown error: %s" % e
     else:
+        print ""
+        print "Machine Learning Pipe"
+        print "---------------------"
+        print ""
+        print "Columns: %s" % ", ".join(result.columns)
         print "Number of rows: %d" % result.nrows
         print "Classification accuracy: %0.2f (+/- %0.2f)" % (result.accuracy_score, result.accuracy_std * 2.0)
