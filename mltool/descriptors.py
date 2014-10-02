@@ -44,36 +44,39 @@ class QuantizationDescriptor:
                                                                                          clusterer_type.param_count,
                                                                                          len(self.quantization_args)))
 
+    def __str__(self):
+        return "%s(%s, %s)" % (self.quantization_method, " ".join(self.columns), " ".join(self.quantization_args))
+
 
 class PreprocessingDescriptor:
-    def __init__(self, fix_method, remove, normalize, q_descriptors):
-        self._fix_method = fix_method
-        self._removed_columns = remove
-        self._normalized_columns = normalize
-        self._quantization_descriptors = q_descriptors
+    def __init__(self, fix_method="remove", remove=[], normalize=[], q_descriptors=[]):
+        self.fix_method = fix_method
+        self.removed_columns = remove
+        self.normalized_columns = normalize
+        self.quantization_descriptors = q_descriptors
 
     def generate_sample(self, filepath):
-        sample = Sample.from_file(filepath, self._fix_method)
-        for col_name in self._removed_columns:
+        sample = Sample.from_file(filepath, self.fix_method)
+        for col_name in self.removed_columns:
             sample.remove_column(col_name)
-        for col_name in self._normalized_columns:
+        for col_name in self.normalized_columns:
             sample.normalize_column(col_name)
-        for descriptor in self._quantization_descriptors:
+        for descriptor in self.quantization_descriptors:
             descriptor.execute(sample)
         return sample
 
     def validate(self):
-        if not self._fix_method in Sample.supported_fix_methods:
+        if not self.fix_method in Sample.supported_fix_methods:
             raise DescriptorException("Incorrect value of 'missing_fix_method' attribute.")
 
-        for col in self._normalized_columns:
-            if col in self._removed_columns:
+        for col in self.normalized_columns:
+            if col in self.removed_columns:
                 raise DescriptorException("Column {0} is supposed to be removed. It can't be normalized.".format(col))
 
-        for descriptor in self._quantization_descriptors:
+        for descriptor in self.quantization_descriptors:
             descriptor.validate()
             for col in descriptor.columns:
-                if col in self._removed_columns:
+                if col in self.removed_columns:
                     raise DescriptorException(
                         "Column {0} is supposed to be removed. It can't be used for quantization.".format(col))
 
