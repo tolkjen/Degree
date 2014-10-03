@@ -45,7 +45,8 @@ class QuantizationDescriptor:
                                                                                          len(self.quantization_args)))
 
     def __str__(self):
-        return "%s(%s, %s)" % (self.quantization_method, " ".join(self.columns), " ".join(self.quantization_args))
+        string_args = [str(arg) for arg in self.quantization_args]
+        return "%s(%s, %s)" % (self.quantization_method, " ".join(self.columns), " ".join(string_args))
 
 
 class PreprocessingDescriptor:
