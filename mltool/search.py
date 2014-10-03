@@ -13,8 +13,32 @@ class SpaceException(Exception):
         return self.message
 
 
-class FixSpace(object):
+class AbstractSpace(object):
+    """
+    Implements a search space pattern. Each search space allows iterating over a set of results. Dividing a total search
+    space into a set of smaller search spaces makes it easier to search through.
+    """
+
+    def generate(self, descriptor):
+        """
+        Yields values from the search space. If the space is a part of a bigger search hyperspace (containing many
+        search spaces), the values in the current space may depend on other spaces. A descriptor object is passed to the
+        method in order to carry information about other spaces.
+        :param descriptor: Contains information useful in determining the contents of the search space.
+        """
+        pass
+
+
+class FixSpace(AbstractSpace):
+    """
+    Describes the search space of methods used for removing missing values in data file.
+    """
+
     def __init__(self, methods):
+        """
+        Creates a space instance.
+        :param methods: List of methods for removing missing values.
+        """
         if not methods:
             raise SpaceException("At least one fix method must be specified.")
         self._methods = methods
@@ -25,8 +49,17 @@ class FixSpace(object):
             yield descriptor
 
 
-class RemoveSpace(object):
+class RemoveSpace(AbstractSpace):
+    """
+    Describes the search space of removing columns from the data file.
+    """
+
     def __init__(self, columns, set_sizes):
+        """
+        Creates a search space object.
+        :param columns: A list of columns from which the removed columns will be picked.
+        :param set_sizes: A list of numbers of columns to be removed at the same time.
+        """
         if not set_sizes:
             raise SpaceException("No subset size specified.")
 
@@ -47,8 +80,18 @@ class RemoveSpace(object):
                 yield descriptor
 
 
-class NormalizeSpace(object):
+class NormalizeSpace(AbstractSpace):
+    """
+    Describes the search space of normalizing the columns attributes.
+    """
+
     def __init__(self, columns, set_sizes):
+        """
+        Creates a search space object.
+        :param columns: A list of columns from which the normalized columns will be picked.
+        :param set_sizes: A list of numbers of columns to be normalized at the same time.
+        :return:
+        """
         if not set_sizes:
             raise SpaceException("No subset size specified.")
 
@@ -70,9 +113,22 @@ class NormalizeSpace(object):
                 yield descriptor
 
 
-class QuantifySpace(object):
-    def __init__(self, columns, clusterers, clusterer_count_list, max_cols, grit):
-        if grit < 2:
+class QuantifySpace(AbstractSpace):
+    """
+    Describes the search space of clustering column groups. Search space iterates over different clusterers, clusterer
+    parameters, column groups used for clustering and the number of clusterers working at the same time.
+    """
+
+    def __init__(self, columns, clusterers, clusterer_count_list, max_cols, granularity):
+        """
+        Creates a search space object.
+        :param columns: A list of columns to be used during clustering.
+        :param clusterers: A list of available clusterer objects which could be used for clustering columns.
+        :param clusterer_count_list: List containing numbers of clusterers which should be used at the same time.
+        :param max_cols: Maximum number of columns that any clusterer can use at any time.
+        :param granularity: Determines the size of each clusterer parameter search space.
+        """
+        if granularity < 2:
             raise SpaceException("Grit can't be less than 2.")
 
         for count in clusterer_count_list:
@@ -83,7 +139,7 @@ class QuantifySpace(object):
         self._clusterers = clusterers
         self._count_list = clusterer_count_list
         self._max_cols = max_cols
-        self._grit = grit
+        self._granularity = granularity
 
     def generate(self, descriptor):
         columns = [col for col in self._columns if not col in descriptor.removed_columns]
