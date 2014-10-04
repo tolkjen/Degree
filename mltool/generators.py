@@ -73,7 +73,7 @@ class MultiSubsetGenerator(object):
 
 class DistributionGenerator(object):
     """
-    Generates sequences of n non-negative integer numbers, each of them is less or equal to max_number and their sum is
+    Generates sequences of n positive integer numbers, each of them is less or equal to max_number and their sum is
     less or equal to max_sum.
     """
 
@@ -96,5 +96,26 @@ class DistributionGenerator(object):
         if len(working_set) == self._n:
             self._data.append(working_set)
         else:
-            for i in range(min(self._max_sum - nsum, self._max_number) + 1):
+            for i in range(1, min(self._max_sum - nsum, self._max_number) + 1):
                 self._generate(nsum + i, working_set + [i])
+
+
+class CombinationGenerator(object):
+    def __init__(self, lists):
+        self._lists = lists
+        self._data = []
+
+    def __iter__(self):
+        self._data = []
+        self._generate([])
+        for combination in self._data:
+            yield combination
+
+    def _generate(self, working_set):
+        index = len(working_set)
+        if index == len(self._lists):
+            self._data.append(working_set)
+        else:
+            space = self._lists[index]
+            for value in space:
+                self._generate(working_set + [value])

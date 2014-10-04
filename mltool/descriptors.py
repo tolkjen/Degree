@@ -81,6 +81,10 @@ class PreprocessingDescriptor:
                     raise DescriptorException(
                         "Column {0} is supposed to be removed. It can't be used for quantization.".format(col))
 
+    def __str__(self):
+        return "method: %s, removed columns: [%s], normalized columns: [%s]" \
+               % (self.fix_method, ", ".join(self.removed_columns), ", ".join(self.normalized_columns))
+
 
 class ClassificationDescriptor:
     """
@@ -90,7 +94,7 @@ class ClassificationDescriptor:
     def _create_gaussian_nb(self, params):
         return GaussianNB()
 
-    def _create_decision_tree(selfself, params):
+    def _create_decision_tree(self, params):
         return DecisionTreeClassifier()
 
     def _create_svc(self, params):
@@ -126,3 +130,7 @@ class ClassificationDescriptor:
             raise DescriptorException(
                 "Classifier '{0:s}' requires {1:d} parameters, not {2:d}.".format(self._name, argument_count,
                                                                                   len(self._arguments)))
+
+    def __str__(self):
+        string_params = [str(x) for x in self._arguments]
+        return "name = %s, params = [%s]" % (self._name, ", ".join(string_params))
