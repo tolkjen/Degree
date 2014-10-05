@@ -28,10 +28,11 @@ class SubsetGenerator(object):
         self._data = []
 
     def __iter__(self):
-        self._data = []
-        self._generate(0, [])
-        for subset in self._data:
-            yield subset
+        if self._size > 0:
+            self._data = []
+            self._generate(0, [])
+            for subset in self._data:
+                yield subset
 
     def _generate(self, index, working_set):
         if index == len(self._objects):

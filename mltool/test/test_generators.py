@@ -14,13 +14,13 @@ def test_subset_generator_size_too_big():
 def test_subset_generator_size_zero():
     generator = SubsetGenerator([1, 2, 3], 0)
     items = [x for x in generator]
-    assert items == [[]]
+    assert items == []
 
 
 def test_subset_generator_size_zero_no_objects():
     generator = SubsetGenerator([], 0)
     items = [x for x in generator]
-    assert items == [[]]
+    assert items == []
 
 
 def test_subset_generator():

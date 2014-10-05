@@ -129,12 +129,16 @@ class RemoveSpace(AbstractSearchSpace):
         self._set_sizes = set_sizes
 
     def generate(self, descriptor):
-        descriptor.removed_columns = []
-        yield descriptor
+        if not self._set_sizes:
+            descriptor.removed_columns = []
+            yield descriptor
 
         for size in self._set_sizes:
             if size > len(self._columns):
                 continue
+            if size == 0:
+                descriptor.removed_columns = []
+                yield descriptor
             generator = SubsetGenerator(self._columns, size)
             for subset in generator:
                 descriptor.removed_columns = subset
@@ -164,13 +168,17 @@ class NormalizeSpace(AbstractSearchSpace):
         self._set_sizes = set_sizes
 
     def generate(self, descriptor):
-        descriptor.normalized_columns = []
-        yield descriptor
+        if not self._set_sizes:
+            descriptor.normalized_columns = []
+            yield descriptor
 
         columns = [col for col in self._columns if not col in descriptor.removed_columns]
         for size in self._set_sizes:
             if size > len(columns):
                 continue
+            if size == 0:
+                descriptor.normalized_columns = []
+                yield descriptor
             generator = SubsetGenerator(columns, size)
             for subset in generator:
                 descriptor.normalized_columns = subset
@@ -218,12 +226,11 @@ class SearchSpace(object):
         self._classification_space = ClassificationSpace(classifiers, classification_granularity)
 
     def __iter__(self):
-        for pd0 in self._fix_space.generate(PreprocessingDescriptor()):
-            for pd1 in self._remove_space.generate(pd0):
-                for pd2 in self._normalize_space.generate(pd1):
-                    for c0 in self._classification_space.generate():
-                        yield DescriptorPair(pd2, c0)
-
+        for fd in self._fix_space.generate(PreprocessingDescriptor()):
+            for rd in self._remove_space.generate(fd):
+                for nd in self._normalize_space.generate(rd):
+                    for cd in self._classification_space.generate():
+                        yield DescriptorPair(nd, cd)
 
 # class QuantifySpace(AbstractSearchSpace):
 #     """

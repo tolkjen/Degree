@@ -42,10 +42,11 @@ class MlSearch(object):
         space_size = 0
         for _ in space:
             space_size += 1
+        counter = 0
 
         best_pair = None
         best_result = 0.0
-        counter = 0
+
         for pair in space:
             sample = pair.preprocessing_descriptor.generate_sample(xls)
             classifier = pair.classification_descriptor.create_classifier()
