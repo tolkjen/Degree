@@ -43,65 +43,7 @@ class SubsetGenerator(object):
             self._generate(index + 1, working_set + [self._objects[index]])
 
 
-class MultiSubsetGenerator(object):
-    """
-    Generates groups of disjoint subsets from a given object list.
-    """
-
-    def __init__(self, objects, counts):
-        if sum(counts) > len(objects):
-            raise GeneratorException("Given subset size distribution requires more objects than are available.")
-
-        self._objects = objects
-        self._counts = counts
-        self._data = []
-
-    def __iter__(self):
-        self._data = []
-        self._generate(0, [])
-        for subset in self._data:
-            yield subset
-
-    def _generate(self, n, working_set):
-        if n == len(self._counts):
-            self._data.append(working_set)
-        else:
-            flat_working_set = reduce(lambda a, b: a + b, working_set, [])
-            generator = SubsetGenerator([x for x in self._objects if not x in flat_working_set], self._counts[n])
-            for subset in generator:
-                self._generate(n + 1, working_set + [subset])
-
-
-class DistributionGenerator(object):
-    """
-    Generates sequences of n positive integer numbers, each of them is less or equal to max_number and their sum is
-    less or equal to max_sum.
-    """
-
-    def __init__(self, n, max_number, max_sum):
-        if max_number > max_sum:
-            raise GeneratorException("Maximum number is sequence can't be greater than the sum of numbers.")
-
-        self._n = n
-        self._max_number = max_number
-        self._max_sum = max_sum
-        self._data = []
-
-    def __iter__(self):
-        self._data = []
-        self._generate(0, [])
-        for sequence in self._data:
-            yield sequence
-
-    def _generate(self, nsum, working_set):
-        if len(working_set) == self._n:
-            self._data.append(working_set)
-        else:
-            for i in range(1, min(self._max_sum - nsum, self._max_number) + 1):
-                self._generate(nsum + i, working_set + [i])
-
-
-class CombinationGenerator(object):
+class ParameterCombinationGenerator(object):
     def __init__(self, lists):
         self._lists = lists
         self._data = []
@@ -120,3 +62,95 @@ class CombinationGenerator(object):
             space = self._lists[index]
             for value in space:
                 self._generate(working_set + [value])
+
+
+class CombinationGenerator(object):
+    """
+    Generates object combinations without repeating combination sets.
+    """
+
+    def __init__(self, objects, size):
+        self._objects = objects
+        self._size = size
+        self._data = []
+
+    def __iter__(self):
+        if self._size > 0:
+            self._data = []
+            self._generate(self._objects, [])
+            for x in self._data:
+                yield x
+
+    def _generate(self, objects, working_set):
+        if len(working_set) == self._size:
+            self._data.append(working_set)
+        else:
+            for i, obj in enumerate(objects):
+                self._generate(objects[i:], working_set + [obj])
+
+
+class CombinationDistributionGenerator(object):
+    def __init__(self, combination, max_sum, max_number):
+        self._combination = combination
+        self._max_sum = max_sum
+        self._max_number = max_number
+        self._data = []
+
+    def __iter__(self):
+        if self._combination:
+            self._data = []
+            self._generate(0, [])
+            for x in self._data:
+                yield x
+
+    def _generate(self, sum_value, working_set):
+        index = len(working_set)
+        if index == len(self._combination):
+            self._data.append(working_set)
+        else:
+            range_start = 1
+            if index > 0 and self._combination[index - 1] == self._combination[index]:
+                    range_start = working_set[index - 1]
+            max_cols = self._max_columns(self._combination[index])
+
+            for i in range(range_start, min(max_cols, self._max_sum - sum_value) + 1):
+                self._generate(sum_value + i, working_set + [i])
+
+    def _max_columns(self, clusterer):
+        if clusterer == "ed":
+            return 1
+        return self._max_number
+
+
+class MultiSubsetGenerator(object):
+    def __init__(self, objects, combination, distribution):
+        self._objects = objects
+        self._distribution = distribution
+        self._combination = combination
+        self._indices = range(len(objects))
+        self._data = []
+
+    def __iter__(self):
+        if self._objects and self._combination and self._distribution:
+            self._data = []
+            self._generate([])
+            for multiset in self._data:
+                yield [[self._objects[i] for i in subset] for subset in multiset]
+
+    def _generate(self, working_set):
+        index = len(working_set)
+        if index == len(self._distribution):
+            self._data.append(working_set)
+        else:
+            flat_working_set = reduce(lambda a, b: a + b, working_set, [])
+
+            subrange_start = 0
+            if index > 0 and self._combination[index - 1] == self._combination[index]:
+                subrange_start = working_set[index - 1][0] + 1
+
+            subrange = [i for i in self._indices if i >= subrange_start and not i in flat_working_set]
+
+            if len(subrange) >= self._distribution[index]:
+                generator = SubsetGenerator(subrange, self._distribution[index])
+                for subset in generator:
+                    self._generate(working_set + [subset])

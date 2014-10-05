@@ -3,7 +3,8 @@ __author__ = 'tolkjen'
 import math
 
 from descriptors import PreprocessingDescriptor, QuantizationDescriptor, ClassificationDescriptor
-from generators import SubsetGenerator, DistributionGenerator, MultiSubsetGenerator, CombinationGenerator
+from generators import SubsetGenerator, MultiSubsetGenerator, ParameterCombinationGenerator, CombinationGenerator, \
+    CombinationDistributionGenerator
 
 
 class SpaceException(Exception):
@@ -206,7 +207,7 @@ class ClassificationSpace(object):
             for space in ClassificationSpace._param_spaces[classifier]:
                 space.granularity = self._granularity
 
-            generator = CombinationGenerator(ClassificationSpace._param_spaces[classifier])
+            generator = ParameterCombinationGenerator(ClassificationSpace._param_spaces[classifier])
             for param_combination in generator:
                 yield ClassificationDescriptor(classifier, param_combination)
 
@@ -216,82 +217,87 @@ class DescriptorPair(object):
         self.preprocessing_descriptor = preprocessing
         self.classification_descriptor = classification
 
+    def copy(self):
+        return DescriptorPair(self.preprocessing_descriptor.copy(), self.classification_descriptor.copy())
+
 
 class SearchSpace(object):
-    def __init__(self, fix_methods, remove_cols, remove_sizes, normalize_cols, normalize_sizes, classifiers,
-                 classification_granularity):
-        self._fix_space = FixSpace(fix_methods)
-        self._normalize_space = NormalizeSpace(normalize_cols, normalize_sizes)
-        self._remove_space = RemoveSpace(remove_cols, remove_sizes)
-        self._classification_space = ClassificationSpace(classifiers, classification_granularity)
+    def __init__(self, fix_space, remove_space, normalize_space, quantify_space, classification_space):
+        self._fix_space = fix_space
+        self._normalize_space = remove_space
+        self._remove_space = normalize_space
+        self._quantify_space = quantify_space
+        self._classification_space = classification_space
 
     def __iter__(self):
         for fd in self._fix_space.generate(PreprocessingDescriptor()):
             for rd in self._remove_space.generate(fd):
                 for nd in self._normalize_space.generate(rd):
-                    for cd in self._classification_space.generate():
-                        yield DescriptorPair(nd, cd)
+                    for qd in self._quantify_space.generate(nd):
+                        for cd in self._classification_space.generate():
+                            yield DescriptorPair(qd, cd)
 
-# class QuantifySpace(AbstractSearchSpace):
-#     """
-#     Describes the search space of clustering column groups. Search space iterates over different clusterers, clusterer
-#     parameters, column groups used for clustering and the number of clusterers working at the same time.
-#     """
-#
-#     _param_spaces = {
-#         "k-means": [LinearValueSpace(2, 20)],
-#         "k-means++": [LinearValueSpace(2, 20)],
-#         "ed": [LinearValueSpace(2, 20)]
-#     }
-#
-#     def __init__(self, columns, clusterers, clusterer_count_list, max_cols, granularity):
-#         """
-#         Creates a search space object.
-#         :param columns: A list of columns to be used during clustering.
-#         :param clusterers: A list of available clusterer objects which could be used for clustering columns.
-#         :param clusterer_count_list: List containing numbers of clusterers which should be used at the same time.
-#         :param max_cols: Maximum number of columns that any clusterer can use at any time.
-#         :param granularity: Determines the size of each clusterer parameter search space.
-#         """
-#         if granularity < 2:
-#             raise SpaceException("Grit can't be less than 2.")
-#
-#         for count in clusterer_count_list:
-#             if count > len(clusterers):
-#                 raise SpaceException("Clusterer count %d is greater then the number of clusterers." % count)
-#
-#         for clusterer in clusterers:
-#             if not clusterer in QuantifySpace._param_spaces.keys():
-#                 raise SpaceException("Clusterer %s doesn't exist." % clusterer)
-#
-#         self._columns = columns
-#         self._clusterers = clusterers
-#         self._count_list = clusterer_count_list
-#         self._max_cols = max_cols
-#         self._granularity = granularity
-#
-#     def generate(self, descriptor):
-#         for clusterer in QuantifySpace._param_spaces:
-#             for space in QuantifySpace._param_spaces[clusterer]:
-#                 space.granularity = self._granularity
-#
-#         columns = [col for col in self._columns if not col in descriptor.removed_columns]
-#         columns_count = len(columns)
-#
-#         for count in self._count_list:
-#             distribution_generator = DistributionGenerator(count, min(columns_count, self._max_cols), columns_count)
-#             for distribution in distribution_generator:
-#                 multi_generator = MultiSubsetGenerator(columns, distribution)
-#                 for column_subsets in multi_generator:
-#                     clusterers_generator = SubsetGenerator(self._clusterers, count)
-#                     for clusterers in clusterers_generator:
-#                         param_space_groups = []
-#                         for clusterer in clusterers:
-#                             param_space_groups.append([x for x in combinations(QuantifySpace._param_spaces[clusterer])])
-#
-#                         for param_space_comb in combinations(param_space_groups):
-#                             descriptor.quantization_descriptors = []
-#                             for i, clusterer in enumerate(clusterers):
-#                                 q_descr = QuantizationDescriptor(column_subsets[i], clusterer, param_space_comb[i])
-#                                 descriptor.quantization_descriptors.append(q_descr)
-#                             yield descriptor
+
+class QuantifySpace(AbstractSearchSpace):
+    """
+    Describes the search space of clustering column groups. Search space iterates over different clusterers, clusterer
+    parameters, column groups used for clustering and the number of clusterers working at the same time.
+    """
+
+    _param_spaces = {
+        "k-means": [LinearValueSpace(2, 20)],
+        "k-means++": [LinearValueSpace(2, 20)],
+        "ed": [LinearValueSpace(2, 20)]
+    }
+
+    def __init__(self, columns, clusterers, clusterer_counts, max_cols, granularity):
+        """
+        Creates a search space object.
+        :param columns: A list of columns to be used during clustering.
+        :param clusterers: A list of available clusterer objects which could be used for clustering columns.
+        :param clusterer_counts: List containing numbers of clusterers which should be used at the same time.
+        :param max_cols: Maximum number of columns that any clusterer can use at any time.
+        :param granularity: Determines the size of each clusterer parameter search space.
+        """
+        if granularity < 2:
+            raise SpaceException("Grit can't be less than 2.")
+
+        for clusterer in clusterers:
+            if not clusterer in QuantifySpace._param_spaces.keys():
+                raise SpaceException("Clusterer %s doesn't exist." % clusterer)
+
+        self._columns = columns
+        self._clusterers = clusterers
+        self._count_list = clusterer_counts
+        self._max_cols = max_cols
+        self._granularity = granularity
+
+    def generate(self, descriptor):
+        if not self._columns or not self._clusterers or not self._count_list:
+            descriptor.quantization_descriptors = []
+            yield descriptor
+
+        for clusterer in QuantifySpace._param_spaces:
+            for space in QuantifySpace._param_spaces[clusterer]:
+                space.granularity = self._granularity
+
+        columns = [col for col in self._columns if not col in descriptor.removed_columns]
+        for count in self._count_list:
+            combination_generator = CombinationGenerator(self._clusterers, count)
+            for combination in combination_generator:
+                parameter_spaces = []
+                for clusterer in combination:
+                    param_combination_generator = ParameterCombinationGenerator(QuantifySpace._param_spaces[clusterer])
+                    parameter_spaces.append([param_comb for param_comb in param_combination_generator])
+
+                distribution_generator = CombinationDistributionGenerator(combination, len(columns), self._max_cols)
+                for distribution in distribution_generator:
+                    multiset_generator = MultiSubsetGenerator(columns, combination, distribution)
+                    for multiset in multiset_generator:
+                        param_space_generator = ParameterCombinationGenerator(parameter_spaces)
+                        for param_space in param_space_generator:
+                            descriptor.quantization_descriptors = []
+                            for i in range(len(combination)):
+                                q_descriptor = QuantizationDescriptor(multiset[i], combination[i], param_space[i])
+                                descriptor.quantization_descriptors.append(q_descriptor)
+                            yield descriptor

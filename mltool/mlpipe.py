@@ -109,4 +109,4 @@ if __name__ == "__main__":
         print ""
         print "Columns: %s" % ", ".join(result.columns)
         print "Number of rows: %d" % result.nrows
-        print "Classification accuracy: %0.2f (+/- %0.2f)" % (result.accuracy_score, result.accuracy_std * 2.0)
+        print "Classification accuracy: %f (+/- %f)" % (result.accuracy_score, result.accuracy_std * 2.0)

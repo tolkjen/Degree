@@ -46,7 +46,7 @@ class QuantizationDescriptor:
 
     def __str__(self):
         string_args = [str(arg) for arg in self.quantization_args]
-        return "%s(%s, %s)" % (self.quantization_method, " ".join(self.columns), " ".join(string_args))
+        return "%s: (%s, %s)" % (self.quantization_method.upper(), " ".join(self.columns), " ".join(string_args))
 
 
 class PreprocessingDescriptor:
@@ -82,8 +82,13 @@ class PreprocessingDescriptor:
                         "Column {0} is supposed to be removed. It can't be used for quantization.".format(col))
 
     def __str__(self):
-        return "method: %s, removed columns: [%s], normalized columns: [%s]" \
-               % (self.fix_method, ", ".join(self.removed_columns), ", ".join(self.normalized_columns))
+        return "method: %s, removed: [%s], normalized: [%s], quant: [%s]" \
+               % (self.fix_method.upper(), ", ".join(self.removed_columns), ", ".join(self.normalized_columns),
+                  ", ".join([str(qd) for qd in self.quantization_descriptors]))
+
+    def copy(self):
+        return PreprocessingDescriptor(self.fix_method, self.removed_columns[:], self.normalized_columns[:],
+                                       self.quantization_descriptors[:])
 
 
 class ClassificationDescriptor:
@@ -133,4 +138,7 @@ class ClassificationDescriptor:
 
     def __str__(self):
         string_params = [str(x) for x in self._arguments]
-        return "name = %s, params = [%s]" % (self._name, ", ".join(string_params))
+        return "name = %s, params = [%s]" % (self._name.upper(), ", ".join(string_params))
+
+    def copy(self):
+        return ClassificationDescriptor(self._name, self._arguments[:])
