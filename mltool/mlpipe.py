@@ -6,6 +6,7 @@ from sklearn import cross_validation
 
 from descriptors import PreprocessingDescriptor, ClassificationDescriptor, QuantizationDescriptor, DescriptorException
 from input.sample import SampleException
+from input.xlsfile import XlsFile
 
 
 class MlPipeResult:
@@ -64,7 +65,7 @@ class MlPipe:
         classifier_descriptor = ClassificationDescriptor(args.classifier, args.params)
         classifier_descriptor.validate()
 
-        sample = preprocessor.generate_sample(args.filepath)
+        sample = preprocessor.generate_sample(XlsFile.load(args.filepath))
         classifier = classifier_descriptor.create_classifier()
         scores = cross_validation.cross_val_score(classifier, sample.attributes, sample.categories, cv=5, scoring="f1")
 

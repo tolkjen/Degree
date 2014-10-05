@@ -220,9 +220,7 @@ class SearchSpace(object):
     def __iter__(self):
         for pd0 in self._fix_space.generate(PreprocessingDescriptor()):
             for pd1 in self._remove_space.generate(pd0):
-
                 for pd2 in self._normalize_space.generate(pd1):
-                    print pd1.removed_columns, pd2.normalized_columns
                     for c0 in self._classification_space.generate():
                         yield DescriptorPair(pd2, c0)
 

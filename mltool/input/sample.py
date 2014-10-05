@@ -30,7 +30,7 @@ def _is_string(x):
         return True
 
 
-def _read_xls_columns(filepath):
+def _read_tabular_data(tabular_file):
     """
     Reads a XLS file and produces an array of attributes, column names and categories. All columns containing string
     values are removed. The file must contain a column with "Index" header. Numerical values are converted to float,
@@ -38,22 +38,16 @@ def _read_xls_columns(filepath):
     :param filepath: A path to the file.
     :return: A tuple of (attributes, column names, categories).
     """
-    try:
-        xlsfile = XlsFile(filepath)
-        xlsfile.read()
-    except Exception, e:
-        raise SampleException("Can't load data sample: " + e.message)
-
     category_index = -1
-    for index in range(len(xlsfile.columns())):
-        if xlsfile.columns()[index].lower() == "index":
+    for index in range(len(tabular_file.columns())):
+        if tabular_file.columns()[index].lower() == "index":
             category_index = index
     if category_index == -1:
         raise SampleException("Data sample contains no Index column.")
 
-    column_contains_strings = [False] * len(xlsfile.columns())
-    column_contains_none = [False] * len(xlsfile.columns())
-    for row in xlsfile.rows():
+    column_contains_strings = [False] * len(tabular_file.columns())
+    column_contains_none = [False] * len(tabular_file.columns())
+    for row in tabular_file.rows():
         is_empty = reduce(lambda accumulated, x: x == "" and accumulated, row, True)
         if not is_empty:
             column_contains_strings = [_is_string(row[i]) or column_contains_strings[i] for i in range(len(row))]
@@ -64,7 +58,7 @@ def _read_xls_columns(filepath):
 
     attributes = []
     categories = []
-    for row in xlsfile.rows():
+    for row in tabular_file.rows():
         attr = [_transform_string_number(value) for i, value in enumerate(row)
                 if i != category_index and not column_contains_strings[i]]
         cat = [_transform_string_number(value) for i, value in enumerate(row)
@@ -72,7 +66,7 @@ def _read_xls_columns(filepath):
         attributes.append(attr)
         categories.append(cat)
 
-    columns = [col for i, col in enumerate(xlsfile.columns())
+    columns = [col for i, col in enumerate(tabular_file.columns())
                if i != category_index and not column_contains_strings[i]]
 
     return attributes, columns, categories
@@ -109,7 +103,7 @@ class Sample:
     supported_fix_methods = _fix_methods.keys()
 
     @staticmethod
-    def from_file(filepath, missing='remove'):
+    def from_file(tabular_file, missing='remove'):
         """
         Creates a Sample object by reading contents of the specified file.
         :param filepath: Path to the file.
@@ -119,7 +113,7 @@ class Sample:
         if not missing in Sample.supported_fix_methods:
             raise SampleException('Incorrect "missing" argument.')
 
-        attributes, columns, categories = _read_xls_columns(filepath)
+        attributes, columns, categories = _read_tabular_data(tabular_file)
 
         # Check for duplicate headers
         if len(columns) != len(set(columns)):

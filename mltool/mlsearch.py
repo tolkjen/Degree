@@ -5,6 +5,7 @@ import argparse
 from sklearn import cross_validation
 
 from search import SearchSpace
+from input.xlsfile import XlsFile
 
 
 class MlSearchResult(object):
@@ -29,6 +30,7 @@ class MlSearch(object):
     def search(self):
         args = self._parse_arguments()
 
+        xls = XlsFile.load(args.filepath)
         space = SearchSpace(args.fix_methods,
                             args.remove_cols,
                             [int(x) for x in args.remove_sizes],
@@ -36,16 +38,29 @@ class MlSearch(object):
                             [int(x) for x in args.normalize_sizes],
                             args.classifiers,
                             int(args.granularity))
+
+        space_size = 0
+        for _ in space:
+            space_size += 1
+
         best_pair = None
         best_result = 0.0
+        counter = 0
         for pair in space:
-            sample = pair.preprocessing_descriptor.generate_sample(args.filepath)
+            sample = pair.preprocessing_descriptor.generate_sample(xls)
             classifier = pair.classification_descriptor.create_classifier()
             scores = cross_validation.cross_val_score(classifier, sample.attributes, sample.categories, cv=5,
                                                       scoring="f1")
             if scores.mean() > best_result:
                 best_result = scores.mean()
                 best_pair = pair
+
+            sys.stdout.write("\rProgress: %0.2f%%" % (100.0 * counter / float(space_size)))
+            sys.stdout.flush()
+
+            counter += 1
+
+        sys.stdout.write("\r")
 
         return MlSearchResult(best_pair.preprocessing_descriptor, best_pair.classification_descriptor, best_result)
 
@@ -77,12 +92,13 @@ class MlSearch(object):
 if __name__ == "__main__":
     app = MlSearch(sys.argv[1:])
 
-    results = app.search()
-
     print ""
     print "Machine Learning Search"
     print "-----------------------"
     print ""
+
+    results = app.search()
+
     print "Best accuracy: %f" % results.accuracy
     print "Classifier info: %s" % results.classification_d
     print "Preprocessing info: %s" % results.preprocessing_d

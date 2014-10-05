@@ -6,10 +6,11 @@ from numpy import array, array_equiv
 from ..descriptors import DescriptorException, QuantizationDescriptor, PreprocessingDescriptor, ClassificationDescriptor
 from ..input.clusterers import KMeansClusterer
 from ..input.sample import Sample
+from ..input.xlsfile import XlsFile
 
 
 def from_current_dir(filename):
-    return os.path.abspath(os.path.dirname(__file__)) + "\\" + filename
+    return XlsFile.load(os.path.abspath(os.path.dirname(__file__)) + "\\" + filename)
 
 
 def test_quant_descriptor_validate():

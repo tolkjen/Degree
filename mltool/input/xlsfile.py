@@ -65,3 +65,9 @@ class XlsFile:
         :return: A list of entry rows.
         """
         return self._row_list
+
+    @staticmethod
+    def load(filepath):
+        result = XlsFile(filepath)
+        result.read()
+        return result

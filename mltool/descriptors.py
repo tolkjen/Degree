@@ -56,8 +56,8 @@ class PreprocessingDescriptor:
         self.normalized_columns = normalize
         self.quantization_descriptors = q_descriptors
 
-    def generate_sample(self, filepath):
-        sample = Sample.from_file(filepath, self.fix_method)
+    def generate_sample(self, tabular_file):
+        sample = Sample.from_file(tabular_file, self.fix_method)
         for col_name in self.removed_columns:
             sample.remove_column(col_name)
         for col_name in self.normalized_columns:

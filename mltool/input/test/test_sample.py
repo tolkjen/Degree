@@ -5,6 +5,7 @@ import pytest
 from numpy import array, array_equiv, zeros
 
 from ..sample import Sample, SampleException
+from ..xlsfile import XlsFile
 
 
 class TestClusterer:
@@ -14,12 +15,7 @@ class TestClusterer:
 
 
 def from_current_dir(filename):
-    return os.path.abspath(os.path.dirname(__file__)) + "\\" + filename
-
-
-def test_non_existing():
-    with pytest.raises(SampleException):
-        Sample.from_file(from_current_dir('no-such-file.xlsx'))
+    return XlsFile.load(os.path.abspath(os.path.dirname(__file__)) + "\\" + filename)
 
 
 def test_no_index_column():
