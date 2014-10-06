@@ -224,8 +224,8 @@ class DescriptorPair(object):
 class SearchSpace(object):
     def __init__(self, fix_space, remove_space, normalize_space, quantify_space, classification_space):
         self._fix_space = fix_space
-        self._normalize_space = remove_space
-        self._remove_space = normalize_space
+        self._normalize_space = normalize_space
+        self._remove_space = remove_space
         self._quantify_space = quantify_space
         self._classification_space = classification_space
 
