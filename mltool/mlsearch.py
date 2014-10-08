@@ -1,11 +1,11 @@
 __author__ = 'tolkjen'
 
 import sys
+import time
 import argparse
-from sklearn import cross_validation
 
-from search import SearchSpace, RemoveSpace, NormalizeSpace, FixSpace, QuantifySpace, ClassificationSpace
-from input.xlsfile import XlsFile
+from spaces import SearchSpace, RemoveSpace, NormalizeSpace, FixSpace, QuantifySpace, ClassificationSpace
+from search import SearchAlgorithm
 
 
 class MlSearchResult(object):
@@ -28,9 +28,25 @@ class MlSearch(object):
 
     def search(self):
         args = self._parse_arguments()
+        search_space = self._create_search_space(args)
 
-        xls = XlsFile.load(args.filepath)
+        algorithm = SearchAlgorithm(args.filepath, search_space, processes=int(args.processes))
+        algorithm.start()
 
+        try:
+            while algorithm.running():
+                sys.stdout.write("\rProgress: %0.2f%%" % (100.0 * algorithm.progress()))
+                sys.stdout.flush()
+                time.sleep(0.05)
+        except KeyboardInterrupt:
+            algorithm.stop()
+
+        sys.stdout.write("\r")
+
+        result, pair = algorithm._result
+        return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, result)
+
+    def _create_search_space(self, args):
         fs = FixSpace(args.fix_methods)
         rs = RemoveSpace(args.remove_cols, [int(x) for x in args.remove_sizes])
         ns = NormalizeSpace(args.normalize_cols, [int(x) for x in args.normalize_sizes])
@@ -41,32 +57,7 @@ class MlSearch(object):
                            args.quantify_max_cols,
                            args.quantify_granularity)
         space = SearchSpace(fs, rs, ns, qs, cs)
-
-        space_size = 0
-        for _ in space:
-            space_size += 1
-        counter = 0
-
-        best_pair = None
-        best_result = 0.0
-
-        for pair in space:
-            sample = pair.preprocessing_descriptor.generate_sample(xls)
-            classifier = pair.classification_descriptor.create_classifier()
-            scores = cross_validation.cross_val_score(classifier, sample.attributes, sample.categories, cv=5,
-                                                      scoring="f1")
-
-            if scores.mean() > best_result:
-                best_result = scores.mean()
-                best_pair = pair.copy()
-
-            sys.stdout.write("\rProgress: %0.2f%%" % (100.0 * counter / float(space_size)))
-            sys.stdout.flush()
-            counter += 1
-
-        sys.stdout.write("\r")
-
-        return MlSearchResult(best_pair.preprocessing_descriptor, best_pair.classification_descriptor, best_result)
+        return space
 
     def _parse_arguments(self):
         parser = argparse.ArgumentParser(
@@ -102,6 +93,8 @@ class MlSearch(object):
         parser.add_argument("-cg", "--classification-granularity",
                             help="The level of granularity when iterating over classification parameters.", default=5,
                             dest="classify_granularity")
+        parser.add_argument("-p", "--processes", help="Number of processes which run the search in parallel.",
+                            default=1, dest="processes")
 
         return parser.parse_args(self._cmd_args)
 

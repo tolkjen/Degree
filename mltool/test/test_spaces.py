@@ -2,7 +2,7 @@ __author__ = 'tolkjen'
 
 import pytest
 
-from ..search import RemoveSpace, NormalizeSpace, SpaceException
+from ..spaces import RemoveSpace, NormalizeSpace, SpaceException
 from ..descriptors import PreprocessingDescriptor
 
 
