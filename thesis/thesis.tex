@@ -1,0 +1,83 @@
+\documentclass[a4paper,12pt,oneside]{mwrep}
+
+\usepackage{subfiles}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel} 
+\usepackage{times} 
+\usepackage[T1]{fontenc} 
+\usepackage[MeX]{polski} 
+\usepackage[pdftex]{graphicx} 
+\usepackage{pdfpages} 
+\usepackage{fancyhdr} % numery stron po zewnętrznej 
+\usepackage{wrapfig}
+\usepackage{hyperref} 
+\usepackage{titlesec} 
+\usepackage{graphicx}
+\graphicspath{{gfx/}{../gfx/}}
+
+% marginesy 
+\usepackage[ bindingoffset = 1cm, hmargin = 2cm, vmargin = 2cm]{geometry} 
+% interlinia 
+\linespread{1.5} 
+
+\widowpenalty=10000 % ostatni wiersz akapitu nie zostanie przeniesiony na następną stronę 
+\clubpenalty=10000 % pierwszy wiersz akapitu nie będzie kończył strony
+\hbadness= 1450 % zmniejsza liczę wyświetlanych ostrzeżeń
+\hfuzz = 0pt % tekst może sterczeć ma marginesie na 1,5pt (ok. 0,5mm)
+
+\brokenpenalty=10000 % nie dzieli stron jeżeli podział wyrazu
+\sloppy % zakaz wydłużania lini
+
+% wcięcia 
+\setlength{\parindent}{1cm} 
+\setcounter{secnumdepth}{2} % only sections and subsections are numbered 
+\setcounter{tocdepth}{2} % table of contents shows up to three levels 
+
+% EiTI
+% rozdział 16pt, pogrubiona, kapitalki, interlinia 2 
+
+\titleformat{\chapter}[hang] 
+{\Large\bfseries}{\thechapter}{10pt}{\Large\bfseries} 
+\titlespacing{\chapter}{0pt}{1em}{1em} 
+
+% podrozdział 12pt, pogrubiona, kapitalki, il 2 
+\titleformat{\section}[hang] 
+{\normalfont\bf}{\thesection}{10pt}{\normalfont\large\bf} 
+\titlespacing{\section}{0pt}{1em}{1em} 
+
+% punkt 12pt, pogrubiona, il 2 
+\titleformat{\subsection}[hang] 
+{\normalfont\bf}{\thesubsection}{10pt}{\normalfont\large\bf} 
+\titlespacing{\subsection}{0pt}{1em}{1em} 
+
+% podpunkt 12pt, il 2 
+\titleformat{\subsubsection}[hang] 
+{\normalfont}{\thesubsubsection}{10pt}{\normalfont\bf} 
+\titlespacing{\subsubsection}{0pt}{1em}{1em} 
+
+\titleformat{\paragraph}[hang] 
+{\normalfont}{\theparagraph}{10pt}{\normalfont\it} 
+\titlespacing{\paragraph}{15pt}{1em}{1em} 
+
+\renewcommand{\contentsname}{Spis treści} 
+\renewcommand{\refname}{Bibliografia}
+
+\begin{document} 
+
+\subfile{tex/title}
+\subfile{tex/abstract}
+\subfile{tex/cv}
+	
+\tableofcontents
+\newpage
+
+\subfile{tex/intro}
+\subfile{tex/classification}
+\subfile{tex/project}
+\subfile{tex/implementation}
+\subfile{tex/tests}
+\subfile{tex/results}
+\subfile{tex/conclusion}
+\subfile{tex/bibliography}
+
+\end{document}
