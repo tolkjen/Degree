@@ -1,16 +1,278 @@
 \documentclass[../thesis.tex]{subfiles}
+\graphicspath{{../gfx/}{gfx/}}
 \begin{document}
 
 \pagestyle{plain}
 
 \chapter{Projekt systemu komputerowego}
 
-W tym rozdziale skupiam się nad projektem systemu komputerowego ułatwiającego zadania klasyfikacji danych. 
+W tym rozdziale skupię się nad projektem systemu komputerowego ułatwiającego zadania klasyfikacji danych. Projektując aplikację, postanowiłem podzielić ją oddzielne, współpracujące ze sobą, elementy. Zaproponowany przeze mnie system komputerowy składa się z \todo{Opis modułów}. \todo{Dłuższy opis modułów}. 
 
-\section{Projekt narzędzia}
-\section{Projekt interfejsu sieciowego}
+Moduły współpracują ze sobą przy użyciu zdefiniowanych przeze mnie interfejsów. \todo{Opis interfejsów}.
+
+Dzięki rozdzieleniu całości na powiązane, lecz odrębne, moduły, prace nad wybranym fragmentem systemu można prowadzić w oderwaniu od reszty. Dodatkowo, luźno powiązana architektura umożliwia testowanie każdego podsystemu oddzielnie. Upraszcza to znacząco testowanie całej aplikacji.
+
+Rysunek \ref{proj:arch_diagram} przybliży czytelnikowi szczegóły podziału, jak również elementy wchodzące w skład każdego modułu systemu.
+
+\begin{figure}[h]
+\centering
+\includegraphics{missing.png}
+\caption{Diagram architektury systemu komputerowego}
+\label{proj:arch_diagram}
+\end{figure}
+
+\section{Projekt biblioteki obliczeniowej}
+
+\subsection{Struktura biblioteki}
+\label{proj:sec_structure}
+
+Biblioteka obliczeniowa składać się będzie z trzech części. Pierwszą z nich będzie zbiór klas odpowiedzialnych za odczyt i dostęp do danych. Klasy te pozwalać będą również na manipulowanie danymi (np. na normalizację atrybutów) oraz na ich klasyfikację. Drugą częścią biblioteki będą klasy związane z przetwarzaniem wstępnym i klasyfikacją danych w sposób zdefiniowany przez użytkownika. Stanowić one będą opis operacji, jakie powinny być wykonane przez aplikację. Ostatnim fragmentem biblioteki obliczeniowej będą klasy związane z przeszukiwaniem przestrzeni metod. 
+
+\subsection{Dostęp do danych}
+
+Klasa \emph{Sample} stanowić będzie reprezentację próbki danych zawartych w pliku dostarczonym przez użytkownika. Klasa ta zawierać będzie pola odpowiadające cechom próbki (liczba wierszy, liczba i nazwy atrybutów) jak również udostępniać będzie metody manipulujące danymi. Instancje obiektów klasy \emph{Sample} przechowywać będą wyłącznie atrybuty o ustalonych wartościach numerycznych. Opis pól i metod prezentuje listing \ref{proj:sample}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ p{40mm} | p{110mm} }
+Nazwa & Opis \\
+\hline
+Pole \emph{attributes} & Macierz zawierająca wszystkie wartości atrybutów w pliku. \\
+Pole \emph{categories} & Wektor zawierający wartości kategorii poszczególnych wierszy. \\
+Pole \emph{columns} & Lista nazw atrybutów. \\
+Pole \emph{ncols} & Liczba atrybutów. \\
+Pole \emph{nrows} & Liczba wierszy. \\
+Metoda \emph{from\textunderscore file} & Tworzy instancję obiektu klasy \emph{Sample}, ładując jej zawartość z instancji klasy implementującej interfejs \emph{DataFile} oraz reperując brakujące dane przy użyciu wybranego algorytmu. Metoda ignoruje kolumny z danymi o wartościach nienumerycznych. \\
+Metoda\\ \emph{remove\textunderscore column} & Usuwa z próbki atrybut o wybranej nazwie. \\
+Metoda\\ \emph{normalize\textunderscore column} & Normalizuje atrybut o wskazanej nazwie. \\
+Metoda\\ \emph{merge\textunderscore columns} & Łączy atrybuty o wybranych nazwach korzystając z instancji obiektu implementującego interfejs \emph{AbstractClusterer}. \\
+\end{tabular}
+\caption{Opis pól i metod klasy \emph{Sample}}
+\label{proj:sample}
+\end{table}
+
+Interfejs \emph{DataFile} zapewnia dostęp do danych, które nadają się do wstępnego przetwarzania i klasyfikacji. Interfejs ten pozwala w ujednolicony sposób traktować dane pochodzące z różnych formatów plików (np. MS Excel, CSV). Metody interfejsu pokazuje listing \ref{proj:datafile}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ p{40mm} | p{110mm} }
+Nazwa & Opis \\
+\hline
+Metoda \emph{columns} & Zwraca listę nazw kolumn w pliku. \\
+Metoda \emph{rows} & Zwraca listę wierszy w pliku. \\
+\end{tabular}
+\caption{Metody interfejsu \emph{DataFile}.}
+\label{proj:datafile}
+\end{table}
+
+Interfejs \emph{DataFile} jest implementowany przez klasę \emph{XlsFile}. Obiekty tej klasy umożliwiają dostęp do danych zapisanych w formatach z rodziny MS Excel. 
+
+Interfejs \emph{AbstractClusterer} definiuje dostęp do algorytmów związanych z łączeniem atrybutów (kwantyzacją). Jedyną metodą interfejsu jest metoda \emph{transform}. Parametrem metody jest lista wektorów z których każdy zawiera wartości wybranego atrybutu danych. Metoda zwraca pojedynczy wektor powstały poprzez złączenie wektorów wejściowych odpowiednią metodą (tabela \ref{proj:abstractclusterer}).
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ p{40mm} | p{110mm} }
+Nazwa & Opis \\
+\hline
+Metoda \emph{transform} & Zwraca atrybut powstały poprzez złączenie wybranych atrybutów.
+\end{tabular}
+\caption{Metody interfejsu \emph{AbstractClusterer}.}
+\label{proj:abstractclusterer}
+\end{table}
+
+Interfejs \emph{AbstractClusterer} implementują klasy \emph{EqualDistributionClusterer}, \emph{KMeansClusterer} i \emph{KMeansPlusPlusClusterer}. Stanowią one implementacje algorytmów, odpowiednio: łączenia o równej liczności grup, K-Średnich i K-Średnich plus plus \todo{Odnośnik do rozdziału o klasyfikacji}.
+
+Zaprojektowane klasy przedstawia diagram \ref{proj:input_diagram}.
+
+\begin{figure}[h]
+\centering
+\includegraphics{missing.png}
+\caption{Diagram klas związanych z dostępem do danych}
+\label{proj:input_diagram}
+\end{figure}
+
+\subsection{Deskryptory operacji}
+
+Projektując bibliotekę postanowiłem oddzielić kod związany z wyborem parametrów przetwarzania od kodu wykonującego to przetwarzanie. W tym celu zaprojektowałem specjalne klasy, tzw. \emph{deskryptory}. Klasy te czerpią ze wzorca projektowego \emph{Polecenie}~\cite{gang_of_four}, stanowiąc opisy operacji, które mają zostać wykonane. Każdy z deskryptorów dotyczy szczególnej części przetwarzania i posiada metody wykonujące daną operację oraz metody sprawdzające poprawność opisu operacji.
+
+Użycie deskryptorów posiada wiele zalet. Po pierwsze, logika związana z definiowaniem kolejnych kroków algorytmu jest odseparowana do właściwego algorytmu. Efektem tego jest prostszy i czytelniejszy kod. Po drugie, każdy deskryptor posiada metody umożliwiające sprawdzenie, czy wprowadzony opis operacji jest poprawny. Pomaga to w zarządzaniu kodem związanym z nieprawidłowymi ustawieniami wprowadzonymi przez użytkownika. Kolejną zaletą jest ograniczenie duplikacji kodu. Zarówno funkcjonalność związana z przetwarzaniem danych jak i ta polegająca na przeszukiwaniu mogą wykorzystywać klasy deskryptorów. Dodatkowym atutem podziału kodu na deskryptory jest uproszczenie testów jednostkowych. Testy projektowane będą pod określony deskryptor, dzięki czemu ich kod będzie czytelniejszy i prostszy w utrzymaniu.
+
+W mojej pracy planuję zaimplementować trzy rodzaje deskryptorów. Pierwszym z nich będzie klasa \emph{PreprocessingDescriptor} związana ze wstępnym przetwarzaniem danych. Instancje obiektu klasy \emph{PreprocessingDescriptor} posiadać będą pola zawierające informacje o metodzie radzenia sobie z brakującymi danymi, atrybutach poddawanych normalizacji itd. Klasa \emph{PreprocessingDescriptor} posiadać będzie również metodę wytwórczą zwracającą instancję obiektu klasy \emph{Sample}. Struktura klasy pokazana jest w tabeli \ref{proj:preprocessingdescriptor}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ p{40mm} | p{110mm} }
+Nazwa & Opis \\
+\hline
+Konstruktor & Przyjmuje jako parametry: metodę naprawiania brakujących danych, atrybuty do usunięcia, atrybuty do normalizacji, kolekcję obiektów klasy \emph{QuantisationDescriptor}. \\
+Metoda \emph{create\textunderscore sample} & Zwraca obiekt typu \emph{Sample} zgodny z parametrami przekazanymi do konstruktora. Jako argument pobiera obiekt implementujący interfejs \emph{DataFile}. \\
+Metoda \emph{validate} & Sprawdza poprawność parametrów przekazanych do konstruktora.
+\end{tabular}
+\caption{Pola i metody klasy \emph{PreprocessingDescriptor}.}
+\label{proj:preprocessingdescriptor}
+\end{table}
+
+Następnym deskryptorem będzie klasa \emph{QuantizationDescriptor}. Przechowywać będzie ona informacje o kwantyzacji atrybutów danych z wykorzystaniem pojedynczego, określonego algorytmu. Poza metodą sprawdzającą, klasa \emph{QuantizationDescriptor} oferować będzie również metodę wykonującą operację łączenia na wskazanej próbce danych. Pola i metody klasy przedstawia tabela \ref{proj:quantizationdescriptor}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ p{40mm} | p{110mm} }
+Nazwa & Opis \\
+\hline
+Konstruktor & Przyjmuje parametry: nazwy atrybutów przeznaczonych do złączenia, nazwę algorytmu kwantyzacji oraz parametry algorytmu. \\
+Metoda \emph{execute} & Jako argument pobiera obiekt klasy \emph{Sample}. Wykonuje operację kwantyzacji na wskazanych atrybutach danych zawartych wewnątrz argumentu. \\
+Metoda \emph{validate} & Sprawdza poprawność parametrów przekazanych do konstruktora.
+\end{tabular}
+\caption{Pola i metody klasy \emph{PreprocessingDescriptor}.}
+\label{proj:quantizationdescriptor}
+\end{table}
+
+Ostatnim deskryptorem jest klasa, związana z klasyfikacją danych, o nazwie \emph{ClassificationDescriptor}. Klasa ta będzie miała za zadanie przechowywać informacje o algorytmie klasyfikacji użytym podczas przetwarzania. Podobnie jak klasa \emph{PreprocessingDescriptor}, również ta klasa posiadać będzie metodę wytwórczą. Różnica będzie polegać na tym, że zwracać ona będzie obiekt klasyfikatora implementujący interfejs \emph{Classifier}. 
+
+Interfejs \emph{Classifier} udostępniać będzie dwie metody: \emph{fit} oraz \emph{predict}. Pierwsza z metod przyjmować będzie dwa parametry: macierz atrybutów oraz wektor z wartościami kategorii odpowiadającym poszczególnym wierszom macierzy. Wywołanie metody spowoduje nauczenie klasyfikatora zgodne z wybranym algorytmem uczenia. Metoda \emph{predict} przyjmować będzie pojedynczy wiersz danych i zwracać kategorię, do której dane zostały zaklasyfikowane. Interfejs prezentuje rysunek \ref{proj:diag_iclassifier}.
+
+\begin{figure}
+\centering
+\includegraphics{missing.png}
+\caption{Diagram interfejsu \emph{IClassifier}.}
+\label{proj:diag_iclassifier}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ p{40mm} | p{110mm} }
+Nazwa & Opis \\
+\hline
+Konstruktor & Przyjmuje parametry: nazwę algorytmu klasyfikacji, listę parametrów algorytmu. \\
+Metoda \\ \emph{create\textunderscore classifier} & Zwraca obiekt klasyfikatora. \\
+Metoda \emph{validate} & Sprawdza poprawność parametrów przekazanych do konstruktora obiektu.
+\end{tabular}
+\caption{Pola i metody klasy \emph{ClassificationDescriptor}.}
+\label{proj:classificationdescriptor}
+\end{table}
+
+Diagram sekwencji \ref{proj:descriptor_seq_diagram} ilustruje przykładowe wykorzystanie deskryptorów w programie.
+
+\begin{figure}[h]
+\centering
+\includegraphics{missing.png}
+\caption{Wykorzystanie klasyfikatorów \emph{PreprocessingDescriptor}, \emph{QuantizationDescriptor} oraz \emph{ClassificationDescriptor}.}
+\label{proj:descriptor_seq_diagram}
+\end{figure}
+
+\subsection{Przeszukiwanie przestrzeni kombinacji}
+
+Drugą z kluczowych funkcjonalności systemu będzie przeszukiwanie przestrzeni wariantów przetwarzania danych. Zgodnie z założeniami opisanymi w rozdziale poświęconym wymaganiom systemu, aplikacja umożliwiać będzie sprecyzowanie podprzestrzeni poszukiwań a następnie przystąpienie do wyszukiwania najlepszego rozwiązania. Aplikacja sprawdzać będzie poszczególne kombinacje operacji związanych z przetwarzaniem wstępnym oraz klasyfikacją. Przeszukiwanie sprawdzi wszystkie warianty, które będą odpowiadać opisowi wprowadzonemu przez użytkownika. W zależności od opisu, czas wykonywania operacji przewiduję na od kilku sekund do kilkunastu godzin. Z tego względu postarałem się zaprojektować przeszukiwanie w sposób umożliwiający łatwe sprawdzenie jego poprawności. Dodatkowo, przygotowany przeze mnie projekt rozdziela przeszukiwanie na luźno powiązane fragmenty, uproszczając tym samym bardzo skomplikowaną implementację.
+
+Przeszukiwanie, najprościej mówiąc, polegać będzie na przeglądaniu wszystkich kombinacji metod przeszukiwania, w celu znalezienia tej, która dawać będzie najwyższy wynik walidacji krzyżowej. Pomysł ten postanowiłem sprowadzić do sekwencji zagnieżdżonych pętli \ref{proj:algo_search}. Każda pętla odpowiadać będzie osobnej operacji związanej z przetwarzaniem danych. Zadaniem wszystkich pętli będzie przyrostowe tworzenie opisu czynności do wykonania. Polegać to będzie na uzupełnianiu pól deskryptorów informacjami związanymi z etapami przetwarzania odpowiadającym danym pętlom. Po uzupełnieniu odpowiedniego pola deskryptora, każda pętla przekaże go do pętli wewnątrz niej. Dzięki temu, podczas każdej iteracji pętli najgłębiej zagnieżdżonej otrzymamy deskryptory opisujące konkretną kombinację elementów przetwarzania. Informacja zawarta w deskryptorach będzie wystarczająca aby wykonać pojedyncze przetwarzanie i otrzymać wynik walidacji krzyżowej. 
+
+Wątek (lub proces) generujący opisy operacji będzie mógł rozdzielać je mi
+
+\begin{figure}
+\centering
+\includegraphics{missing.png}
+\caption{Poglądowy algorytm przeszukiwania}
+\label{proj:algo_search}
+\end{figure}
+
+Należy wspomnieć, że kolejność zagnieżdżania pętli odgrywa tu rolę. Dzieje się tak, ponieważ niektóre operacje mogą mieć wpływ na decyzję o wykonaniu innych operacji. Przykładowo, po usunięciu atrybutu o nazwie \emph{wiek} nie jest możliwe normalizowanie atrybutu o tej samej nazwie - z tego powodu pętla odpowiadająca normalizacji musi być umieszczona wewnątrz pętli odpowiadającej usuwaniu. 
+
+W celu uproszczenia kodu związanego z obsługą każdej z pętli, iterowanie po każdym poziomie zagnieżdżenia realizowane będzie przy pomocy obiektów specjalnych klas. Każda z klas będzie wykorzystywać wzorzec projektowy \emph{Iterator}~\cite{gang_of_four}. W mojej pracy sprowadzi się to do tego, że każda z klas implementować będzie interfejs \emph{AbstractSearchSpace}. Diagram klas \ref{proj:diagram_abstractsearchspace} ilustruje zależności między klasami.
+
+\begin{figure}
+\centering
+\includegraphics{missing.png}
+\caption{Interfejs \emph{AbstractSearchSpace} oraz klasy implementujące go.}
+\label{proj:diagram_abstractsearchspace}
+\end{figure}
+
+Interfejs \emph{AbstractSearchSpace} udostępniać będzie tylko jedną metodę o nazwie \emph{generate}. Argumentem metody będzie deskryptor - w założeniu pochodzący z pętli z wyższego poziomu zagnieżdżenia. Metoda zwracać będzie ten sam deskryptor lecz uzupełniony o informacje związane z danym etapem przetwarzania.
+
+Pierwszą z klas implementujących interfejs \emph{AbstractSearchSpace} jest klasa \emph{FixSpace}. Obiekt tej klasy ma za zadanie uzupełnić deskryptor o informację związaną z metodą pozbywania się brakujących danych. Argumentem konstruktora klasy będzie lista metod, z których algorytm przeszukiwania może skorzystać aby pozbyć się brakujących danych. Dla każdej metody z listy obiekt klasy wygeneruje pojedynczy deskryptor korzystający z danej metody.
+
+Następną klasą implementującą interfejs będzie klasa o nazwie \emph{RemoveSpace}. Konstruktor klasy będzie przyjmować dwa argumenty: listę nazw atrybutów przeznaczonych do usunięcia $\textbf{L}$ oraz listę krotności. Lista krotności zawierać będzie liczby odpowiadające liczbom atrybutów usuwanych jednocześnie. Dla każdej liczby krotności $n$ algorytm wygeneruje wszystkie podzbiory zbioru $\textbf{L}$ o liczności $n$. Przykładowo, dla listy atrybutów $\{a, b, c, d\}$ oraz listy krotności $\{1, 2\}$ algorytm wytworzy ${4 \choose 1} + {4 \choose 2} = 10$ kombinacji.  
+
+W podobny sposób zachowywać się będą obiekty klasy \emph{NormalizeSpace}. Zarówno jak w przypadku klasy \emph{RemoveSpace} konstruktor oczekiwać będzie listy nazw atrybutów oraz listy krotności. Różnica polegać będzie na tym, czego otrzymane kombinacje będą dotyczyć. Obiekt klasy \emph{NormalizeSpace} będzie bowiem uzupełniał dany deskryptor informacją dotyczącą normalizacji kolumn. 
+
+Obie klasy -- \emph{RemoveSpace} i \emph{NormalizeSpace} -- wykorzystywać będą algorytm generujący kolejne podzbiory o określonej liczności. W celu uniknięcia duplikacji kodu, algorytm odpowiedzialny za generowanie podzbiorów zostanie zaimplementowany w oddzielnej klasie o nazwie \emph{SubsetGenerator}. Klasa ta, podobnie jak klasy implementujące interfejs \emph{AbstractSearchSpace}, oparta będzie na wzorcu projektowym iteratora. 
+
+Kolejną klasą implementującą interfejs \emph{AbstractSearchSpace} będzie klasa o nazwie \emph{QuantifySpace}. Zadaniem obiektu tej klasy jest generowanie deskryptorów posiadających informację o kwantyzacjach, które mają zostać wykonane. 
+
+Konstruktor klasy przyjmuje zestaw argumentów odpowiadający wymaganiom funkcjonalnym przeszukiwania opisanym w rozdziale \ref{req:sec_search}. Pierwszym argumentem jest lista nazw atrybutów, które mogą wziąć udział w procesie kwantyzacji. Drugim argumentem jest lista obiektów implementujących interfejs \emph{AbstractClusterer} reprezentujących poszczególne algorytmy kwantyzacji. Następny argument to lista liczb odpowiadających liczbom kwantyzacji, które mogą zachodzić w tym samym czasie. Argument \emph{max\textunderscore cols} określa maksymalną liczbę atrybutów, które każdy z algorytmów kwantyzacji może łączyć. Ostatni argument określa granularność przeszukiwania.
+
+Ostatnią klasą odpowiedzialną za szczególny etap przeszukiwania będzie klasa \emph{ClassificationSpace}. Konstruktor klasy przyjmować będzie jedynie dwa parametry -- listę obiektów implementujących interfejs \emph{Classifier} oraz granularność operacji. Obiekt klasy \emph{ClassificationSpace} wygeneruje wszystkie kombinacje przekazanych algorytmów klasyfikacji oraz ich parametrów, które określać będzie wartość granularności.
+
+Iterowanie z wykorzystaniem powyższych klas zaimplementowane zostanie w klasie \emph{SearchSpace}. Klasa ta, będąca kolejnym przykładem iteratora, pozwoli na łatwe generowanie kolejnych deskryptorów. Konstruktor klasy przyjmować będzie obiekty klas \emph{FixSpace}, \emph{RemoveSpace}, \emph{NormalizeSpace}, \emph{QuantifySpace} oraz \emph{ClassificationSpace}. Przy każdej iteracji obiekt klasy \emph{SearchSpace} zwróci parę deskryptorów -- obiekty klas \emph{PreprocessingDescriptor} oraz \emph{ClassificationDescriptor}.
+
+Wykorzystanie klas, jakimi są deskryptory, umożliwi rozdzielenie kodu odpowiedzialnego za wytwarzanie deskryptorów od kodu przetwarzającego dane zgodnie z opisem zawartym w deskryptorach. Rozdzielenie tych obowiązków posiada bardzo dużą zaletę. Na komputerach wyposażonych w przynajmniej dwa rdzenie procesora aplikacja będzie mogła w prosty sposób przetwarzać dane równolegle. Możliwość ta wynika z faktu, że wygenerowanie pojedynczego deskryptora zajmować będzie znacznie mniej czasu, niż przetworzenie danych związanych z nim. Wątek (lub proces) będzie ,,rozdawał'' opisy operacji innym wątkom (lub procesom) i co jakiś czas odbierał rezultaty obliczeń. Rozwiązanie to pozwoli na skrócenie czasu przeszukiwania.
+
+Przeprowadzenie przeszukiwania z wykorzystaniem wyżej opisanych klas zostanie umieszczone wewnątrz klasy \emph{SearchAlgorithm}. Diagram klasy prezentuje rysunek \ref{proj:diagram_searchalgorithm}. Konstruktor klasy pobierać będzie trzy parametry. Pierwszym z nich będzie ścieżka do pliku z danymi. Drugim parametrem będzie obiekt klasy \emph{SearchSpace} reprezentujący przestrzeń kombinacji do przeszukania. Ostatnim parametrem będzie liczba wątków wykonania użyta podczas przeszukiwania.
+
+\begin{figure}
+\centering
+\includegraphics{missing.png}
+\caption{Diagram klasy \emph{SearchAlgorithm}.}
+\label{proj:diagram_searchalgorithm}
+\end{figure}
+
+Przeszukiwanie rozpocznie się po wywołaniu metody \emph{start} obiektu klasy \emph{SearchAlgorithm}. Po wywołaniu tej metody zostanie utworzony osobny wątek w którym rozpocznie się wyszukiwanie. Metoda \emph{progress} pozwoli na podejrzenie postępu przeszukiwania. Zwróci ona liczbę z przedziału $[0, 1]$ oznaczającą postęp przeszukiwań. O tym, czy przeszukiwanie zostało zakończone informować będzie wartość zwrócona przez metodę \emph{running}. Po zakończeniu przeszukiwania metoda \emph{result} zwróci strukturę zawierającą parę deskryptorów dającą najlepszy wynik jak również sam wynik. Rozpoczęte przeszukiwanie będzie można zatrzymać metodą \emph{stop}.
+
+\section{Projekt aplikacji}
 \section{Projekt testów}
-\subsection{Testy narzędzia}
-\subsection{Testy interfejsu}
+
+\subsection{Testy biblioteki obliczeniowej}
+
+Biblioteka obliczeniowa stanowi fundament całej aplikacji. Wyniki działania biblioteki decydować będą o rezultatach badań, jakie przeprowadzać będzie użytkownik. Z tego powodu niezmiernie istotne jest upewnienie się, że biblioteka obliczeniowa działa poprawnie. 
+
+W celu sprawdzenia tego istotnego warunku, poprawność działania klas w bibliotece będzie sprawdzana przy pomocy testów jednostkowych. Dzięki modularnej strukturze biblioteki opisanej w punkcie~\ref{proj:sec_structure}, możliwe jest oddzielne testowanie poszczególnych klas biblioteki. Weryfikacja poprawności działania poszczególnych fragmentów biblioteki umożliwi wyeliminowanie większości możliwych błędów.
+
+Tabela \ref{proj:lib_input_uts} prezentuje opis testów jednostkowych badających poprawność działania części biblioteki odpowiedzialnej za odczyt i przetwarzanie wstępne danych. Tabela \ref{proj:lib_descriptor_uts} pokazuje testy klas-deskryptorów. Testy jednostkowe klas odpowiadających za przeszukiwanie zostały umieszczone w tabeli \ref{proj:lib_search_uts}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ p{40mm} | p{110mm} }
+Nazwa klasy & Opis testów \\
+\hline
+XlsFile & Weryfikacja stan obiektu po odczytaniu różnych poprawnych danych poprawnych, weryfikacja rzucania wyjątków podczas odczytu danych niepoprawnych. \\
+KMeansClusterer & Sprawdzenie, czy wynik klasteryzacji podlega założeniom algorytmu K-Średnich, weryfikacja rzucania wyjątków w przypadku otrzymania nieprawidłowych parametrów. \\
+KMeansPlusPlus\-Clusterer & Sprawdzenie, czy wynik klasteryzacji podlega założeniom algorytmu K-Średnich++, weryfikacja rzucania wyjątków w przypadku otrzymania nieprawidłowych parametrów. \\
+EqualDistribution\-Clusterer & Sprawdzenie, czy wynik klasteryzacji podlega założeniom algorytmu łączenia o równej liczności grup, weryfikacja rzucania wyjątków w przypadku otrzymania nieprawidłowych parametrów. \\
+Sample & Badanie stanu obiektu po odczycie poprawnych danych, badanie rzucania wyjątków podczas odczytu danych niepoprawnych. Badanie poprawności działania metod modyfikujących atrybuty danych, weryfikacja rzucania wyjątków podczas wołania metod z nieprawidłowymi argumentami. \\
+\end{tabular}
+\caption{Testy klas biorących udział w odczycie i przetwarzaniu wstępnym danych.}
+\label{proj:lib_input_uts}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ p{40mm} | p{110mm} }
+Nazwa klasy & Opis testów \\
+\hline
+Quantification\-Descriptor & Sprawdzenie czy opis w deskryptorze odpowiada operacjom kwantyzacji przeprowadzanym przez deskryptor, badanie rzucania wyjątków dla nieprawidłowych parametrów deskryptora. \\
+Preprocessing\-Descriptor & Weryfikowanie czy opis w deskryptorze odpowiada przetwarzaniu wstępnemu przeprowadzonemu przez deskryptor, badanie rzucania wyjątków dla nieprawidłowych parametrów deskryptora. \\
+Classification\-Descriptor & Badanie czy opis w deskryptorze odpowiada operacji klasyfikacji przeprowadzonej przez deskryptor, badanie rzucania wyjątków dla nieprawidłowych parametrów deskryptora. \\
+\end{tabular}
+\caption{Testy jednostkowe deskryptorów}
+\label{proj:lib_descriptor_uts}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ p{40mm} | p{110mm} }
+Nazwa klasy & Opis testów \\
+\hline
+FixSpace & Testowanie poprawności kombinacji wygenerowanych przez obiekt klasy, badanie rzucania wyjątków dla nieprawidłowych parametrów konstruktora. \\
+RemoveSpace & Testowanie poprawności kombinacji wygenerowanych przez obiekt klasy, badanie rzucania wyjątków dla nieprawidłowych parametrów konstruktora. \\
+NormalizeSpace & Testowanie poprawności kombinacji wygenerowanych przez obiekt klasy, badanie czy kombinacje uwzględniają ew. usunięcie niektórych atrybutów. Weryfikowanie rzucania wyjątków dla nieprawidłowych parametrów konstruktora. \\
+QuantifySpace & Testowanie poprawności kombinacji wygenerowanych przez obiekt klasy, badanie czy kombinacje uwzględniają ew. usunięcie niektórych atrybutów. Weryfikowanie rzucania wyjątków dla nieprawidłowych parametrów konstruktora. \\
+Classification\-Space & Testowanie poprawności kombinacji wygenerowanych przez obiekt klasy, badanie rzucania wyjątków dla nieprawidłowych parametrów konstruktora. \\
+SearchSpace & Badanie poprawności deskryptorów wygenerowanych przez obiekt klasy przy różnych ustawieniach klas odpowiadających za poszczególne etapy przeszukiwania. \\
+SearchAlgorithm & Sprawdzenie poprawności stanu obiektu przed, w trakcie i po zakończeniu przeszukiwania. Testowanie informacji przedstawiającej postęp przeszukiwania oraz końcowy wynik. \\
+\end{tabular}
+\caption{Testy klas związanych z przeszukiwaniem}
+\label{proj:lib_search_uts}
+\end{table}
+
+\subsection{Testy aplikacji}
 
 \end{document}
