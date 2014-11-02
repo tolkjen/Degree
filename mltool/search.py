@@ -2,7 +2,7 @@ __author__ = 'tolkjen'
 
 import threading
 import multiprocessing
-from sklearn import cross_validation
+from sklearn.cross_validation import cross_val_score, StratifiedKFold
 
 from input.xlsfile import XlsFile
 
@@ -18,8 +18,9 @@ def _process_entry_point(filepath, q_work, q_result):
 
             sample = pair.preprocessing_descriptor.generate_sample(xls)
             classifier = pair.classification_descriptor.create_classifier()
-            scores = cross_validation.cross_val_score(classifier, sample.attributes, sample.categories, cv=5,
-                                                      scoring="f1")
+
+            splitter = StratifiedKFold(sample.categories, n_folds=5, shuffle=True)
+            scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=splitter, scoring="f1")
 
             q_result.put((scores.mean(), pair))
     except KeyboardInterrupt:
@@ -83,8 +84,9 @@ class SearchAlgorithm(object):
         for pair in self._search_space:
             sample = pair.preprocessing_descriptor.generate_sample(xls)
             classifier = pair.classification_descriptor.create_classifier()
-            scores = cross_validation.cross_val_score(classifier, sample.attributes, sample.categories, cv=5,
-                                                      scoring="f1")
+
+            splitter = StratifiedKFold(sample.categories, n_folds=5, shuffle=True)
+            scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=splitter, scoring="f1")
 
             if scores.mean() > best_result:
                 best_result = scores.mean()
@@ -134,16 +136,19 @@ class SearchAlgorithm(object):
                 if self._stop_requested:
                     break
 
-        for _ in processes:
-            result, dp = queue_result.get()
-            if result > best_result:
-                best_result = result
-                best_pair = dp
-            progress += 1
-            with self._progress_lock:
-                self._progress_fraction = max(0.0, progress / float(space_size))
-                if self._stop_requested:
-                    break
+        with self._progress_lock:
+            if not self._stop_requested:
+                for _ in processes:
+                    result, dp = queue_result.get()
+                    if result > best_result:
+                        best_result = result
+                        best_pair = dp
+
+                    progress += 1
+
+                    self._progress_fraction = max(0.0, progress / float(space_size))
+                    if self._stop_requested:
+                        break
 
         for p in processes:
             p.terminate()

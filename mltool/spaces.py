@@ -195,7 +195,11 @@ class QuantifySpace(AbstractSearchSpace):
     _param_spaces = {
         "k-means": [LinearValueSpace(2, 20)],
         "k-means++": [LinearValueSpace(2, 20)],
-        "ed": [LinearValueSpace(2, 20)]
+        "ed": [LinearValueSpace(2, 20)],
+        "dbscan": [ExpValueSpace(0.0001, 0.5), NominalValueSpace([2, 3, 4, 5])],
+        "hierarchy_ward": [LinearValueSpace(2, 20)],
+        "hierarchy_complete": [LinearValueSpace(2, 20)],
+        "hierarchy_avg": [LinearValueSpace(2, 20)],
     }
 
     def __init__(self, columns, clusterers, clusterer_counts, max_cols, granularity):
@@ -254,9 +258,13 @@ class QuantifySpace(AbstractSearchSpace):
 class ClassificationSpace(object):
 
     _param_spaces = {
-        "gaussianNB": [],
+        "bayes": [],
         "tree": [],
-        "svc": [ExpValueSpace(0.0001, 10000), ExpValueSpace(0.0001, 10000)]
+        "svc_rbf": [ExpValueSpace(0.0001, 10000), ExpValueSpace(0.0001, 10000)],
+        "svc_linear": [ExpValueSpace(0.0001, 10000)],
+        "knn": [NominalValueSpace([1, 3, 5, 7, 9, 11])],
+        "random_forest": [NominalValueSpace([5, 10, 15, 20, 25, 30]), NominalValueSpace([2, 3, 4])],
+        "extra_trees": [NominalValueSpace([5, 10, 15, 20, 25, 30]), NominalValueSpace([2, 3, 4])],
     }
 
     def __init__(self, classifiers, granularity):

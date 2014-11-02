@@ -2,10 +2,13 @@ __author__ = 'tolkjen'
 
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 
 from input.sample import Sample
-from input.clusterers import KMeansClusterer, KMeansPlusPlusClusterer, EqualDistributionClusterer
+from input.clusterers import KMeansClusterer, KMeansPlusPlusClusterer, EqualDistributionClusterer, DBScanClusterer, \
+    WardHierarchyClusterer, CompleteHierarchyClusterer, AverageHierarchyClusterer
 
 
 class DescriptorException(Exception):
@@ -18,8 +21,13 @@ class DescriptorException(Exception):
 
 
 class QuantizationDescriptor:
-    _algorithms = {"k-means": KMeansClusterer, "k-means++": KMeansPlusPlusClusterer,
-                   "ed": EqualDistributionClusterer}
+    _algorithms = {"k-means": KMeansClusterer,
+                   "k-means++": KMeansPlusPlusClusterer,
+                   "ed": EqualDistributionClusterer,
+                   "dbscan": DBScanClusterer,
+                   "hierarchy_ward": WardHierarchyClusterer,
+                   "hierarchy_complete": CompleteHierarchyClusterer,
+                   "hierarchy_avg": AverageHierarchyClusterer}
 
     def __init__(self, columns, method, args):
         self.columns = columns
@@ -61,7 +69,7 @@ class PreprocessingDescriptor:
         for col_name in self.removed_columns:
             sample.remove_column(col_name)
         for col_name in self.normalized_columns:
-            sample.normalize_column(col_name)
+            sample.normalize_column(col_name, (-1.0, 1.0))
         for descriptor in self.quantization_descriptors:
             descriptor.execute(sample)
         return sample
@@ -102,21 +110,59 @@ class ClassificationDescriptor:
     def _create_decision_tree(self, params):
         return DecisionTreeClassifier()
 
-    def _create_svc(self, params):
+    def _create_svc_rbf(self, params):
         try:
             c = float(params[0])
             gamma = float(params[1])
         except:
             raise DescriptorException("Classifier parameters are incorrect.")
         else:
-            return SVC(C=c, gamma=gamma)
+            return SVC(C=c, gamma=gamma, kernel="rbf")
+
+    def _create_svc_linear(self, params):
+        try:
+            c = float(params[0])
+        except:
+            raise DescriptorException("Classifier parameters are incorrect.")
+        else:
+            return LinearSVC(dual=False, C=c)
+
+    def _create_knn(self, params):
+        try:
+            n = int(params[0])
+        except:
+            raise DescriptorException("Classifier parameters are incorrect.")
+        else:
+            return KNeighborsClassifier(n_neighbors=n)
+
+    def _create_random_forest(self, params):
+        try:
+            n = int(params[0])
+            features = int(params[1])
+        except:
+            raise DescriptorException("Classifier parameters are incorrect.")
+        else:
+            return RandomForestClassifier(n_estimators=n, max_features=features)
+
+    def _create_extra_trees(self, params):
+        try:
+            n = int(params[0])
+            features = int(params[1])
+        except:
+            raise DescriptorException("Classifier parameters are incorrect.")
+        else:
+            return ExtraTreesClassifier(n_estimators=n, max_features=features)
 
     # Each entry is:
     #  - key: name for the classifier
     #  - value: a tuple of (factory method, number of parameters accepted)
-    _classifiers = {"gaussianNB": (_create_gaussian_nb, 0),
+    _classifiers = {"bayes": (_create_gaussian_nb, 0),
                     "tree": (_create_decision_tree, 0),
-                    "svc": (_create_svc, 2)}
+                    "svc_rbf": (_create_svc_rbf, 2),
+                    "svc_linear": (_create_svc_linear, 1),
+                    "knn": (_create_knn, 1),
+                    "random_forest": (_create_random_forest, 2),
+                    "extra_trees": (_create_extra_trees, 2)}
 
     def __init__(self, name, arguments):
         self._name = name

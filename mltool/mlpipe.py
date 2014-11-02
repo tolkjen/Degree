@@ -2,7 +2,7 @@ __author__ = 'tolkjen'
 
 import argparse
 import sys
-from sklearn import cross_validation
+from sklearn.cross_validation import cross_val_score, StratifiedKFold
 
 from descriptors import PreprocessingDescriptor, ClassificationDescriptor, QuantizationDescriptor, DescriptorException
 from input.sample import SampleException
@@ -67,7 +67,9 @@ class MlPipe:
 
         sample = preprocessor.generate_sample(XlsFile.load(args.filepath))
         classifier = classifier_descriptor.create_classifier()
-        scores = cross_validation.cross_val_score(classifier, sample.attributes, sample.categories, cv=5, scoring="f1")
+
+        splitter = StratifiedKFold(sample.categories, n_folds=5, shuffle=True)
+        scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=splitter, scoring="f1")
 
         return MlPipeResult(sample.nrows, scores.mean(), scores.std(), sample.columns)
 

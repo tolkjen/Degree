@@ -55,7 +55,7 @@ class MlSearch(object):
                            args.quantify_algo,
                            [int(x) for x in args.quantify_sizes],
                            args.quantify_max_cols,
-                           args.quantify_granularity)
+                           int(args.quantify_granularity))
         space = SearchSpace(fs, rs, ns, qs, cs)
         return space
 

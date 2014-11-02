@@ -1,10 +1,8 @@
 __author__ = 'tolkjen'
 
-import sys
+from sys import maxint
 import math
-import random
-from numpy import array
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, DBSCAN, AgglomerativeClustering
 
 
 def distance_euclidean(a, b):
@@ -92,3 +90,56 @@ class KMeansPlusPlusClusterer(KMeansClusterer):
     def __init__(self, bucket_count):
         super(KMeansPlusPlusClusterer, self).__init__(bucket_count)
         self._initialization = 'k-means++'
+
+
+class DBScanClusterer(AbstractClusterer):
+    param_count = 2
+
+    def __init__(self, eps_ratio, min_samples):
+        if eps_ratio < 0.0 or eps_ratio > 1.0:
+            raise Exception("eps_ratio parameter must be contained within [0, 1].")
+
+        self._eps_ratio = eps_ratio
+        self._min_samples = min_samples
+
+    def transform(self, attributes):
+        min_distance = maxint
+        max_distance = -maxint - 1
+        for i in range(len(attributes) - 1):
+            for j in range(len(attributes) - i - 1):
+                distance = distance_euclidean(attributes[i], attributes[i+j+1])
+                min_distance = min(min_distance, distance)
+                max_distance = max(max_distance, distance)
+
+        eps = min_distance + (max_distance - min_distance) * self._eps_ratio
+
+        clusterer = DBSCAN(eps=eps, min_samples=self._min_samples)
+        return clusterer.fit_predict(attributes).reshape(attributes.shape[0], 1)
+
+
+class WardHierarchyClusterer(AbstractClusterer):
+    param_count = 1
+
+    def __init__(self, buckets):
+        self._buckets = int(buckets)
+        self._linkage = "ward"
+
+    def transform(self, attributes):
+        clusterer = AgglomerativeClustering(n_clusters=self._buckets, linkage=self._linkage)
+        return clusterer.fit_predict(attributes).reshape(attributes.shape[0], 1)
+
+
+class CompleteHierarchyClusterer(WardHierarchyClusterer):
+    param_count = 1
+
+    def __init__(self, buckets):
+        super(CompleteHierarchyClusterer, self).__init__(buckets)
+        self._linkage = "complete"
+
+
+class AverageHierarchyClusterer(WardHierarchyClusterer):
+    param_count = 1
+
+    def __init__(self, buckets):
+        super(AverageHierarchyClusterer, self).__init__(buckets)
+        self._linkage = "average"
