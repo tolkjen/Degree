@@ -1,0 +1,35 @@
+Uwagi dotyczące rozdziału 3 (założenia)
+
+Nie definiować co to są wymagania. Czytelnik (recenzent) to wie.
+
+Linie 2-12 na stronie 7 zamienić na:
+
+W tym rozdziale opisuję wymagania funkcjonalne, czyli możliwości, jakie daje użytkownikom projektowny system, wymagania jakościowe (niefunkcjonalne) oraz wymagania ograniczeń.
+
+Rozdział 3.1
+
+Zdanie: Aplikacja ma za zadania ... do końca akapitu, czyli napisu ' i 'projektowanego rozwiązania' zamienić na
+
+Aplikacja ma za zadanie wykonywać czasochłonne operacje: wstępne przetwarzanie danych, ich klasyfikację, wyszukiwanie kombinacji metod i parametrów, których użycie daje najwyższą jakość klasyfikacji.
+Funcje dostarczane przez system podzieliłem na trzy grupy: przetwarzanie wstępne i klasyfikacja, przeszukiwanie oraz pozostałe.
+
+Rozdział 3.1.1
+
+Nie odwoływać się do elementów, które będą opisane później.
+
+Tekst:
+
+Powołuuąc się na to, co opisałem w rodziale o klasyfikacji użytkownik ...
+
+Zamienić na:
+
+Użytkownik ...
+
+
+Rozdział 3.1.2
+
+napis 'złoty środek' str. 9 zamienić na 'kompromis'
+
+Rozdział 3.2
+
+usunąć przypis na str. 12, czytelnik sam sobie pomnoży, jeżeli zechce
