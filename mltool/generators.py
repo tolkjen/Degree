@@ -134,23 +134,28 @@ class MultiSubsetGenerator(object):
         if self._objects and self._combination and self._distribution:
             self._data = []
             self._generate([])
+
+            collection = {}
+            for datasets in self._data:
+                for index, dataset in datasets:
+                    dataset.sort()
+                datasets.sort()
+                collection[str(datasets)] = datasets
+            self._data = collection.values()
+
             for multiset in self._data:
-                yield [[self._objects[i] for i in subset] for subset in multiset]
+                yield [[self._objects[i] for i in subset] for index, subset in multiset]
 
     def _generate(self, working_set):
         index = len(working_set)
         if index == len(self._distribution):
             self._data.append(working_set)
         else:
-            flat_working_set = reduce(lambda a, b: a + b, working_set, [])
+            flat_working_set = reduce(lambda a, b: a + b[1], working_set, [])
 
-            subrange_start = 0
-            if index > 0 and self._combination[index - 1] == self._combination[index]:
-                subrange_start = working_set[index - 1][0] + 1
-
-            subrange = [i for i in self._indices if i >= subrange_start and not i in flat_working_set]
+            subrange = [i for i in self._indices if not i in flat_working_set]
 
             if len(subrange) >= self._distribution[index]:
                 generator = SubsetGenerator(subrange, self._distribution[index])
                 for subset in generator:
-                    self._generate(working_set + [subset])
+                    self._generate(working_set + [(self._combination[index], subset)])

@@ -43,8 +43,10 @@ class MlSearch(object):
 
         sys.stdout.write("\r")
 
-        result, pair = algorithm._result
-        return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, result)
+        if algorithm.result():
+            result, pair = algorithm.result()
+            return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, result)
+        return None
 
     def _create_search_space(self, args):
         fs = FixSpace(args.fix_methods)
@@ -64,7 +66,9 @@ class MlSearch(object):
             description="Searches through data preprocessing and data classification parameters in order to find ones "
                         "which maximize the classification accuracy.")
         parser.add_argument("filepath", help="Path to the file containing data.")
-        parser.add_argument("classifiers", help="List of classification algorithms that search can use.",
+        parser.add_argument("classifiers",
+                            help="List of classification algorithms that search can use. Supported algorithms: " +
+                                 ", ".join(ClassificationSpace.algorithms),
                             action=MlSearch.SplitAction)
         parser.add_argument("-f", "--fix", help="List of methods for fixing missing data that search can choose from.",
                             default=["remove"], action=MlSearch.SplitAction, dest="fix_methods")
@@ -80,7 +84,9 @@ class MlSearch(object):
                             default=[], action=MlSearch.SplitAction, dest="normalize_sizes")
         parser.add_argument("-qc", "--quantify-cols", help="List of columns which can be used during quantification.",
                             default=[], dest="quantify_cols", action=MlSearch.SplitAction)
-        parser.add_argument("-qa", "--quantify-algorithms", help="List of quantification algorithms to use.",
+        parser.add_argument("-qa", "--quantify-algorithms",
+                            help="List of quantification algorithms to use. Supported algorithms: " +
+                                 ", ".join(QuantifySpace.algorithms),
                             default=[], dest="quantify_algo", action=MlSearch.SplitAction)
         parser.add_argument("-qs", "--quantify-sizes", help="List of numbers of quantifications performed at the same "
                                                             "time.",
@@ -108,7 +114,9 @@ if __name__ == "__main__":
     print ""
 
     results = app.search()
-
-    print "Best accuracy: %f" % results.accuracy
-    print "Classifier info: %s" % results.classification_d
-    print "Preprocessing info: %s" % results.preprocessing_d
+    if results:
+        print "Best accuracy: %f" % results.accuracy
+        print "Classifier info: %s" % results.classification_d
+        print "Preprocessing info: %s" % results.preprocessing_d
+    else:
+        print "Didn't find anything"

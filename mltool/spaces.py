@@ -202,6 +202,8 @@ class QuantifySpace(AbstractSearchSpace):
         "hierarchy_avg": [LinearValueSpace(2, 20)],
     }
 
+    algorithms = _param_spaces.keys()
+
     def __init__(self, columns, clusterers, clusterer_counts, max_cols, granularity):
         """
         Creates a search space object.
@@ -266,6 +268,8 @@ class ClassificationSpace(object):
         "random_forest": [NominalValueSpace([5, 10, 15, 20, 25, 30]), NominalValueSpace([2, 3, 4])],
         "extra_trees": [NominalValueSpace([5, 10, 15, 20, 25, 30]), NominalValueSpace([2, 3, 4])],
     }
+
+    algorithms = _param_spaces.keys()
 
     def __init__(self, classifiers, granularity):
         for classifier in classifiers:

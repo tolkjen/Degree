@@ -76,7 +76,7 @@ def test_pre_descriptor_generate_sample():
     d = PreprocessingDescriptor(fix_method="remove", remove=["Height"], normalize=["Age"], q_descriptors=[q])
     sample = d.generate_sample(from_current_dir("sample2.xlsx"))
 
-    expected_attributes = array([[0.0, 0], [0.5, 0], [1.0, 0]])
+    expected_attributes = array([[-1.0, 0], [0.0, 0], [1.0, 0]])
     assert array_equiv(sample.attributes, expected_attributes)
 
 
@@ -93,5 +93,5 @@ def test_class_descriptor_wrong_arguments():
 
 
 def test_class_descriptor_create():
-    d = ClassificationDescriptor("gaussianNB", [])
+    d = ClassificationDescriptor("bayes", [])
     d.create_classifier()

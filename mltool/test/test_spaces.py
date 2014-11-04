@@ -2,7 +2,8 @@ __author__ = 'tolkjen'
 
 import pytest
 
-from ..spaces import RemoveSpace, NormalizeSpace, SpaceException
+from ..spaces import RemoveSpace, NormalizeSpace, SpaceException, FixSpace, ClassificationSpace, QuantifySpace, \
+    SearchSpace
 from ..descriptors import PreprocessingDescriptor
 
 
@@ -40,3 +41,43 @@ def test_normalize_space_missing_arguments():
 
     with pytest.raises(SpaceException):
         NormalizeSpace([], [1])
+
+
+def test_quantify_space():
+    columns = ["a", "b", "c", "d"]
+    algorithms = ["k-means"]
+    group_sizes = [1]
+    max_columns = 4
+    granularity = 2
+
+    space = QuantifySpace(columns, algorithms, group_sizes, max_columns, granularity)
+    count = sum((1 for _ in space.generate(PreprocessingDescriptor())))
+    assert count == (4 + 6 + 4 + 1) * granularity
+
+
+def test_quantify_space_2():
+    columns = ["a", "b", "c", "d"]
+    algorithms = ["k-means"]
+    group_sizes = [2]
+    max_columns = 4
+    granularity = 2
+
+    space = QuantifySpace(columns, algorithms, group_sizes, max_columns, granularity)
+    count = sum((1 for _ in space.generate(PreprocessingDescriptor())))
+    assert count == (6 + 12 + 3 + 4) * granularity * granularity
+
+
+def test_search_space_with_removed_cols():
+    columns = ["a", "b", "c", "d"]
+    granularity = 2
+
+    fix_space = FixSpace(["remove"])
+    remove_space = RemoveSpace(columns, [1])
+    normalize_space = NormalizeSpace(columns, [len(columns)])
+    quantify_space = QuantifySpace(columns, [], [0], 3, granularity)
+    classify_space = ClassificationSpace(["tree"], granularity)
+
+    search_space = SearchSpace(fix_space, remove_space, normalize_space, quantify_space, classify_space)
+
+    descriptors = [x for x in search_space]
+    assert len(descriptors) == 0

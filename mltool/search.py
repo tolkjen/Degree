@@ -2,15 +2,18 @@ __author__ = 'tolkjen'
 
 import threading
 import multiprocessing
+import numpy.random
+
 from sklearn.cross_validation import cross_val_score, StratifiedKFold
 
 from input.xlsfile import XlsFile
 
 
-def _process_entry_point(filepath, q_work, q_result):
+def _process_entry_point(random, filepath, q_work, q_result):
     xls = XlsFile(filepath)
     xls.read()
 
+    cross_validator = CrossValidator(random, splits_per_group=3)
     try:
         q_result.put((0.0, None))
         while True:
@@ -18,13 +21,48 @@ def _process_entry_point(filepath, q_work, q_result):
 
             sample = pair.preprocessing_descriptor.generate_sample(xls)
             classifier = pair.classification_descriptor.create_classifier()
+            score = cross_validator.validate(sample, classifier)
 
-            splitter = StratifiedKFold(sample.categories, n_folds=5, shuffle=True)
-            scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=splitter, scoring="f1")
-
-            q_result.put((scores.mean(), pair))
+            q_result.put((score, pair))
     except KeyboardInterrupt:
         q_result.put((0.0, None))
+
+
+class CrossValidator(object):
+    def __init__(self, random_state=None, splits_per_group=3):
+        self._random = random_state
+        self._splits_per_group = splits_per_group
+        self._split_groups = {}
+
+    def validate(self, sample, classifier):
+        n_samples = len(sample.attributes)
+        if not n_samples in self._split_groups:
+            group = [StratifiedKFold(sample.categories, n_folds=5, shuffle=True, random_state=self._random) for _ in
+                     range(self._splits_per_group)]
+            self._split_groups[n_samples] = group
+
+        mean_list = []
+        split_group = self._split_groups[n_samples]
+        for split in split_group:
+            scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=split, scoring="f1")
+            mean_list.append(scores.mean())
+        return sum(mean_list) / float(len(mean_list))
+
+
+class Progress(object):
+    def __init__(self, search_space, value=0):
+        self._search_space = search_space
+        self._progress = value
+
+        self.space_size = 0
+        for _ in self._search_space:
+            self.space_size += 1
+
+    def inc(self):
+        self._progress += 1
+
+    def fraction(self):
+        return max(0.0, self._progress / float(self.space_size))
 
 
 class SearchAlgorithm(object):
@@ -37,11 +75,14 @@ class SearchAlgorithm(object):
         self._running_lock = threading.Lock()
         self._progress_fraction = 0.0
         self._progress_lock = threading.Lock()
+        self._progress = None
         self._stop_requested = False
         self._thread = None
-        self._result = (0.0, None)
+        self._result = None
 
     def start(self):
+        self._result = None
+
         if self._processes == 1:
             self._thread = threading.Thread(target=self._thread_worker_basic)
         else:
@@ -53,7 +94,9 @@ class SearchAlgorithm(object):
 
     def progress(self):
         with self._progress_lock:
-            return self._progress_fraction
+            if self._progress:
+                return self._progress.fraction()
+            return 0.0
 
     def result(self):
         return self._result
@@ -71,84 +114,76 @@ class SearchAlgorithm(object):
         xls = XlsFile(self._filepath)
         xls.read()
 
-        space_size = 0
-        for _ in self._search_space:
-            space_size += 1
-
         best_pair = None
         best_result = 0.0
-        progress = 0
+
         with self._progress_lock:
-            self._progress_fraction = 0
+            self._progress = Progress(self._search_space)
 
-        for pair in self._search_space:
-            sample = pair.preprocessing_descriptor.generate_sample(xls)
-            classifier = pair.classification_descriptor.create_classifier()
+        cross_validator = CrossValidator(None, splits_per_group=3)
 
-            splitter = StratifiedKFold(sample.categories, n_folds=5, shuffle=True)
-            scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=splitter, scoring="f1")
+        if self._progress.space_size > 0:
+            for pair in self._search_space:
+                sample = pair.preprocessing_descriptor.generate_sample(xls)
+                classifier = pair.classification_descriptor.create_classifier()
+                score = cross_validator.validate(sample, classifier)
 
-            if scores.mean() > best_result:
-                best_result = scores.mean()
-                best_pair = pair.copy()
+                if score > best_result:
+                    best_result = score
+                    best_pair = pair.copy()
 
-            progress += 1
-            with self._progress_lock:
-                self._progress_fraction = progress / float(space_size)
-                if self._stop_requested:
-                    break
+                with self._progress_lock:
+                    self._progress.inc()
+                    if self._stop_requested:
+                        break
 
         with self._running_lock:
             self._running = False
             self._result = (best_result, best_pair)
 
     def _thread_worker_multiprocess(self, process_count):
-        space_size = 0
-        for _ in self._search_space:
-            space_size += 1
-
         queue_result = multiprocessing.Queue()
         queue_work = multiprocessing.Queue()
+        random = numpy.random.RandomState()
 
         processes = []
         for i in range(process_count):
-            p = multiprocessing.Process(target=_process_entry_point, args=(self._filepath, queue_work, queue_result))
+            p = multiprocessing.Process(target=_process_entry_point,
+                                        args=(random, self._filepath, queue_work, queue_result))
             p.start()
             processes.append(p)
 
         best_pair = None
         best_result = 0.0
-        progress = -process_count
-        with self._progress_lock:
-            self._progress_fraction = 0
-
-        for pair in self._search_space:
-            result, dp = queue_result.get()
-            queue_work.put(pair)
-
-            if result > best_result:
-                best_result = result
-                best_pair = dp
-
-            progress += 1
-            with self._progress_lock:
-                self._progress_fraction = max(0.0, progress / float(space_size))
-                if self._stop_requested:
-                    break
 
         with self._progress_lock:
-            if not self._stop_requested:
-                for _ in processes:
-                    result, dp = queue_result.get()
-                    if result > best_result:
-                        best_result = result
-                        best_pair = dp
+            self._progress = Progress(self._search_space, -process_count)
 
-                    progress += 1
+        if self._progress.space_size > 0:
+            for pair in self._search_space:
+                result, dp = queue_result.get()
+                queue_work.put(pair.copy())
 
-                    self._progress_fraction = max(0.0, progress / float(space_size))
+                if result > best_result:
+                    best_result = result
+                    best_pair = dp
+
+                with self._progress_lock:
+                    self._progress.inc()
                     if self._stop_requested:
                         break
+
+            with self._progress_lock:
+                if not self._stop_requested:
+                    for _ in processes:
+                        result, dp = queue_result.get()
+                        if result > best_result:
+                            best_result = result
+                            best_pair = dp
+
+                        self._progress.inc()
+                        if self._stop_requested:
+                            break
 
         for p in processes:
             p.terminate()

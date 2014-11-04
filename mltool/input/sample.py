@@ -95,11 +95,39 @@ def _fix_missing_remove(attributes, categories):
     return attribute_buffer[:count].copy(), categories_buffer[:count].copy()
 
 
+def _fix_missing_average(attributes, categories):
+    n_features = len(attributes[0])
+    n_rows = len(attributes)
+
+    attribute_buffer = empty((n_rows, n_features), dtype=float64)
+    categories_buffer = array(categories)
+
+    sums = [0] * n_features
+    for row in attributes:
+        for i in range(n_features):
+            if row[i] is not None:
+                sums[i] += row[i]
+
+    averages = [x / float(n_rows) for x in sums]
+
+    for j in range(n_rows):
+        for i in range(n_features):
+            if attributes[j][i] is None:
+                attributes[j][i] = averages[i]
+        attribute_buffer[j] = attributes[j]
+
+    return attribute_buffer, categories_buffer
+
+
 class Sample:
     """
     Represents data sample. Contains methods for data preprocessing.
     """
-    _fix_methods = {"remove": _fix_missing_remove}
+    _fix_methods = {
+        "remove": _fix_missing_remove,
+        "average": _fix_missing_average
+    }
+
     supported_fix_methods = _fix_methods.keys()
 
     @staticmethod
@@ -169,7 +197,8 @@ class Sample:
         try:
             column_indices = [self.columns.index(c) for c in column_names]
         except:
-            raise SampleException("Specified column names don't belong to sample's columns.")
+            raise SampleException("Specified column names don't belong to sample's columns: [%s], [%s]" % (
+                ", ".join(column_names), ", ".join(self.columns)))
 
         remaining_column_names = [col for col in self.columns if not col in column_names]
         remaining_column_indices = [self.columns.index(col) for col in remaining_column_names]

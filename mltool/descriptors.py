@@ -56,6 +56,9 @@ class QuantizationDescriptor:
         string_args = [str(arg) for arg in self.quantization_args]
         return "%s: (%s, %s)" % (self.quantization_method.upper(), " ".join(self.columns), " ".join(string_args))
 
+    def copy(self):
+        return QuantizationDescriptor(self.columns[:], self.quantization_method, self.quantization_args[:])
+
 
 class PreprocessingDescriptor:
     def __init__(self, fix_method="remove", remove=[], normalize=[], q_descriptors=[]):
@@ -96,7 +99,7 @@ class PreprocessingDescriptor:
 
     def copy(self):
         return PreprocessingDescriptor(self.fix_method, self.removed_columns[:], self.normalized_columns[:],
-                                       self.quantization_descriptors[:])
+                                       [d.copy() for d in self.quantization_descriptors])
 
 
 class ClassificationDescriptor:
