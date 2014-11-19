@@ -2,18 +2,18 @@ __author__ = 'tolkjen'
 
 import argparse
 import sys
-from sklearn.cross_validation import cross_val_score, StratifiedKFold
 
-from descriptors import PreprocessingDescriptor, ClassificationDescriptor, QuantizationDescriptor, DescriptorException
-from input.sample import SampleException
-from input.xlsfile import XlsFile
+from mltool.crossvalidation import CrossValidator
+from mltool.descriptors import PreprocessingDescriptor, ClassificationDescriptor, QuantizationDescriptor, \
+    DescriptorException
+from mltool.input.sample import SampleException
+from mltool.input.xlsfile import XlsFile
 
 
 class MlPipeResult:
-    def __init__(self, row_count, accuracy_score, accuracy_std, columns):
+    def __init__(self, row_count, accuracy_score, columns):
         self.nrows = row_count
         self.accuracy_score = accuracy_score
-        self.accuracy_std = accuracy_std
         self.columns = columns
 
 
@@ -68,10 +68,10 @@ class MlPipe:
         sample = preprocessor.generate_sample(XlsFile.load(args.filepath))
         classifier = classifier_descriptor.create_classifier()
 
-        splitter = StratifiedKFold(sample.categories, n_folds=5, shuffle=True)
-        scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=splitter, scoring="f1")
+        validator = CrossValidator(None, 10)
+        score = validator.validate(sample, classifier)
 
-        return MlPipeResult(sample.nrows, scores.mean(), scores.std(), sample.columns)
+        return MlPipeResult(sample.nrows, score, sample.columns)
 
     def _parse_arguments(self):
         parser = argparse.ArgumentParser(description="Processes and classifies data.")
@@ -111,4 +111,4 @@ if __name__ == "__main__":
         print ""
         print "Columns: %s" % ", ".join(result.columns)
         print "Number of rows: %d" % result.nrows
-        print "Classification accuracy: %f (+/- %f)" % (result.accuracy_score, result.accuracy_std * 2.0)
+        print "Classification accuracy: %f" % result.accuracy_score

@@ -4,8 +4,8 @@ import sys
 import time
 import argparse
 
-from spaces import SearchSpace, RemoveSpace, NormalizeSpace, FixSpace, QuantifySpace, ClassificationSpace
-from search import SearchAlgorithm
+from mltool.spaces import SearchSpace, RemoveSpace, NormalizeSpace, FixSpace, QuantifySpace, ClassificationSpace
+from mltool.search import SearchAlgorithm
 
 
 class MlSearchResult(object):
