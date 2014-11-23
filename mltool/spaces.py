@@ -49,7 +49,7 @@ class LinearValueSpace(AbstractValueSpace):
     def __iter__(self):
         current = self._start
         increment = (self._end - self._start) / float((self.granularity - 1))
-        for i in range(self.granularity):
+        for i in xrange(self.granularity):
             yield current
             current += increment
 
@@ -67,7 +67,7 @@ class ExpValueSpace(AbstractValueSpace):
         p = math.pow((self._end / float(self._start)), 1.0 / float(self.granularity - 1))
         q = math.log(self._start) / math.log(p)
         current = self._start
-        for i in range(self.granularity):
+        for i in xrange(self.granularity):
             yield current
             current *= p
 
@@ -93,7 +93,7 @@ class FixSpace(AbstractSearchSpace):
     Describes the search space of methods used for removing missing values in data file.
     """
 
-    def __init__(self, methods):
+    def __init__(self, methods=["remove"]):
         """
         Creates a space instance.
         :param methods: List of methods for removing missing values.
@@ -113,7 +113,7 @@ class RemoveSpace(AbstractSearchSpace):
     Describes the search space of removing columns from the data file.
     """
 
-    def __init__(self, columns, set_sizes):
+    def __init__(self, columns=[], set_sizes=[]):
         """
         Creates a search space object.
         :param columns: A list of columns from which the removed columns will be picked.
@@ -151,7 +151,7 @@ class NormalizeSpace(AbstractSearchSpace):
     Describes the search space of normalizing the columns attributes.
     """
 
-    def __init__(self, columns, set_sizes):
+    def __init__(self, columns=[], set_sizes=[]):
         """
         Creates a search space object.
         :param columns: A list of columns from which the normalized columns will be picked.
@@ -172,6 +172,7 @@ class NormalizeSpace(AbstractSearchSpace):
         if not self._set_sizes:
             descriptor.normalized_columns = []
             yield descriptor
+            return
 
         columns = [col for col in self._columns if not col in descriptor.removed_columns]
         for size in self._set_sizes:
@@ -204,7 +205,7 @@ class QuantifySpace(AbstractSearchSpace):
 
     algorithms = _param_spaces.keys()
 
-    def __init__(self, columns, clusterers, clusterer_counts, max_cols, granularity):
+    def __init__(self, columns=[], clusterers=[], clusterer_counts=[], max_cols=None, granularity=2):
         """
         Creates a search space object.
         :param columns: A list of columns to be used during clustering.
@@ -251,7 +252,7 @@ class QuantifySpace(AbstractSearchSpace):
                         param_space_generator = ParameterCombinationGenerator(parameter_spaces)
                         for param_space in param_space_generator:
                             descriptor.quantization_descriptors = []
-                            for i in range(len(combination)):
+                            for i in xrange(len(combination)):
                                 q_descriptor = QuantizationDescriptor(multiset[i], combination[i], param_space[i])
                                 descriptor.quantization_descriptors.append(q_descriptor)
                             yield descriptor

@@ -43,12 +43,6 @@ def test_edc_transform_one_bucket():
     assert array_equiv(clusterer.transform(attributes), expected_attributes)
 
 
-def test_edc_transform_too_many_buckets():
-    clusterer = EqualDistributionClusterer(10)
-    with pytest.raises(ClustererException):
-        clusterer.transform(zeros((5, 1)))
-
-
 def test_km_no_buckets():
     with pytest.raises(ClustererException):
         KMeansClusterer(0)

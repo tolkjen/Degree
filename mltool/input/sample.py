@@ -39,7 +39,7 @@ def _read_tabular_data(tabular_file):
     :return: A tuple of (attributes, column names, categories).
     """
     category_index = -1
-    for index in range(len(tabular_file.columns())):
+    for index in xrange(len(tabular_file.columns())):
         if tabular_file.columns()[index].lower() == "index":
             category_index = index
     if category_index == -1:
@@ -50,8 +50,8 @@ def _read_tabular_data(tabular_file):
     for row in tabular_file.rows():
         is_empty = reduce(lambda accumulated, x: x == "" and accumulated, row, True)
         if not is_empty:
-            column_contains_strings = [_is_string(row[i]) or column_contains_strings[i] for i in range(len(row))]
-            column_contains_none = [row[i] == "" or column_contains_none[i] for i in range(len(row))]
+            column_contains_strings = [_is_string(row[i]) or column_contains_strings[i] for i in xrange(len(row))]
+            column_contains_none = [row[i] == "" or column_contains_none[i] for i in xrange(len(row))]
 
     if column_contains_strings[category_index] or column_contains_none[category_index]:
         raise SampleException("Index column contains string or empty values.")
@@ -82,7 +82,7 @@ def _fix_missing_remove(attributes, categories):
     attribute_buffer = empty((len(attributes), len(attributes[0])), dtype=float64)
     categories_buffer = empty((len(attributes)))
     count = 0
-    for i in range(len(attributes)):
+    for i in xrange(len(attributes)):
         contains_empty = False
         for x in attributes[i]:
             if x is None:
@@ -104,14 +104,14 @@ def _fix_missing_average(attributes, categories):
 
     sums = [0] * n_features
     for row in attributes:
-        for i in range(n_features):
+        for i in xrange(n_features):
             if row[i] is not None:
                 sums[i] += row[i]
 
     averages = [x / float(n_rows) for x in sums]
 
-    for j in range(n_rows):
-        for i in range(n_features):
+    for j in xrange(n_rows):
+        for i in xrange(n_features):
             if attributes[j][i] is None:
                 attributes[j][i] = averages[i]
         attribute_buffer[j] = attributes[j]

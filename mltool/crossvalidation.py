@@ -13,7 +13,7 @@ class CrossValidator(object):
         n_samples = len(sample.attributes)
         if not n_samples in self._split_groups:
             group = [StratifiedKFold(sample.categories, n_folds=5, shuffle=True, random_state=self._random) for _ in
-                     range(self._splits_per_group)]
+                     xrange(self._splits_per_group)]
             self._split_groups[n_samples] = group
 
         mean_list = []

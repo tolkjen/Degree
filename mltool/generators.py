@@ -113,7 +113,7 @@ class CombinationDistributionGenerator(object):
                     range_start = working_set[index - 1]
             max_cols = self._max_columns(self._combination[index])
 
-            for i in range(range_start, min(max_cols, self._max_sum - sum_value) + 1):
+            for i in xrange(range_start, min(max_cols, self._max_sum - sum_value) + 1):
                 self._generate(sum_value + i, working_set + [i])
 
     def _max_columns(self, clusterer):
@@ -127,7 +127,7 @@ class MultiSubsetGenerator(object):
         self._objects = objects
         self._distribution = distribution
         self._combination = combination
-        self._indices = range(len(objects))
+        self._indices = xrange(len(objects))
         self._data = []
 
     def __iter__(self):

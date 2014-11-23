@@ -19,7 +19,7 @@ def _process_entry_point(random, filepath, q_work, q_result):
             pair = q_work.get()
 
             sample = pair.preprocessing_descriptor.generate_sample(xls)
-            classifier = pair.classification_descriptor.create_classifier()
+            classifier = pair.classification_descriptor.create_classifier(sample)
             score = cross_validator.validate(sample, classifier)
 
             q_result.put((score, pair))
@@ -103,7 +103,7 @@ class SearchAlgorithm(object):
         if self._progress.space_size > 0:
             for pair in self._search_space:
                 sample = pair.preprocessing_descriptor.generate_sample(xls)
-                classifier = pair.classification_descriptor.create_classifier()
+                classifier = pair.classification_descriptor.create_classifier(sample)
                 score = cross_validator.validate(sample, classifier)
 
                 if score > best_result:
@@ -125,7 +125,7 @@ class SearchAlgorithm(object):
         random = numpy.random.RandomState()
 
         processes = []
-        for i in range(process_count):
+        for i in xrange(process_count):
             p = multiprocessing.Process(target=_process_entry_point,
                                         args=(random, self._filepath, queue_work, queue_result))
             p.start()

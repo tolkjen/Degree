@@ -107,13 +107,13 @@ class ClassificationDescriptor:
     Describes a classification algorithm together with its parameters.
     """
 
-    def _create_gaussian_nb(self, params):
+    def _create_gaussian_nb(self, params, sample):
         return GaussianNB()
 
-    def _create_decision_tree(self, params):
+    def _create_decision_tree(self, params, sample):
         return DecisionTreeClassifier()
 
-    def _create_svc_rbf(self, params):
+    def _create_svc_rbf(self, params, sample):
         try:
             c = float(params[0])
             gamma = float(params[1])
@@ -122,7 +122,7 @@ class ClassificationDescriptor:
         else:
             return SVC(C=c, gamma=gamma, kernel="rbf")
 
-    def _create_svc_linear(self, params):
+    def _create_svc_linear(self, params, sample):
         try:
             c = float(params[0])
         except:
@@ -130,7 +130,7 @@ class ClassificationDescriptor:
         else:
             return LinearSVC(dual=False, C=c)
 
-    def _create_knn(self, params):
+    def _create_knn(self, params, sample):
         try:
             n = int(params[0])
         except:
@@ -138,19 +138,23 @@ class ClassificationDescriptor:
         else:
             return KNeighborsClassifier(n_neighbors=n)
 
-    def _create_random_forest(self, params):
+    def _create_random_forest(self, params, sample):
         try:
             n = int(params[0])
             features = int(params[1])
+            if not sample is None:
+                features = min(len(sample.columns), features)
         except:
             raise DescriptorException("Classifier parameters are incorrect.")
         else:
             return RandomForestClassifier(n_estimators=n, max_features=features)
 
-    def _create_extra_trees(self, params):
+    def _create_extra_trees(self, params, sample):
         try:
             n = int(params[0])
             features = int(params[1])
+            if not sample is None:
+                features = min(len(sample.columns), features)
         except:
             raise DescriptorException("Classifier parameters are incorrect.")
         else:
@@ -171,9 +175,9 @@ class ClassificationDescriptor:
         self._name = name
         self._arguments = arguments
 
-    def create_classifier(self):
+    def create_classifier(self, sample=None):
         factory, count = ClassificationDescriptor._classifiers[self._name]
-        return factory(self, self._arguments)
+        return factory(self, self._arguments, sample)
 
     def validate(self):
         if not self._name in ClassificationDescriptor._classifiers.keys():

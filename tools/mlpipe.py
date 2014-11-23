@@ -66,7 +66,7 @@ class MlPipe:
         classifier_descriptor.validate()
 
         sample = preprocessor.generate_sample(XlsFile.load(args.filepath))
-        classifier = classifier_descriptor.create_classifier()
+        classifier = classifier_descriptor.create_classifier(sample)
 
         validator = CrossValidator(None, 10)
         score = validator.validate(sample, classifier)

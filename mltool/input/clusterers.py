@@ -6,11 +6,11 @@ from sklearn.cluster import KMeans, DBSCAN, AgglomerativeClustering
 
 
 def distance_euclidean(a, b):
-    return math.sqrt(sum([(a[i] - b[i]) * (a[i] - b[i]) for i in range(len(a))]))
+    return math.sqrt(sum([(a[i] - b[i]) * (a[i] - b[i]) for i in xrange(len(a))]))
 
 
 def distance_square(a, b):
-    return sum([(a[i] - b[i]) * (a[i] - b[i]) for i in range(len(a))])
+    return sum([(a[i] - b[i]) * (a[i] - b[i]) for i in xrange(len(a))])
 
 
 class ClustererException(Exception):
@@ -25,6 +25,7 @@ class AbstractClusterer(object):
     """
     Interface for all clusterers.
     """
+
     def transform(self, attributes):
         """
         Transforms an array of attribute rows into a single column of values.
@@ -38,6 +39,11 @@ class EqualDistributionClusterer(AbstractClusterer):
     param_count = 1
 
     def __init__(self, bucket_count):
+        """
+        Creates EqualDistributionClusterer object.
+        :param bucket_count: The target number of clusters which will be generated. If the number of samples will be
+               smaller than the number of clusters, algorithm will use the number of samples instead.
+        """
         if bucket_count < 1:
             raise ClustererException('bucket_count must be a positive number.')
         self._bucket_count = int(bucket_count)
@@ -47,19 +53,17 @@ class EqualDistributionClusterer(AbstractClusterer):
         if col_count != 1:
             raise ClustererException('EqualDistributionClusterer can\'t transform multi-column data.')
 
-        if self._bucket_count > row_count:
-            raise ClustererException('Can\'t create more clusters than rows.')
-
+        bucket_count = min(self._bucket_count, row_count)
         data = attributes[:, 0]
 
         data_sorted = data.copy()
         data_sorted.sort()
-        bucket_size = row_count / self._bucket_count
+        bucket_size = row_count / bucket_count
         bucket_edges = [(data_sorted[bucket_size * i - 1] + data_sorted[bucket_size * i]) / 2.0
-                        for i in range(1, self._bucket_count)]
+                        for i in xrange(1, bucket_count)]
         bucket_edges.append(data_sorted[-1])
 
-        for i in range(len(data)):
+        for i in xrange(len(data)):
             for j, edge in enumerate(bucket_edges):
                 if data[i] <= edge:
                     data[i] = j
@@ -79,7 +83,8 @@ class KMeansClusterer(AbstractClusterer):
 
     def transform(self, attributes):
         row_count, col_count = attributes.shape
-        clusterer = KMeans(self._bucket_count, self._initialization)
+        bucket_count = min(self._bucket_count, row_count)
+        clusterer = KMeans(bucket_count, self._initialization)
         clusterer.fit(attributes)
         return clusterer.predict(attributes).reshape(row_count, 1)
 
@@ -105,8 +110,8 @@ class DBScanClusterer(AbstractClusterer):
     def transform(self, attributes):
         min_distance = maxint
         max_distance = -maxint - 1
-        for i in range(len(attributes) - 1):
-            for j in range(len(attributes) - i - 1):
+        for i in xrange(len(attributes) - 1):
+            for j in xrange(len(attributes) - i - 1):
                 distance = distance_euclidean(attributes[i], attributes[i+j+1])
                 min_distance = min(min_distance, distance)
                 max_distance = max(max_distance, distance)
@@ -125,7 +130,9 @@ class WardHierarchyClusterer(AbstractClusterer):
         self._linkage = "ward"
 
     def transform(self, attributes):
-        clusterer = AgglomerativeClustering(n_clusters=self._buckets, linkage=self._linkage)
+        row_count, col_count = attributes.shape
+        bucket_count = min(self._buckets, row_count)
+        clusterer = AgglomerativeClustering(n_clusters=bucket_count, linkage=self._linkage)
         return clusterer.fit_predict(attributes).reshape(attributes.shape[0], 1)
 
 

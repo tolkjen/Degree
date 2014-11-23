@@ -7,6 +7,29 @@ from ..spaces import RemoveSpace, NormalizeSpace, SpaceException, FixSpace, Clas
 from ..descriptors import PreprocessingDescriptor
 
 
+def validate_space_default_constructor(space_type):
+    space = space_type()
+    descriptor = PreprocessingDescriptor()
+    data = [1 for _ in space.generate(descriptor)]
+    assert len(data) > 0
+
+
+def test_fix_space_default_constructor():
+    validate_space_default_constructor(FixSpace)
+
+
+def test_remove_space_default_constructor():
+    validate_space_default_constructor(RemoveSpace)
+
+
+def test_normalize_space_default_constructor():
+    validate_space_default_constructor(NormalizeSpace)
+
+
+def test_quantify_space_default_constructor():
+    validate_space_default_constructor(QuantifySpace)
+
+
 def test_remove_space_missing_arguments():
     space0 = RemoveSpace([], [])
     descriptors0 = [x for x in space0.generate(PreprocessingDescriptor())]
