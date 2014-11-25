@@ -62,7 +62,7 @@ class ReportGenerator(object):
     desc_alpha_quantify_vii = "Removing, normalizing features (*) & quantification (%s)"
 
     quantification_max_features = 3
-    quantification_granularity = 5
+    quantification_granularity = 6
 
     def __init__(self, factory, filepath, granularity=5, report_file=None):
         self._granularity = granularity
@@ -70,15 +70,17 @@ class ReportGenerator(object):
         self._factory = factory
         self._features = []
         self._file = report_file
-        self._report_entries = []
+        self._search_algorithm = None
 
     def generate(self):
-        self._report_entries = []
         self._read_feature_names()
-        classifier_names = ["tree", "knn", "random_forest", "svc_rbf"]
+        classifier_names = ["tree", "random_forest", "svc_rbf", "knn", "svc_linear", "extra_trees"]
         for name in classifier_names:
             for data in self._generate_classifier_reports(name):
                 yield data
+
+    def stop(self):
+        self._search_algorithm.stop()
 
     def _generate_classifier_reports(self, classifier_name):
         fix_report = self._generate_fix_report(classifier_name)
@@ -98,18 +100,18 @@ class ReportGenerator(object):
         normalized_columns_2 = remove_normalize_report.preprocessing.normalized_columns
         yield remove_normalize_report
 
-        clustering_algorithms = ["ed", "k-means", "k-means++"]
-        for algorithm in clustering_algorithms:
-            yield self._generate_alpha_quantification_report_i(classifier_name, fix_method, algorithm)
-            yield self._generate_alpha_quantification_report_ii(classifier_name, fix_method, algorithm)
-            yield self._generate_alpha_quantification_report_iii(classifier_name, fix_method, algorithm,
-                                                                 removed_columns)
-            yield self._generate_alpha_quantification_report_iv(classifier_name, fix_method, algorithm)
-            yield self._generate_alpha_quantification_report_v(classifier_name, fix_method, algorithm,
-                                                               normalized_columns)
-            yield self._generate_alpha_quantification_report_vi(classifier_name, fix_method, algorithm)
-            yield self._generate_alpha_quantification_report_vii(classifier_name, fix_method, algorithm,
-                                                                 removed_columns_2, normalized_columns_2)
+        # clustering_algorithms = ["ed", "k-means", "k-means++"]
+        # for algorithm in clustering_algorithms:
+        #     yield self._generate_alpha_quantification_report_i(classifier_name, fix_method, algorithm)
+        #     # yield self._generate_alpha_quantification_report_ii(classifier_name, fix_method, algorithm)
+        #     yield self._generate_alpha_quantification_report_iii(classifier_name, fix_method, algorithm,
+        #                                                          removed_columns)
+        #     # yield self._generate_alpha_quantification_report_iv(classifier_name, fix_method, algorithm)
+        #     yield self._generate_alpha_quantification_report_v(classifier_name, fix_method, algorithm,
+        #                                                        normalized_columns)
+        #     # yield self._generate_alpha_quantification_report_vi(classifier_name, fix_method, algorithm)
+        #     yield self._generate_alpha_quantification_report_vii(classifier_name, fix_method, algorithm,
+        #                                                          removed_columns_2, normalized_columns_2)
 
     def _generate_fix_report(self, classifier_name):
         fs = FixSpace(["remove", "average"])
@@ -155,8 +157,7 @@ class ReportGenerator(object):
         fs = FixSpace([fix_method])
         rs = RemoveSpace()
         ns = NormalizeSpace()
-        qs = QuantifySpace(self._features, [algorithm], range(1, len(self._features) + 1),
-                           self.quantification_max_features, self.quantification_granularity)
+        qs = QuantifySpace(self._features, [algorithm], [len(self._features)], 1, self.quantification_granularity)
         cs = ClassificationSpace([classifier_name], self._granularity)
         ss = SearchSpace(fs, rs, ns, qs, cs)
 
@@ -166,8 +167,8 @@ class ReportGenerator(object):
         fs = FixSpace([fix_method])
         rs = RemoveSpace(self._features, range(1, len(self._features)))
         ns = NormalizeSpace()
-        qs = QuantifySpace(self._features, [algorithm], range(1, len(self._features) + 1),
-                           self.quantification_max_features, self.quantification_granularity)
+        qs = QuantifySpace(self._features, [algorithm], [len(self._features)],
+                           1, self.quantification_granularity)
         cs = ClassificationSpace([classifier_name], self._granularity)
         ss = SearchSpace(fs, rs, ns, qs, cs)
 
@@ -177,8 +178,7 @@ class ReportGenerator(object):
         fs = FixSpace([fix_method])
         rs = RemoveSpace(removed_columns, [len(removed_columns)])
         ns = NormalizeSpace()
-        qs = QuantifySpace(self._features, [algorithm], range(1, len(self._features) + 1),
-                           self.quantification_max_features, self.quantification_granularity)
+        qs = QuantifySpace(self._features, [algorithm], [len(self._features)], 1, self.quantification_granularity)
         cs = ClassificationSpace([classifier_name], self._granularity)
         ss = SearchSpace(fs, rs, ns, qs, cs)
 
@@ -188,8 +188,7 @@ class ReportGenerator(object):
         fs = FixSpace([fix_method])
         rs = RemoveSpace()
         ns = NormalizeSpace(self._features, range(1, len(self._features) + 1))
-        qs = QuantifySpace(self._features, [algorithm], range(1, len(self._features) + 1),
-                           self.quantification_max_features, self.quantification_granularity)
+        qs = QuantifySpace(self._features, [algorithm], [len(self._features)], 1, self.quantification_granularity)
         cs = ClassificationSpace([classifier_name], self._granularity)
         ss = SearchSpace(fs, rs, ns, qs, cs)
 
@@ -199,8 +198,7 @@ class ReportGenerator(object):
         fs = FixSpace([fix_method])
         rs = RemoveSpace()
         ns = NormalizeSpace(normalized_columns, [len(normalized_columns)])
-        qs = QuantifySpace(self._features, [algorithm], range(1, len(self._features) + 1),
-                           self.quantification_max_features, self.quantification_granularity)
+        qs = QuantifySpace(self._features, [algorithm], [len(self._features)], 1, self.quantification_granularity)
         cs = ClassificationSpace([classifier_name], self._granularity)
         ss = SearchSpace(fs, rs, ns, qs, cs)
 
@@ -210,8 +208,7 @@ class ReportGenerator(object):
         fs = FixSpace([fix_method])
         rs = RemoveSpace(self._features, range(1, len(self._features)))
         ns = NormalizeSpace(self._features, range(1, len(self._features) + 1))
-        qs = QuantifySpace(self._features, [algorithm], range(1, len(self._features) + 1),
-                           self.quantification_max_features, self.quantification_granularity)
+        qs = QuantifySpace(self._features, [algorithm], [len(self._features)], 1, self.quantification_granularity)
         cs = ClassificationSpace([classifier_name], self._granularity)
         ss = SearchSpace(fs, rs, ns, qs, cs)
 
@@ -221,8 +218,7 @@ class ReportGenerator(object):
         fs = FixSpace([fix_method])
         rs = RemoveSpace(removed, [len(removed)])
         ns = NormalizeSpace(normalized, [len(normalized)])
-        qs = QuantifySpace(self._features, [algorithm], range(1, len(self._features) + 1),
-                           self.quantification_max_features, self.quantification_granularity)
+        qs = QuantifySpace(self._features, [algorithm], [len(self._features)], 1, self.quantification_granularity)
         cs = ClassificationSpace([classifier_name], self._granularity)
         ss = SearchSpace(fs, rs, ns, qs, cs)
 
@@ -230,16 +226,19 @@ class ReportGenerator(object):
 
     def _create_report(self, classifier_name, ss, description):
         if self._file:
-            report_entry = self._file.read_report_entry(classifier_name, description)
+            report_entry = self._file.read_entry(classifier_name, description)
             if report_entry:
-                self._report_entries.append(report_entry)
                 return report_entry
 
-        search = self._factory.create_search_algorithm(self._filepath, ss)
-        search.start()
-        while search.running():
+        self._search_algorithm = self._factory.create_search_algorithm(self._filepath, ss)
+        self._search_algorithm.start()
+        while self._search_algorithm.running():
             sleep(0.1)
-        pair = search.result()[1]
+        pair = self._search_algorithm.result()[1]
+
+        # data = [x for x in ss]
+        # pair = data[0]
+        # print classifier_name, description, len(data)
 
         sample = pair.preprocessing_descriptor.generate_sample(XlsFile.load(self._filepath))
         classifier = pair.classification_descriptor.create_classifier(sample)
@@ -250,8 +249,7 @@ class ReportGenerator(object):
                                    pair.classification_descriptor)
 
         if self._file:
-            self._report_entries.append(report_entry)
-            self._file.write_report(self._report_entries)
+            self._file.write_entry(report_entry)
 
         return report_entry
 
@@ -261,45 +259,63 @@ class ReportGenerator(object):
 
 
 class ReportFile(object):
-    def __init__(self, filepath, writable=True):
+    def __init__(self, filepath):
+        self._entries = []
+        self._loaded = False
         self._filepath = filepath
-        self._writable = writable
 
-    def write_report(self, report):
-        if self._writable:
-            report_file = Dataset()
-            report_file.headers = ['Classifier', 'Search', 'Cross-validation score', 'Preprocessing', 'Classification',
-                                   'Dump']
-            for report_entry in report:
-                report_file.append(report_entry.to_table_entry())
+    def write_entry(self, entry):
+        stored_entry = self.read_entry(entry.classifier, entry.description)
+        if not stored_entry:
+            self._entries.append(entry)
+
+            dataset_file = Dataset()
+            dataset_file.headers = ['Classifier', 'Search', 'Cross-validation score', 'Preprocessing', 'Classification',
+                                    'Dump']
+            for written_entry in self._entries:
+                e = written_entry.to_table_entry()
+                dataset_file.append(e)
             with open(self._filepath, 'wb') as f:
-                f.write(report_file.xls)
+                f.write(dataset_file.xls)
 
-    def read_report_entry(self, classifier, description):
+    def read_entry(self, classifier, description):
+        if not self._loaded:
+            self._load()
+        for entry in self._entries:
+            if entry.classifier == classifier and entry.description == description:
+                return entry
+        return None
+
+    def _load(self):
         if os.path.isfile(self._filepath):
             workbook = xlrd.open_workbook(self._filepath)
             datasheet = workbook.sheet_by_index(0)
-            for i in xrange(datasheet.nrows):
+            for i in xrange(1, datasheet.nrows):
                 row = [cell.value for cell in datasheet.row(i)]
-                if row[0] == classifier and row[1] == description:
-                    return ReportEntry.from_fable_entry(row)
-        return None
+                self._entries.append(ReportEntry.from_fable_entry(row))
+        self._loaded = True
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("filepath", help="Path to the file containing data.")
-    parser.add_argument("-g", help="Granularity", default=5, dest="granularity")
-    args = parser.parse_args()
+    def main():
+        parser = argparse.ArgumentParser()
+        parser.add_argument("filepath", help="Path to the file containing data.")
+        parser.add_argument("-g", help="Granularity", default=5, dest="granularity")
+        args = parser.parse_args()
 
-    report_file = ReportFile('report.xls')
-    app = ReportGenerator(ReportFactory(), args.filepath, args.granularity, report_file)
+        report_file = ReportFile('report.xls')
+        app = ReportGenerator(ReportFactory(), args.filepath, args.granularity, report_file)
 
-    print ""
-    print "Report generator"
-    print "----------------"
-    print ""
+        print ""
+        print "Report generator"
+        print "----------------"
+        print ""
 
-    report = []
-    for entry in app.generate():
-        print entry.classifier, entry.description, entry.score
+        try:
+            for entry in app.generate():
+                print entry.classifier, entry.description, entry.score
+                # pass
+        except (KeyboardInterrupt, SystemExit):
+            app.stop()
+
+    main()

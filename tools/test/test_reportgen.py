@@ -39,17 +39,18 @@ def from_current_dir(filename):
 
 
 def test_report_generator_run():
-    generator = ReportGenerator(TestFactory(), from_current_dir("sample.xlsx"))
+    generator = ReportGenerator(TestFactory(), from_current_dir("sample.xlsx"),
+                                report_file=ReportFile(from_current_dir('report_test.xls')))
     results = [x for x in generator.generate()]
-
-    # number of classifiers * (4 + number of clusterers * 2)
     assert len(results) > 0
 
-    report_file = ReportFile(from_current_dir('report_test.xls'))
-    report_file.write_report(results)
+
+def test_report_file_non_existing():
+    report_file = ReportFile(from_current_dir('unknown.xlsx'))
+    assert not report_file.read_entry('what', 'ever')
 
 
-def test_report_file():
-    report_file = ReportFile(from_current_dir('data.xlsx'), False)
-    assert report_file.read_report_entry('tree', 'ugh')
-    assert not report_file.read_report_entry('tree', 'Not reported yet')
+def test_report_file_read():
+    report_file = ReportFile(from_current_dir('data.xlsx'))
+    assert report_file.read_entry('tree', 'Removing features')
+    assert not report_file.read_entry('what', 'ever')

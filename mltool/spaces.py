@@ -238,7 +238,10 @@ class QuantifySpace(AbstractSearchSpace):
 
         columns = [col for col in self._columns if not col in descriptor.removed_columns]
         for count in self._count_list:
-            combination_generator = CombinationGenerator(self._clusterers, count)
+            # Do not try to use more classifiers than columns
+            count_adjusted = min(count, len(columns))
+
+            combination_generator = CombinationGenerator(self._clusterers, count_adjusted)
             for combination in combination_generator:
                 parameter_spaces = []
                 for clusterer in combination:
