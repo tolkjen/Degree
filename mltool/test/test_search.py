@@ -32,7 +32,7 @@ def build_search_space():
 
 
 def get_data_filepath():
-    return os.path.abspath(os.path.dirname(__file__)) + "\\" + "sample3.xlsx"
+    return os.path.abspath(os.path.dirname(__file__)) + "/" + "sample3.xlsx"
 
 
 def test_completes_within_success():

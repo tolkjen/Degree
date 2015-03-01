@@ -15,7 +15,7 @@ class TestClusterer:
 
 
 def from_current_dir(filename):
-    return XlsFile.load(os.path.abspath(os.path.dirname(__file__)) + "\\" + filename)
+    return XlsFile.load(os.path.abspath(os.path.dirname(__file__)) + "/" + filename)
 
 
 def test_no_index_column():
