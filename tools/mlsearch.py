@@ -2,6 +2,7 @@ __author__ = 'tolkjen'
 
 import sys
 import time
+import datetime
 import argparse
 
 from mltool.spaces import SearchSpace, RemoveSpace, NormalizeSpace, FixSpace, QuantifySpace, ClassificationSpace
@@ -12,7 +13,7 @@ class MlSearchResult(object):
     def __init__(self, preprocessing_d, classification_d, accuracy):
         self.preprocessing_d = preprocessing_d
         self.classification_d = classification_d
-        self.accuracy = accuracy
+        self.accuracy = accuracy 
 
 
 class MlSearch(object):
@@ -30,14 +31,24 @@ class MlSearch(object):
         args = self._parse_arguments()
         search_space = self._create_search_space(args)
 
-        algorithm = SearchAlgorithm(args.filepath, search_space, processes=int(args.processes))
+        size = sum([1 for _ in search_space])
+        print 'Size: %d\n' % size
+
+        algorithm = SearchAlgorithm(args.filepath, search_space, args.distrib, int(args.group_size))
         algorithm.start()
 
+        started_dt = datetime.datetime.now()
         try:
             while algorithm.running():
-                sys.stdout.write("\rProgress: %0.2f%%" % (100.0 * algorithm.progress()))
+                td = datetime.datetime.now() - started_dt
+                if algorithm.progress() > 0:
+                    eta = datetime.timedelta(seconds=td.total_seconds()*(1.0/algorithm.progress()))
+                else:
+                    eta = datetime.timedelta(hours=99)
+
+                sys.stdout.write("\rProgress: %0.2f%% (ETA: %s)" % (100.0 * algorithm.progress(), eta))
                 sys.stdout.flush()
-                time.sleep(0.05)
+                time.sleep(0.1)
         except KeyboardInterrupt:
             algorithm.stop()
 
@@ -99,8 +110,9 @@ class MlSearch(object):
         parser.add_argument("-cg", "--classification-granularity",
                             help="The level of granularity when iterating over classification parameters.", default=5,
                             dest="classify_granularity")
-        parser.add_argument("-p", "--processes", help="Number of processes which run the search in parallel.",
-                            default=1, dest="processes")
+        parser.add_argument("-d", "--distribution", help="Number of processes which run the search in parallel on local "
+                            "machine or 'queue'", default=1, dest="distrib")
+        parser.add_argument("-gs", "--group-size", help="Packet size for queue", default=10, dest="group_size")
 
         return parser.parse_args(self._cmd_args)
 
@@ -113,10 +125,15 @@ if __name__ == "__main__":
     print "-----------------------"
     print ""
 
+    time_started = datetime.datetime.now()
     results = app.search()
+    time_finished = datetime.datetime.now()
+
     if results:
-        print "Best accuracy: %f" % results.accuracy
+        print "Best accuracy: %f                    " % results.accuracy
         print "Classifier info: %s" % results.classification_d
         print "Preprocessing info: %s" % results.preprocessing_d
     else:
         print "Didn't find anything"
+
+    print '\nTime: %s' % str(time_finished - time_started)

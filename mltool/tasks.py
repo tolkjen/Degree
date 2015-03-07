@@ -1,0 +1,56 @@
+import celery
+import os
+from datetime import datetime
+
+from crossvalidation import CrossValidator
+from input.xlsfile import XlsFile
+from cache import SampleCache
+
+class FileCache(object):
+
+    _cache = {}
+
+    @staticmethod
+    def get(filepath):
+        if not filepath in FileCache._cache:
+            xls = XlsFile(filepath)
+            xls.read()
+            FileCache._cache[filepath] = xls
+            return xls
+        return FileCache._cache[filepath]
+
+sample_cache = SampleCache(5)
+
+url = os.environ.get('RABBITMQ_BIGWIG_URL', 'amqp://guest@localhost//')
+app = celery.Celery('tasks')
+app.conf.update(BROKER_URL=url,
+                CELERY_RESULT_BACKEND=url,
+                #CELERY_ACCEPT_CONTENT=['json'],
+                #CELERY_TASK_SERIALIZER='json',
+                CELERY_TRACK_STARTED=True,
+                CELERYD_PREFETCH_MULTIPLIER=1,
+                BROKER_POOL_LIMIT=50)
+
+@app.task
+def validate(filepath, pairs):
+    dt_started = datetime.now()
+    print 'Work started'
+
+    xls = FileCache.get(filepath)
+    cross_validator = CrossValidator(None, splits_per_group=3)
+
+    best_score = 0
+    best_pair = None
+
+    for pair in pairs:
+        sample = pair.preprocessing_descriptor.generate_sample(xls)
+        classifier = pair.classification_descriptor.create_classifier(sample)
+        score = cross_validator.validate(sample, classifier)
+
+        if score > best_score:
+            best_score = score
+            best_pair = pair.copy()
+
+    print 'Work finished (%d)' % (datetime.now() - dt_started).total_seconds()
+
+    return (best_score, best_pair)

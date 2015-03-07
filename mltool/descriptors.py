@@ -6,6 +6,7 @@ from sklearn.svm import SVC, LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 
+from cache import DummyCache
 from input.sample import Sample
 from input.clusterers import KMeansClusterer, KMeansPlusPlusClusterer, EqualDistributionClusterer, DBScanClusterer, \
     WardHierarchyClusterer, CompleteHierarchyClusterer, AverageHierarchyClusterer
@@ -67,14 +68,23 @@ class PreprocessingDescriptor:
         self.normalized_columns = normalize
         self.quantization_descriptors = q_descriptors
 
-    def generate_sample(self, tabular_file):
-        sample = Sample.from_file(tabular_file, self.fix_method)
-        for col_name in self.removed_columns:
-            sample.remove_column(col_name)
-        for col_name in self.normalized_columns:
-            sample.normalize_column(col_name, (-1.0, 1.0))
-        for descriptor in self.quantization_descriptors:
-            descriptor.execute(sample)
+    def generate_sample(self, tabular_file, cache=None):
+        if not cache:
+            cache = DummyCache()
+
+        sample = cache.get(tabular_file, str(self))
+        if not sample:
+            #print 'miss'
+            sample = Sample.from_file(tabular_file, self.fix_method)
+            for col_name in self.removed_columns:
+                sample.remove_column(col_name)
+            for col_name in self.normalized_columns:
+                sample.normalize_column(col_name, (-1.0, 1.0))
+            for descriptor in self.quantization_descriptors:
+                descriptor.execute(sample)
+            cache.add(tabular_file, str(self), sample)
+        #else:
+        #    print 'hit'
         return sample
 
     def validate(self):
