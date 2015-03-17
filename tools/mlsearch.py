@@ -34,7 +34,8 @@ class MlSearch(object):
         size = sum([1 for _ in search_space])
         print 'Size: %d\n' % size
 
-        algorithm = SearchAlgorithm(args.filepath, search_space, args.distrib, int(args.group_size))
+        algorithm = SearchAlgorithm(args.filepath, search_space, args.distrib, int(args.group_size), 
+                                    int(args.working_set_size))
         algorithm.start()
 
         started_dt = datetime.datetime.now()
@@ -42,7 +43,8 @@ class MlSearch(object):
             while algorithm.running():
                 td = datetime.datetime.now() - started_dt
                 if algorithm.progress() > 0:
-                    eta = datetime.timedelta(seconds=td.total_seconds()*(1.0/algorithm.progress()))
+                    prog = algorithm.progress()
+                    eta = datetime.timedelta(seconds=td.total_seconds()*((1.0 - prog)/prog))
                 else:
                     eta = datetime.timedelta(hours=99)
 
@@ -113,6 +115,7 @@ class MlSearch(object):
         parser.add_argument("-d", "--distribution", help="Number of processes which run the search in parallel on local "
                             "machine or 'queue'", default=1, dest="distrib")
         parser.add_argument("-gs", "--group-size", help="Packet size for queue", default=10, dest="group_size")
+        parser.add_argument("-ws", "--workingset-size", help="Size of the working set", default=100, dest="working_set_size")
 
         return parser.parse_args(self._cmd_args)
 

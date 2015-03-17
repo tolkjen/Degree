@@ -19,12 +19,17 @@ class FileCache(object):
             return xls
         return FileCache._cache[filepath]
 
+def get_queue_url():
+    url = os.environ.get('QUEUE_URL', None)
+    if not url:
+        return os.environ.get('RABBITMQ_BIGWIG_URL', 'amqp://guest@localhost//')
+    return url
+
 sample_cache = SampleCache(5)
 
-url = os.environ.get('RABBITMQ_BIGWIG_URL', 'amqp://guest@localhost//')
 app = celery.Celery('tasks')
-app.conf.update(BROKER_URL=url,
-                CELERY_RESULT_BACKEND=url,
+app.conf.update(BROKER_URL=get_queue_url(),
+                CELERY_RESULT_BACKEND=get_queue_url(),
                 #CELERY_ACCEPT_CONTENT=['json'],
                 #CELERY_TASK_SERIALIZER='json',
                 CELERY_TRACK_STARTED=True,

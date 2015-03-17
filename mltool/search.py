@@ -79,7 +79,8 @@ class Task(object):
 
 
 class SearchAlgorithm(object):
-    def __init__(self, filepath, search_space, distribution=1, group_size=10):
+    def __init__(self, filepath, search_space, distribution=1, group_size=10, 
+                 working_set_size=100):
         self._search_space = search_space
         self._distribution = distribution
         self._filepath = filepath
@@ -93,6 +94,7 @@ class SearchAlgorithm(object):
         self._thread = None
         self._result = None
         self._task_group_size = group_size
+        self._working_set_size = working_set_size
 
     def start(self):
         self._result = None
@@ -144,15 +146,12 @@ class SearchAlgorithm(object):
         best_pair = None
         best_result = 0.0
 
-        #self._monitor.start()
-
         space_size = sum([1 for _ in self._search_space])
         workitems_count = ceil(float(space_size) / self._task_group_size)
         with self._progress_lock:
             self._progress = Progress(max=workitems_count)
 
         workitems_depleted = False
-        working_set_capacity = 160
         working_set = []
         space_iterator = iter(self._search_space)
         while not workitems_depleted or len(working_set):
@@ -172,7 +171,7 @@ class SearchAlgorithm(object):
             for task in tasks_finished:
                 working_set.remove(task)
 
-            while not workitems_depleted and len(working_set) < working_set_capacity:
+            while not workitems_depleted and len(working_set) < self._working_set_size:
                 workitem_group = []
                 try:
                     for _ in xrange(self._task_group_size):
@@ -189,13 +188,10 @@ class SearchAlgorithm(object):
                 break
 
             for task in working_set:
-                if task.is_lost(timedelta(minutes=15)):
-                    print 'Retry'
+                if task.is_lost(timedelta(minutes=30)):
                     task.retry()
 
             time.sleep(1)
-
-        #self._monitor.stop()
 
         if best_result:
             with self._running_lock:
