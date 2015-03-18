@@ -9,7 +9,7 @@ from cache import SampleCache
 class FileCache(object):
 
     _cache = {}
-
+     
     @staticmethod
     def get(filepath):
         if not filepath in FileCache._cache:

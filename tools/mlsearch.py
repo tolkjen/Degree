@@ -39,18 +39,27 @@ class MlSearch(object):
         algorithm.start()
 
         started_dt = datetime.datetime.now()
+        total_time_estimate = None
+        progress_last = 0
         try:
             while algorithm.running():
-                td = datetime.datetime.now() - started_dt
-                if algorithm.progress() > 0:
-                    prog = algorithm.progress()
-                    eta = datetime.timedelta(seconds=td.total_seconds()*((1.0 - prog)/prog))
+                time_d = datetime.datetime.now() - started_dt
+                if algorithm.progress() <> progress_last:
+                    progress_last = algorithm.progress()
+                    total_time_estimate = datetime.timedelta(seconds=time_d.total_seconds()*
+                                                             (1.0/progress_last))
+                if total_time_estimate:
+                    if total_time_estimate > time_d:
+                        eta = total_time_estimate - time_d
+                    else:
+                        eta = datetime.timedelta()
                 else:
-                    eta = datetime.timedelta(hours=99)
+                    eta = datetime.timedelta(days=99)
 
-                sys.stdout.write("\rProgress: %0.2f%% (ETA: %s)" % (100.0 * algorithm.progress(), eta))
+                sys.stdout.write("\rProgress: %0.2f%% (ETA: %s)%s" % (100.0 * algorithm.progress(), 
+                                                                    eta, ' '*20))
                 sys.stdout.flush()
-                time.sleep(0.1)
+                time.sleep(0.25)
         except KeyboardInterrupt:
             algorithm.stop()
 
@@ -133,7 +142,7 @@ if __name__ == "__main__":
     time_finished = datetime.datetime.now()
 
     if results:
-        print "Best accuracy: %f                    " % results.accuracy
+        print "Best accuracy: %f%s" % (results.accuracy, ' '*30)
         print "Classifier info: %s" % results.classification_d
         print "Preprocessing info: %s" % results.preprocessing_d
     else:
