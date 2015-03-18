@@ -107,6 +107,9 @@ class FixSpace(AbstractSearchSpace):
             descriptor.fix_method = method
             yield descriptor
 
+    def __repr__(self):
+        return 'FixSpace(methods=%s)' % ','.join(self._methods)
+
 
 class RemoveSpace(AbstractSearchSpace):
     """
@@ -144,6 +147,10 @@ class RemoveSpace(AbstractSearchSpace):
             for subset in generator:
                 descriptor.removed_columns = subset
                 yield descriptor
+
+    def __repr__(self):
+        return 'RemoveSpace(columns=%s, sizes=%s)' % (
+            ','.join(self._columns), ','.join([str(s) for s in self._set_sizes]))
 
 
 class NormalizeSpace(AbstractSearchSpace):
@@ -186,6 +193,10 @@ class NormalizeSpace(AbstractSearchSpace):
                 descriptor.normalized_columns = subset
                 yield descriptor
 
+    def __repr__(self):
+        return 'NormalizeSpace(columns=%s, sizes=%s)' % (
+            ','.join(self._columns), ','.join([str(s) for s in self._set_sizes]))
+
 
 class QuantifySpace(AbstractSearchSpace):
     """
@@ -226,6 +237,12 @@ class QuantifySpace(AbstractSearchSpace):
         self._count_list = clusterer_counts
         self._max_cols = max_cols
         self._granularity = granularity
+
+    def __repr__(self):
+        count_list = [str(c) for c in self._count_list]
+        return 'QuantifySpace(columns=%s, algorithms=%s, count=%s, maxcols=%d, granularity=%d)' % (
+            ','.join(self._columns), ','.join(self._clusterers), ','.join(count_list),
+            self._max_cols, self._granularity)
 
     def generate(self, descriptor):
         if not self._columns or not self._clusterers or not self._count_list:
@@ -283,6 +300,10 @@ class ClassificationSpace(object):
         self._classifiers = classifiers
         self._granularity = granularity
 
+    def __repr__(self):
+        return 'ClassificationSpace(classifiers=%s, granularity=%d)' % (
+            ','.join(self._classifiers), self._granularity)
+
     def generate(self):
         for classifier in self._classifiers:
             for space in ClassificationSpace._param_spaces[classifier]:
@@ -317,3 +338,8 @@ class SearchSpace(object):
                     for qd in self._quantify_space.generate(nd):
                         for cd in self._classification_space.generate():
                             yield DescriptorPair(qd, cd)
+
+    def __repr__(self):
+        return 'SearchSpace(fix=%s, remove=%s, normalize=%s, quantify=%s, classify=%s' % (
+            self._fix_space, self._remove_space, self._normalize_space, self._quantify_space,
+            self._classification_space)

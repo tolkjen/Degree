@@ -104,3 +104,16 @@ def test_search_space_with_removed_cols():
 
     descriptors = [x for x in search_space]
     assert len(descriptors) == 0
+
+def test_search_space_repr():
+    columns = ["a", "b", "c", "d"]
+    granularity = 2
+
+    fix_space = FixSpace(["remove"])
+    remove_space = RemoveSpace(columns, [1])
+    normalize_space = NormalizeSpace(columns, [len(columns)])
+    quantify_space = QuantifySpace(columns, [], [0], 3, granularity)
+    classify_space = ClassificationSpace(["tree"], granularity)
+
+    search_space = SearchSpace(fix_space, remove_space, normalize_space, quantify_space, classify_space)
+    repr = str(search_space)

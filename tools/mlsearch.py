@@ -7,7 +7,7 @@ import argparse
 
 from mltool.spaces import SearchSpace, RemoveSpace, NormalizeSpace, FixSpace, QuantifySpace, ClassificationSpace
 from mltool.search import SearchAlgorithm
-
+from tools.datastore import DataStore
 
 class MlSearchResult(object):
     def __init__(self, preprocessing_d, classification_d, accuracy):
@@ -30,6 +30,12 @@ class MlSearch(object):
     def search(self):
         args = self._parse_arguments()
         search_space = self._create_search_space(args)
+
+        store = DataStore('sqlite:///cache.db')
+        if args.reset:
+            store.remove(str(search_space))
+        elif store.is_done(str(search_space)):
+            return None
 
         size = sum([1 for _ in search_space])
         print 'Size: %d\n' % size
@@ -60,6 +66,8 @@ class MlSearch(object):
                                                                     eta, ' '*20))
                 sys.stdout.flush()
                 time.sleep(0.25)
+
+            store.set(str(search_space), '', 0, True)
         except KeyboardInterrupt:
             algorithm.stop()
 
@@ -125,6 +133,7 @@ class MlSearch(object):
                             "machine or 'queue'", default=1, dest="distrib")
         parser.add_argument("-gs", "--group-size", help="Packet size for queue", default=10, dest="group_size")
         parser.add_argument("-ws", "--workingset-size", help="Size of the working set", default=100, dest="working_set_size")
+        parser.add_argument('-r', '--reset', help='Resets previously calculated progress', action='store_true', dest='reset')
 
         return parser.parse_args(self._cmd_args)
 
