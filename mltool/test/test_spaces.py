@@ -105,15 +105,31 @@ def test_search_space_with_removed_cols():
     descriptors = [x for x in search_space]
     assert len(descriptors) == 0
 
+
 def test_search_space_repr():
     columns = ["a", "b", "c", "d"]
     granularity = 2
 
     fix_space = FixSpace(["remove"])
     remove_space = RemoveSpace(columns, [1])
-    normalize_space = NormalizeSpace(columns, [len(columns)])
+    normalize_space = NormalizeSpace(columns, [0, 1, 2])
     quantify_space = QuantifySpace(columns, [], [0], 3, granularity)
     classify_space = ClassificationSpace(["tree"], granularity)
 
     search_space = SearchSpace(fix_space, remove_space, normalize_space, quantify_space, classify_space)
     repr = str(search_space)
+
+
+def test_search_space_set_offset():
+    columns = ["a", "b", "c", "d"]
+    granularity = 2
+
+    fix_space = FixSpace(["remove"])
+    remove_space = RemoveSpace(columns, [1])
+    normalize_space = NormalizeSpace(columns, [0, 1, 2])
+    quantify_space = QuantifySpace(columns, [], [0], 3, granularity)
+    classify_space = ClassificationSpace(["tree"], granularity)
+
+    search_space = SearchSpace(fix_space, remove_space, normalize_space, quantify_space, classify_space)
+    search_space.set_offset(10, [[0, 2], [4, 5]])
+    assert sum([1 for _ in search_space]) == 22

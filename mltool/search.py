@@ -55,9 +55,11 @@ class Progress(object):
 
 
 class Task(object):
-    def __init__(self, signature, result=None):
+    def __init__(self, signature, number_begin, number_end):
         self.signature = signature
-        self.result = result 
+        self.result = None 
+        self.number_begin = number_begin
+        self.number_end = number_end
         self._started_at = None
 
     def is_lost(self, timeout):
@@ -95,6 +97,7 @@ class SearchAlgorithm(object):
         self._result = None
         self._task_group_size = group_size
         self._working_set_size = working_set_size
+        self._observer = None
 
     def start(self):
         self._result = None
@@ -123,6 +126,9 @@ class SearchAlgorithm(object):
             if self._progress:
                 return self._progress.fraction()
             return 0.0
+
+    def register_observer(self, observer):
+        self._observer = observer
 
     def result(self):
         return self._result
@@ -154,8 +160,11 @@ class SearchAlgorithm(object):
         workitems_depleted = False
         working_set = []
         space_iterator = iter(self._search_space)
+        space_item_latest = 0
+        space_item_finished = 0
         while not workitems_depleted or len(working_set):
             tasks_finished = []
+            new_tasks_ready_found = False
             for task in working_set:
                 if task.result.ready():
                     score, pair = task.result.get()
@@ -168,17 +177,27 @@ class SearchAlgorithm(object):
 
                     tasks_finished.append(task)
 
+                    new_tasks_ready_found = True
+                    space_item_finished = max(task.number_begin, space_item_finished)
+
+            if new_tasks_ready_found and self._observer:
+                unfinished_ranges = [[t.number_begin, t.number_end] for t in working_set if t.number_end < space_item_finished]
+                self._observer.update_results(best_result, best_pair, space_item_finished, unfinished_ranges)
+
             for task in tasks_finished:
                 working_set.remove(task)
 
             while not workitems_depleted and len(working_set) < self._working_set_size:
                 workitem_group = []
+                group_number_begin = space_item_latest
                 try:
                     for _ in xrange(self._task_group_size):
                         workitem_group.append(space_iterator.next().copy())
+                        space_item_latest += 1
                 except StopIteration:
                     workitems_depleted = True
-                new_task = Task(validate.s(self._filepath, workitem_group))
+                group_number_end = space_item_latest
+                new_task = Task(validate.s(self._filepath, workitem_group), group_number_begin, group_number_end)
                 new_task.start()
                 working_set.append(new_task)
 

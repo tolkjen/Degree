@@ -26,22 +26,44 @@ class MlSearch(object):
 
     def __init__(self, cmd_args):
         self._cmd_args = cmd_args
+        self._space = None
+        self._store = DataStore('sqlite:///cache.db')
+
+    def update_results(self, score, pair, latest_finished, unfinished_ranges):
+        self._store.set(str(self._space), (score, pair), latest_finished, False, unfinished_ranges)
 
     def search(self):
+        def better_result(a, b):
+            if not a: return b
+            if not b: return a
+            if a[0] > b[0]:
+                return a
+            return b
+
         args = self._parse_arguments()
-        search_space = self._create_search_space(args)
+        self._space = self._create_search_space(args)
 
-        store = DataStore('sqlite:///cache.db')
+        space_descr = str(self._space)
+
+        cached_result = None
         if args.reset:
-            store.remove(str(search_space))
-        elif store.is_done(str(search_space)):
-            return None
+            self._store.remove(space_descr)
+        elif self._store.is_done(space_descr):
+            result, pair = self._store.get_result(space_descr)
+            return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, result)
+        else:
+            latest_finished = self._store.get_latest(space_descr)
+            if latest_finished:
+                cached_result = self._store.get_result(space_descr)
+                unfinished_ranges = self._store.get_ranges(space_descr)
+                self._space.set_offset(latest_finished, unfinished_ranges)
 
-        size = sum([1 for _ in search_space])
+        size = sum([1 for _ in self._space])
         print 'Size: %d\n' % size
 
-        algorithm = SearchAlgorithm(args.filepath, search_space, args.distrib, int(args.group_size), 
+        algorithm = SearchAlgorithm(args.filepath, self._space, args.distrib, int(args.group_size), 
                                     int(args.working_set_size))
+        algorithm.register_observer(self)
         algorithm.start()
 
         started_dt = datetime.datetime.now()
@@ -67,14 +89,14 @@ class MlSearch(object):
                 sys.stdout.flush()
                 time.sleep(0.25)
 
-            store.set(str(search_space), '', 0, True)
+            self._store.set(str(self._space), better_result(algorithm.result(), cached_result), 0, True)
         except KeyboardInterrupt:
             algorithm.stop()
 
         sys.stdout.write("\r")
 
         if algorithm.result():
-            result, pair = algorithm.result()
+            result, pair = better_result(algorithm.result(), cached_result)
             return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, result)
         return None
 
@@ -155,6 +177,6 @@ if __name__ == "__main__":
         print "Classifier info: %s" % results.classification_d
         print "Preprocessing info: %s" % results.preprocessing_d
     else:
-        print "Didn't find anything"
+        print "Didn't find anything                       "
 
     print '\nTime: %s' % str(time_finished - time_started)

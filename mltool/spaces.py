@@ -322,6 +322,10 @@ class DescriptorPair(object):
     def copy(self):
         return DescriptorPair(self.preprocessing_descriptor.copy(), self.classification_descriptor.copy())
 
+    def __repr__(self):
+        return 'Preprocessing=%s, Classification=%s' % (
+            self.preprocessing_descriptor, self.classification_descriptor)
+
 
 class SearchSpace(object):
     def __init__(self, fix_space, remove_space, normalize_space, quantify_space, classification_space):
@@ -330,14 +334,32 @@ class SearchSpace(object):
         self._remove_space = remove_space
         self._quantify_space = quantify_space
         self._classification_space = classification_space
+        self._offset = -1
+        self._unfinished_ranges = []
+
+    def set_offset(self, offset, unfinished_ranges):
+        self._offset = offset
+        self._unfinished_ranges = unfinished_ranges
 
     def __iter__(self):
+        counter = 0
         for fd in self._fix_space.generate(PreprocessingDescriptor()):
             for rd in self._remove_space.generate(fd):
                 for nd in self._normalize_space.generate(rd):
                     for qd in self._quantify_space.generate(nd):
                         for cd in self._classification_space.generate():
-                            yield DescriptorPair(qd, cd)
+                            do_yield = False
+                            if counter > self._offset:
+                                do_yield = True
+                            elif self._unfinished_ranges and counter == self._unfinished_ranges[0][0]:
+                                do_yield = True
+                                self._unfinished_ranges[0][0] += 1
+                                if self._unfinished_ranges[0][0] > self._unfinished_ranges[0][1]:
+                                    self._unfinished_ranges.pop(0)
+
+                            if do_yield:
+                                yield DescriptorPair(qd, cd)
+                            counter += 1
 
     def __repr__(self):
         return 'SearchSpace(fix=%s, remove=%s, normalize=%s, quantify=%s, classify=%s' % (
