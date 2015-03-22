@@ -226,7 +226,7 @@ class Sample:
         :param split_ratio: What part of the original sample will go to the test subset.
         """
         if test_ratio <= 0.0 or test_ratio >= 1.0:
-            raise Exception('Test ratio must be in range (0.0, 1.0)')
+            raise Exception('Test ratio (%d) must be in range (0.0, 1.0)' % test_ratio)
 
         r = RandomState()
         if random:

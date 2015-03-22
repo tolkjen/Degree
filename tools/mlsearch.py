@@ -45,7 +45,7 @@ class MlSearch(object):
         xls = XlsFile(self._args.filepath)
         xls.read()
         sample = preprocessing_descriptor.generate_sample(xls)
-        evaluation_sample, test_sample = sample.split(r, test_ratio=0.4)
+        evaluation_sample, test_sample = sample.split(r, test_ratio=float(self._args.test_ratio))
 
         cls = classification_descriptor.create_classifier(evaluation_sample)
         cls.fit(evaluation_sample.attributes, evaluation_sample.categories)
@@ -76,7 +76,7 @@ class MlSearch(object):
         print 'Size: %d\n' % size
 
         algorithm = SearchAlgorithm(self._args.filepath, self._space, self._args.distrib, int(self._args.group_size), 
-                                    int(self._args.working_set_size), random)
+                                    int(self._args.working_set_size), float(self._args.test_ratio), random)
         algorithm.register_observer(self)
         algorithm.start()
 
@@ -192,6 +192,8 @@ class MlSearch(object):
                             dest='random_state')
         parser.add_argument('-t', '--test', help='Evaluate the best solution found so far.', action='store_true', 
                             dest='test')
+        parser.add_argument('-tr', '--test-ratio', help='The bigger, the bigger the test subset will be', default=0.4, 
+                            dest='test_ratio')
 
         return parser.parse_args(args)
 

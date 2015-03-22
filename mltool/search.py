@@ -82,7 +82,7 @@ class Task(object):
 
 class SearchAlgorithm(object):
     def __init__(self, filepath, search_space, distribution=1, group_size=10, 
-                 working_set_size=100, random=None):
+                 working_set_size=100, test_ratio=0.3, random=None):
         self._search_space = search_space
         self._distribution = distribution
         self._filepath = filepath
@@ -99,6 +99,7 @@ class SearchAlgorithm(object):
         self._task_group_size = group_size
         self._working_set_size = working_set_size
         self._observer = None
+        self._test_ratio = test_ratio
 
     def start(self):
         self._result = None
@@ -198,7 +199,7 @@ class SearchAlgorithm(object):
                 except StopIteration:
                     workitems_depleted = True
                 group_number_end = space_item_latest
-                new_task = Task(validate.s(self._filepath, self._random_state, workitem_group), 
+                new_task = Task(validate.s(self._filepath, self._random_state, self._test_ratio, workitem_group), 
                                 group_number_begin, group_number_end)
                 new_task.start()
                 working_set.append(new_task)
