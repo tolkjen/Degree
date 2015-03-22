@@ -32,9 +32,10 @@ class DataStore(object):
 
     def set(self, space, result, latest, done=False, ranges=[], test_score=0):
         session = self._session_factory()
-        operation = session.query(SearchOperation).filter_by(space=space).first()
+        space_dump = pickle.dumps(space)
+        operation = session.query(SearchOperation).filter_by(space=space_dump).first()
         if not operation:
-            operation = SearchOperation(space=space)
+            operation = SearchOperation(space=space_dump)
             session.add(operation)
         operation.result = pickle.dumps(result)
         operation.latest = latest
@@ -45,14 +46,14 @@ class DataStore(object):
 
     def is_done(self, space):
         session = self._session_factory()
-        operation = session.query(SearchOperation).filter_by(space=space).first()
+        operation = session.query(SearchOperation).filter_by(space=pickle.dumps(space)).first()
         if operation:
             return operation.done
         return False
 
     def get_test_score(self, space):
         session = self._session_factory()
-        operation = session.query(SearchOperation).filter_by(space=space).first()
+        operation = session.query(SearchOperation).filter_by(space=pickle.dumps(space)).first()
         if operation:
             return operation.test_score
         return None
@@ -63,28 +64,28 @@ class DataStore(object):
 
     def get_latest(self, space):
         session = self._session_factory()
-        operation = session.query(SearchOperation).filter_by(space=space).first()
+        operation = session.query(SearchOperation).filter_by(space=pickle.dumps(space)).first()
         if not operation:
             return None
         return operation.latest
 
     def get_result(self, space):
         session = self._session_factory()
-        operation = session.query(SearchOperation).filter_by(space=space).first()
+        operation = session.query(SearchOperation).filter_by(space=pickle.dumps(space)).first()
         if not operation:
             raise Exception('Space %s not in data store!' % space)
         return pickle.loads(operation.result)
 
     def get_ranges(self, space):
         session = self._session_factory()
-        operation = session.query(SearchOperation).filter_by(space=space).first()
+        operation = session.query(SearchOperation).filter_by(space=pickle.dumps(space)).first()
         if not operation:
             raise Exception('Space %s not in data store!' % space)
         return pickle.loads(operation.ranges)
 
     def remove(self, space):
         session = self._session_factory()
-        operation = session.query(SearchOperation).filter_by(space=space).first()
+        operation = session.query(SearchOperation).filter_by(space=pickle.dumps(space)).first()
         if operation:
             session.delete(operation)
             session.commit()
@@ -96,12 +97,13 @@ if __name__ == '__main__':
     print ''
     for op in store.get_all():
         result, descriptor_pair = pickle.loads(op.result)
+        space = pickle.loads(op.space)
 
         test_score = op.test_score
         if not op.done:
             test_score = '????'
 
-        print 'SPACE:  ', op.space
+        print 'SPACE:  ', space
         print 'SCORE:  ', test_score
         print 'EVAL:   ', result
         print 'DESCR:  ', descriptor_pair
