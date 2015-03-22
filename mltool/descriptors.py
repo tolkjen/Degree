@@ -74,7 +74,6 @@ class PreprocessingDescriptor:
 
         sample = cache.get(tabular_file, str(self))
         if not sample:
-            #print 'miss'
             sample = Sample.from_file(tabular_file, self.fix_method)
             for col_name in self.removed_columns:
                 sample.remove_column(col_name)
@@ -83,8 +82,7 @@ class PreprocessingDescriptor:
             for descriptor in self.quantization_descriptors:
                 descriptor.execute(sample)
             cache.add(tabular_file, str(self), sample)
-        #else:
-        #    print 'hit'
+
         return sample
 
     def validate(self):

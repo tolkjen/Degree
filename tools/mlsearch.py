@@ -4,6 +4,10 @@ import sys
 import time
 import datetime
 import argparse
+import pickle
+import os
+
+from numpy.random import RandomState
 
 from mltool.spaces import SearchSpace, RemoveSpace, NormalizeSpace, FixSpace, QuantifySpace, ClassificationSpace
 from mltool.search import SearchAlgorithm
@@ -25,14 +29,15 @@ class MlSearch(object):
             setattr(namespace, self.dest, values.split(","))
 
     def __init__(self, cmd_args):
-        self._cmd_args = cmd_args
         self._space = None
         self._store = DataStore('sqlite:///cache.db')
+        self._args = self._parse_arguments(cmd_args)
+        self.random_state_requested = self._args.random_state
 
     def update_results(self, score, pair, latest_finished, unfinished_ranges):
         self._store.set(str(self._space), (score, pair), latest_finished, False, unfinished_ranges)
 
-    def search(self):
+    def search(self, random):
         def better_result(a, b):
             if not a: return b
             if not b: return a
@@ -40,13 +45,11 @@ class MlSearch(object):
                 return a
             return b
 
-        args = self._parse_arguments()
-        self._space = self._create_search_space(args)
-
+        self._space = self._create_search_space(self._args)
         space_descr = str(self._space)
 
         cached_result = None
-        if args.reset:
+        if self._args.reset:
             self._store.remove(space_descr)
         elif self._store.is_done(space_descr):
             result, pair = self._store.get_result(space_descr)
@@ -61,8 +64,8 @@ class MlSearch(object):
         size = sum([1 for _ in self._space])
         print 'Size: %d\n' % size
 
-        algorithm = SearchAlgorithm(args.filepath, self._space, args.distrib, int(args.group_size), 
-                                    int(args.working_set_size))
+        algorithm = SearchAlgorithm(self._args.filepath, self._space, self._args.distrib, int(self._args.group_size), 
+                                    int(self._args.working_set_size), random)
         algorithm.register_observer(self)
         algorithm.start()
 
@@ -113,7 +116,7 @@ class MlSearch(object):
         space = SearchSpace(fs, rs, ns, qs, cs)
         return space
 
-    def _parse_arguments(self):
+    def _parse_arguments(self, args):
         parser = argparse.ArgumentParser(
             description="Searches through data preprocessing and data classification parameters in order to find ones "
                         "which maximize the classification accuracy.")
@@ -156,8 +159,24 @@ class MlSearch(object):
         parser.add_argument("-gs", "--group-size", help="Packet size for queue", default=10, dest="group_size")
         parser.add_argument("-ws", "--workingset-size", help="Size of the working set", default=100, dest="working_set_size")
         parser.add_argument('-r', '--reset', help='Resets previously calculated progress', action='store_true', dest='reset')
+        parser.add_argument('-s', '--random-state', help='Generates random state and stores it on disk.', action='store_true', 
+                            dest='random_state')
 
-        return parser.parse_args(self._cmd_args)
+        return parser.parse_args(args)
+
+
+def file_exists(filename):
+    return os.path.isfile(os.getcwd() + '/' + filename)
+
+
+def save_random_state(filename):
+    with open(filename, 'w') as f:
+        f.write(pickle.dumps(RandomState()))
+
+
+def load_random_state(filename):
+    with open(filename, 'r') as f:
+        return pickle.loads(f.read())
 
 
 if __name__ == "__main__":
@@ -168,8 +187,14 @@ if __name__ == "__main__":
     print "-----------------------"
     print ""
 
+    random_state_filename = 'randomstate'
+    if app.random_state_requested or not file_exists(random_state_filename):
+        print 'Saving random state...'
+        print ''
+        save_random_state(random_state_filename)
+
     time_started = datetime.datetime.now()
-    results = app.search()
+    results = app.search(load_random_state(random_state_filename))
     time_finished = datetime.datetime.now()
 
     if results:

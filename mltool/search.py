@@ -82,7 +82,7 @@ class Task(object):
 
 class SearchAlgorithm(object):
     def __init__(self, filepath, search_space, distribution=1, group_size=10, 
-                 working_set_size=100):
+                 working_set_size=100, random=None):
         self._search_space = search_space
         self._distribution = distribution
         self._filepath = filepath
@@ -95,6 +95,7 @@ class SearchAlgorithm(object):
         self._stop_requested = False
         self._thread = None
         self._result = None
+        self._random_state = random
         self._task_group_size = group_size
         self._working_set_size = working_set_size
         self._observer = None
@@ -197,7 +198,8 @@ class SearchAlgorithm(object):
                 except StopIteration:
                     workitems_depleted = True
                 group_number_end = space_item_latest
-                new_task = Task(validate.s(self._filepath, workitem_group), group_number_begin, group_number_end)
+                new_task = Task(validate.s(self._filepath, self._random_state, workitem_group), 
+                                group_number_begin, group_number_end)
                 new_task.start()
                 working_set.append(new_task)
 
@@ -227,7 +229,7 @@ class SearchAlgorithm(object):
         with self._progress_lock:
             self._progress = Progress(self._search_space)
 
-        cross_validator = CrossValidator(None, splits_per_group=3)
+        cross_validator = CrossValidator(self._random_state, splits_per_group=3)
 
         if self._progress._space_size > 0:
             for pair in self._search_space:
@@ -251,12 +253,11 @@ class SearchAlgorithm(object):
     def _thread_worker_multiprocess(self, process_count):
         queue_result = multiprocessing.Queue()
         queue_work = multiprocessing.Queue()
-        random = numpy.random.RandomState()
 
         processes = []
         for i in xrange(process_count):
             p = multiprocessing.Process(target=_process_entry_point,
-                                        args=(random, self._filepath, queue_work, queue_result))
+                                        args=(self._random_state, self._filepath, queue_work, queue_result))
             p.start()
             processes.append(p)
 
