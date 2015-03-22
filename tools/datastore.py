@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 import pickle
 from mltool.spaces import *
 from mltool.descriptors import *
@@ -26,7 +27,8 @@ class SearchOperation(Base):
 
 class DataStore(object):
     def __init__(self, url):
-        engine = create_engine(url, echo=False, echo_pool=False)
+        engine = create_engine(url, echo=False, echo_pool=False, poolclass=StaticPool, 
+                               connect_args={'check_same_thread':False})
         SearchOperation.metadata.create_all(engine) 
         self._session_factory = sessionmaker(bind=engine)
 

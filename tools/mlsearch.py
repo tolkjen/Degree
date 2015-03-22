@@ -214,11 +214,6 @@ def load_random_state(filename):
 if __name__ == "__main__":
     app = MlSearch(sys.argv[1:])
 
-    print ""
-    print "Machine Learning Search"
-    print "-----------------------"
-    print ""
-
     random_state_filename = 'randomstate'
     if app.random_state_requested or not file_exists(random_state_filename):
         print 'Generating random state...'

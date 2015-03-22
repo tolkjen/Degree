@@ -1,5 +1,6 @@
 __author__ = 'tolkjen'
 
+from numpy import concatenate
 from numpy.random import RandomState
 from sklearn.cross_validation import cross_val_score, StratifiedKFold
 
@@ -18,12 +19,12 @@ class CrossValidator(object):
                      xrange(self._iterations)]
             self._split_groups[n_rows] = group
 
-        mean_list = []
+        total_scores = []
         split_group = self._split_groups[n_rows]
         for split in split_group:
             scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=split, scoring="accuracy")
-            mean_list.append(scores.mean())
-        return sum(mean_list) / float(len(mean_list))
+            total_scores = concatenate((total_scores, scores))
+        return total_scores.mean() - 3.0 * total_scores.std()
 
     def _clone_random_state(self):
         if self._random:

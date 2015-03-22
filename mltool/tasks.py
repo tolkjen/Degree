@@ -42,7 +42,7 @@ def validate(filepath, random_state, test_ratio, pairs):
     print 'Work started'
 
     xls = FileCache.get(filepath)
-    cross_validator = CrossValidator(random_state, iterations=3)
+    cross_validator = CrossValidator(random_state, iterations=1)
 
     best_score = 0
     best_pair = None
