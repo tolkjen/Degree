@@ -36,7 +36,7 @@ class MlSearch(object):
         self.random_state_requested = self._args.random_state
 
     def update_results(self, score, pair, latest_finished, unfinished_ranges):
-        self._store.set(str(self._space), (score, pair), latest_finished, False, unfinished_ranges)
+        self._store.set(self._space, (score, pair), latest_finished, False, unfinished_ranges)
 
     def get_test_score(self, preprocessing_descriptor, classification_descriptor, random):
         r = RandomState()
@@ -53,20 +53,19 @@ class MlSearch(object):
 
     def search(self, random):
         self._space = self._create_search_space(self._args)
-        space_descr = str(self._space)
 
         cached_result = None
         if self._args.reset:
-            self._store.remove(space_descr)
-        elif self._store.is_done(space_descr):
-            eval_score, pair = self._store.get_result(space_descr)
-            test_score = self._store.get_test_score(space_descr)
+            self._store.remove(self._space)
+        elif self._store.is_done(self._space):
+            eval_score, pair = self._store.get_result(self._space)
+            test_score = self._store.get_test_score(self._space)
             return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, test_score)
         else:
-            latest_finished = self._store.get_latest(space_descr)
+            latest_finished = self._store.get_latest(self._space)
             if latest_finished:
-                cached_result = self._store.get_result(space_descr)
-                unfinished_ranges = self._store.get_ranges(space_descr)
+                cached_result = self._store.get_result(self._space)
+                unfinished_ranges = self._store.get_ranges(self._space)
                 self._space.set_offset(latest_finished, unfinished_ranges)
 
                 if self._args.test:
@@ -129,7 +128,7 @@ class MlSearch(object):
         result, pair = better_result(current_result, cached_result)
         test_score = self.get_test_score(pair.preprocessing_descriptor, pair.classification_descriptor, random)
         if save_score:
-            self._store.set(str(self._space), (result, pair), 0, True, [], test_score)
+            self._store.set(self._space, (result, pair), 0, True, [], test_score)
         return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, test_score)
 
     def _create_search_space(self, args):

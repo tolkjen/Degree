@@ -107,8 +107,8 @@ class FixSpace(AbstractSearchSpace):
             descriptor.fix_method = method
             yield descriptor
 
-    def __repr__(self):
-        return 'FixSpace(methods=%s)' % ','.join(self._methods)
+    def __str__(self):
+        return 'Fix(%s)' % ','.join(self._methods)
 
 
 class RemoveSpace(AbstractSearchSpace):
@@ -148,9 +148,13 @@ class RemoveSpace(AbstractSearchSpace):
                 descriptor.removed_columns = subset
                 yield descriptor
 
-    def __repr__(self):
-        return 'RemoveSpace(columns=%s, sizes=%s)' % (
-            ','.join(self._columns), ','.join([str(s) for s in self._set_sizes]))
+    def __str__(self):
+        args = []
+        if self._columns: args.append('columns=%s' % ','.join(self._columns))
+        if self._set_sizes: args.append('sizes=%s' % ','.join([str(s) for s in self._set_sizes]))
+        if args:
+            return 'Remove(%s)' % ', '.join(args)
+        return ''
 
 
 class NormalizeSpace(AbstractSearchSpace):
@@ -193,9 +197,13 @@ class NormalizeSpace(AbstractSearchSpace):
                 descriptor.normalized_columns = subset
                 yield descriptor
 
-    def __repr__(self):
-        return 'NormalizeSpace(columns=%s, sizes=%s)' % (
-            ','.join(self._columns), ','.join([str(s) for s in self._set_sizes]))
+    def __str__(self):
+        args = []
+        if self._columns: args.append('columns=%s' % ','.join(self._columns))
+        if self._set_sizes: args.append('sizes=%s' % ','.join([str(s) for s in self._set_sizes]))
+        if args:
+            return 'Normalize(%s)' % ', '.join(args)
+        return ''
 
 
 class QuantifySpace(AbstractSearchSpace):
@@ -238,11 +246,16 @@ class QuantifySpace(AbstractSearchSpace):
         self._max_cols = max_cols
         self._granularity = granularity
 
-    def __repr__(self):
-        count_list = [str(c) for c in self._count_list]
-        return 'QuantifySpace(columns=%s, algorithms=%s, count=%s, maxcols=%d, granularity=%d)' % (
-            ','.join(self._columns), ','.join(self._clusterers), ','.join(count_list),
-            self._max_cols, self._granularity)
+    def __str__(self):
+        if not self._columns or not self._clusterers or not self._count_list:
+            return ''
+        args = []
+        if self._columns: args.append('columns=%s' % ','.join(self._columns))
+        if self._clusterers: args.append('algorithms=%s' % ','.join(self._clusterers))
+        if self._count_list: args.append('counts=%s' % ','.join(count_list))
+        args.append('maxcols=%s' % self._max_cols)
+        args.append('granularity=%s' % self._granularity)
+        return 'Quantify(%s)' % ', '.join(args)
 
     def generate(self, descriptor):
         if not self._columns or not self._clusterers or not self._count_list:
@@ -300,8 +313,8 @@ class ClassificationSpace(object):
         self._classifiers = classifiers
         self._granularity = granularity
 
-    def __repr__(self):
-        return 'ClassificationSpace(classifiers=%s, granularity=%d)' % (
+    def __str__(self):
+        return 'Classification(classifiers=%s, granularity=%d)' % (
             ','.join(self._classifiers), self._granularity)
 
     def generate(self):
@@ -322,7 +335,7 @@ class DescriptorPair(object):
     def copy(self):
         return DescriptorPair(self.preprocessing_descriptor.copy(), self.classification_descriptor.copy())
 
-    def __repr__(self):
+    def __str__(self):
         return 'Preprocessing=%s, Classification=%s' % (
             self.preprocessing_descriptor, self.classification_descriptor)
 
@@ -361,7 +374,10 @@ class SearchSpace(object):
                                 yield DescriptorPair(qd, cd)
                             counter += 1
 
-    def __repr__(self):
-        return 'SearchSpace(fix=%s, remove=%s, normalize=%s, quantify=%s, classify=%s' % (
-            self._fix_space, self._remove_space, self._normalize_space, self._quantify_space,
-            self._classification_space)
+    def __str__(self):
+        args = [str(self._fix_space)]
+        if str(self._remove_space) != '': args.append(str(self._remove_space))
+        if str(self._normalize_space) != '': args.append(str(self._normalize_space))
+        if str(self._quantify_space) != '': args.append(str(self._quantify_space))
+        args.append(str(self._classification_space))
+        return 'Search(%s)' % ', '.join(args)
