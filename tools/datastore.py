@@ -14,6 +14,7 @@ class SearchOperation(Base):
 
     space = Column(String, primary_key=True)
     result = Column(String)
+    test_score = Column(Integer)
     latest = Column(Integer)
     done = Column(Boolean)
     ranges = Column(String)
@@ -29,7 +30,7 @@ class DataStore(object):
         SearchOperation.metadata.create_all(engine) 
         self._session_factory = sessionmaker(bind=engine)
 
-    def set(self, space, result, latest, done=False, ranges=[]):
+    def set(self, space, result, latest, done=False, ranges=[], test_score=0):
         session = self._session_factory()
         operation = session.query(SearchOperation).filter_by(space=space).first()
         if not operation:
@@ -39,6 +40,7 @@ class DataStore(object):
         operation.latest = latest
         operation.done = done
         operation.ranges = pickle.dumps(ranges)
+        operation.test_score = test_score
         session.commit()
 
     def is_done(self, space):
@@ -47,6 +49,13 @@ class DataStore(object):
         if operation:
             return operation.done
         return False
+
+    def get_test_score(self, space):
+        session = self._session_factory()
+        operation = session.query(SearchOperation).filter_by(space=space).first()
+        if operation:
+            return operation.test_score
+        return None
 
     def get_all(self):
         session = self._session_factory()
@@ -88,8 +97,13 @@ if __name__ == '__main__':
     for op in store.get_all():
         result, descriptor_pair = pickle.loads(op.result)
 
+        test_score = op.test_score
+        if not op.done:
+            test_score = '????'
+
         print 'SPACE:  ', op.space
-        print 'RESULT: ', result
+        print 'SCORE:  ', test_score
+        print 'EVAL:   ', result
         print 'DESCR:  ', descriptor_pair
         print 'RANGES: ', pickle.loads(op.ranges)
         print 'DONE:    %s (Latest = %d)' % (op.done, op.latest)

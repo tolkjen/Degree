@@ -42,15 +42,17 @@ def validate(filepath, random_state, pairs):
     print 'Work started'
 
     xls = FileCache.get(filepath)
-    cross_validator = CrossValidator(random_state, splits_per_group=3)
+    cross_validator = CrossValidator(random_state, iterations=3)
 
     best_score = 0
     best_pair = None
 
     for pair in pairs:
         sample = pair.preprocessing_descriptor.generate_sample(xls, sample_cache)
-        classifier = pair.classification_descriptor.create_classifier(sample)
-        score = cross_validator.validate(sample, classifier)
+        evaluation_sample, test_sample = sample.split(random_state, test_ratio=0.4)
+
+        classifier = pair.classification_descriptor.create_classifier(evaluation_sample)
+        score = cross_validator.validate(evaluation_sample, classifier)
 
         if score > best_score:
             best_score = score

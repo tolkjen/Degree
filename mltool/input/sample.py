@@ -1,9 +1,10 @@
 __author__ = 'tolkjen'
 
-from numpy import empty, float64, array, hstack
+from numpy import empty, float64, array, hstack, concatenate
+from numpy.random import RandomState
 
 from xlsfile import XlsFile
-
+from sklearn.cross_validation import ShuffleSplit
 
 class SampleException(Exception):
     def __init__(self, message):
@@ -216,6 +217,49 @@ class Sample:
         self.attributes = hstack((remaining, merged))
         self.columns = remaining_column_names + [new_column_name]
         self.ncols = len(self.columns)
+
+    def split(self, random=None, test_ratio=0.2):
+        """
+        Splits the sample into two subsets - evaluation sample and test sample.
+        :param random: RandomState object used for selecting the split. State will not be 
+        modified b the method.
+        :param split_ratio: What part of the original sample will go to the test subset.
+        """
+        if test_ratio <= 0.0 or test_ratio >= 1.0:
+            raise Exception('Test ratio must be in range (0.0, 1.0)')
+
+        r = RandomState()
+        if random:
+            r.set_state(random.get_state())
+
+        indices0 = array([i for i in xrange(self.nrows) if not self.categories[i]])
+        indices1 = array([i for i in xrange(self.nrows) if self.categories[i]])
+
+        eval0, test0 = iter(ShuffleSplit(len(indices0), n_iter=1, test_size=test_ratio, 
+                                          random_state=r)).next()
+        eval1, test1 = iter(ShuffleSplit(len(indices1), n_iter=1, test_size=test_ratio, 
+                                          random_state=r)).next()
+
+        eval_indices = concatenate((indices0[eval0], indices1[eval1]))
+        test_indices = concatenate((indices0[test0], indices1[test1]))
+        r.shuffle(eval_indices)
+        r.shuffle(test_indices)
+
+        eval_sample = self._build_sample(self.attributes[eval_indices], 
+                                         self.categories[eval_indices], list(self.columns))
+        test_sample = self._build_sample(self.attributes[test_indices], 
+                                         self.categories[test_indices], list(self.columns))
+        return eval_sample, test_sample
+
+    @staticmethod
+    def _build_sample(attributes, categories, columns):
+        sample = Sample()
+        sample.attributes = attributes
+        sample.categories = categories
+        sample.columns = columns
+        sample.ncols = len(columns)
+        sample.nrows = len(attributes)
+        return sample
 
     def _create_new_column_name(self, columns_removed):
 

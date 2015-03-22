@@ -25,7 +25,7 @@ class AbstractFactory(object):
 
 class ReportFactory(AbstractFactory):
     def create_cross_validator(self):
-        return CrossValidator(splits_per_group=10)
+        return CrossValidator(iterations=10)
 
     def create_search_algorithm(self, filepath, search_space):
         return SearchAlgorithm(filepath, search_space, 8)

@@ -11,6 +11,7 @@ from numpy.random import RandomState
 
 from mltool.spaces import SearchSpace, RemoveSpace, NormalizeSpace, FixSpace, QuantifySpace, ClassificationSpace
 from mltool.search import SearchAlgorithm
+from mltool.input.xlsfile import XlsFile
 from tools.datastore import DataStore
 
 class MlSearchResult(object):
@@ -37,14 +38,20 @@ class MlSearch(object):
     def update_results(self, score, pair, latest_finished, unfinished_ranges):
         self._store.set(str(self._space), (score, pair), latest_finished, False, unfinished_ranges)
 
-    def search(self, random):
-        def better_result(a, b):
-            if not a: return b
-            if not b: return a
-            if a[0] > b[0]:
-                return a
-            return b
+    def get_test_score(self, preprocessing_descriptor, classification_descriptor, random):
+        r = RandomState()
+        r.set_state(random.get_state())
 
+        xls = XlsFile(self._args.filepath)
+        xls.read()
+        sample = preprocessing_descriptor.generate_sample(xls)
+        evaluation_sample, test_sample = sample.split(r, test_ratio=0.4)
+
+        cls = classification_descriptor.create_classifier(evaluation_sample)
+        cls.fit(evaluation_sample.attributes, evaluation_sample.categories)
+        return cls.score(test_sample.attributes, test_sample.categories)
+
+    def search(self, random):
         self._space = self._create_search_space(self._args)
         space_descr = str(self._space)
 
@@ -52,14 +59,18 @@ class MlSearch(object):
         if self._args.reset:
             self._store.remove(space_descr)
         elif self._store.is_done(space_descr):
-            result, pair = self._store.get_result(space_descr)
-            return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, result)
+            eval_score, pair = self._store.get_result(space_descr)
+            test_score = self._store.get_test_score(space_descr)
+            return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, test_score)
         else:
             latest_finished = self._store.get_latest(space_descr)
             if latest_finished:
                 cached_result = self._store.get_result(space_descr)
                 unfinished_ranges = self._store.get_ranges(space_descr)
                 self._space.set_offset(latest_finished, unfinished_ranges)
+
+                if self._args.test:
+                    return self.evaluate(None, cached_result, random, save_score=False)
 
         size = sum([1 for _ in self._space])
         print 'Size: %d\n' % size
@@ -72,6 +83,7 @@ class MlSearch(object):
         started_dt = datetime.datetime.now()
         total_time_estimate = None
         progress_last = 0
+        finished = False
         try:
             while algorithm.running():
                 time_d = datetime.datetime.now() - started_dt
@@ -92,16 +104,33 @@ class MlSearch(object):
                 sys.stdout.flush()
                 time.sleep(0.25)
 
-            self._store.set(str(self._space), better_result(algorithm.result(), cached_result), 0, True)
+            finished = True
         except KeyboardInterrupt:
             algorithm.stop()
 
         sys.stdout.write("\r")
 
-        if algorithm.result():
-            result, pair = better_result(algorithm.result(), cached_result)
-            return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, result)
+        if finished:
+            return self.evaluate(algorithm.result(), cached_result, random, save_score=True)
         return None
+
+    def evaluate(self, current_result, cached_result, random, save_score):
+        def better_result(a, b):
+            if not a: return b
+            if not b: return a
+            if a[0] > b[0]:
+                return a
+            return b
+
+        print 'Evaluating algorithm on the test subset...'
+        print ''
+        sys.stdout.flush()
+
+        result, pair = better_result(current_result, cached_result)
+        test_score = self.get_test_score(pair.preprocessing_descriptor, pair.classification_descriptor, random)
+        if save_score:
+            self._store.set(str(self._space), (result, pair), 0, True, [], test_score)
+        return MlSearchResult(pair.preprocessing_descriptor, pair.classification_descriptor, test_score)
 
     def _create_search_space(self, args):
         fs = FixSpace(args.fix_methods)
@@ -161,6 +190,8 @@ class MlSearch(object):
         parser.add_argument('-r', '--reset', help='Resets previously calculated progress', action='store_true', dest='reset')
         parser.add_argument('-s', '--random-state', help='Generates random state and stores it on disk.', action='store_true', 
                             dest='random_state')
+        parser.add_argument('-t', '--test', help='Evaluate the best solution found so far.', action='store_true', 
+                            dest='test')
 
         return parser.parse_args(args)
 
@@ -189,7 +220,7 @@ if __name__ == "__main__":
 
     random_state_filename = 'randomstate'
     if app.random_state_requested or not file_exists(random_state_filename):
-        print 'Saving random state...'
+        print 'Generating random state...'
         print ''
         save_random_state(random_state_filename)
 

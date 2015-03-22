@@ -3,6 +3,7 @@ __author__ = 'tolkjen'
 import os
 import pytest
 from numpy import array, array_equiv, zeros
+from numpy.random import RandomState
 
 from ..sample import Sample, SampleException
 from ..xlsfile import XlsFile
@@ -121,3 +122,34 @@ def test_transform_not_existing_column():
     sample = Sample.from_file(from_current_dir('sample3.xlsx'))
     with pytest.raises(SampleException):
         sample.merge_columns(['Not-existing-column'], TestClusterer())
+
+
+def test_split_distribution():
+    sample = Sample.from_file(from_current_dir('sample5.xlsx'))
+    positive_count = len([0 for cat in sample.categories if cat])
+
+    test_ratio = 0.25
+    eval, test = sample.split(test_ratio=test_ratio)
+
+    assert array_equiv(sample.columns, eval.columns)
+    assert array_equiv(sample.columns, test.columns)
+
+    eval_positive_count = len([0 for cat in eval.categories if cat])
+    test_positive_count = len([0 for cat in test.categories if cat])
+
+    assert eval_positive_count == positive_count * (1.0 - test_ratio)
+    assert test_positive_count == positive_count * test_ratio
+
+def test_split_repro():
+    sample = Sample.from_file(from_current_dir('sample5.xlsx'))
+
+    random = RandomState()
+    test_ratio = 0.25
+
+    eval_first, test_first = sample.split(random, test_ratio)
+    eval_second, test_second = sample.split(random, test_ratio)
+
+    assert array_equiv(eval_first.attributes, eval_second.attributes)
+    assert array_equiv(eval_first.categories, eval_second.categories)
+    assert array_equiv(test_first.attributes, test_second.attributes)
+    assert array_equiv(test_first.categories, test_second.categories)

@@ -21,7 +21,7 @@ def _process_entry_point(random, filepath, q_work, q_result):
 
     cache = SampleCache(5)
 
-    cross_validator = CrossValidator(random, splits_per_group=3)
+    cross_validator = CrossValidator(random, iterations=3)
     try:
         q_result.put((0.0, None))
         while True:
@@ -229,7 +229,7 @@ class SearchAlgorithm(object):
         with self._progress_lock:
             self._progress = Progress(self._search_space)
 
-        cross_validator = CrossValidator(self._random_state, splits_per_group=3)
+        cross_validator = CrossValidator(self._random_state, iterations=3)
 
         if self._progress._space_size > 0:
             for pair in self._search_space:
