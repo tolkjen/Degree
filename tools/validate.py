@@ -105,8 +105,7 @@ class SearchSpaceScore(Base):
 
 class SpaceDataStore(object):
     def __init__(self, dburl):
-        engine = create_engine(dburl, echo=False, echo_pool=False, poolclass=StaticPool, 
-                               connect_args={'check_same_thread':False})
+        engine = create_engine(dburl, echo=False, echo_pool=False, poolclass=StaticPool)
         SearchOperation.metadata.create_all(engine) 
         self._session_factory = sessionmaker(bind=engine)
 
@@ -374,7 +373,7 @@ class ValidateApplication(object):
         sys.stdout.flush()
 
     def _clear_line(self, time_estimate):
-        sys.stdout.write('\rFinished! (%s)%s' % (time_estimate.elapsed(), ' '*20))
+        sys.stdout.write('\rFinished! (%s)%s\n' % (time_estimate.elapsed(), ' '*20))
         sys.stdout.flush()
 
     def _get_random_state(self):
@@ -401,7 +400,7 @@ if __name__ == '__main__':
     parser = Parser()
     arguments = parser.parse(sys.argv[1:])
 
-    app = ValidateApplication(arguments, 'sqlite:///validations.db')
+    app = ValidateApplication(arguments, 'postgresql+psycopg2://guest:guest@localhost/db')
     if arguments.reset:
         app.reset_space()
 
