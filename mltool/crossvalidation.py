@@ -23,8 +23,8 @@ class CrossValidator(object):
         split_group = self._split_groups[n_rows]
         for split in split_group:
             scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=split, scoring="accuracy")
-            total_scores = concatenate((total_scores, scores))
-        return total_scores.mean() - 3.0 * total_scores.std()
+            total_scores.extend(scores)
+        return total_scores
 
     def _clone_random_state(self):
         if self._random:

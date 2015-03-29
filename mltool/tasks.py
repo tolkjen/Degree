@@ -37,27 +37,18 @@ app.conf.update(BROKER_URL=get_queue_url(),
                 BROKER_POOL_LIMIT=50)
 
 @app.task
-def validate(filepath, random_state, test_ratio, pairs):
+def validate(filepath, random_state, pairs):
     dt_started = datetime.now()
     print 'Work started'
 
     xls = FileCache.get(filepath)
     cross_validator = CrossValidator(random_state, iterations=1)
 
-    best_score = 0
-    best_pair = None
-
+    scores = []
     for pair in pairs:
         sample = pair.preprocessing_descriptor.generate_sample(xls, sample_cache)
-        evaluation_sample, test_sample = sample.split(random_state, test_ratio=test_ratio)
-
-        classifier = pair.classification_descriptor.create_classifier(evaluation_sample)
-        score = cross_validator.validate(evaluation_sample, classifier)
-
-        if score > best_score:
-            best_score = score
-            best_pair = pair.copy()
+        classifier = pair.classification_descriptor.create_classifier(sample)
+        scores.extend(cross_validator.validate(sample, classifier))
 
     print 'Work finished (%d)' % (datetime.now() - dt_started).total_seconds()
-
-    return (best_score, best_pair)
+    return scores
