@@ -1,8 +1,10 @@
+import os
 import sys
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 
+from pylab import savefig
 from scipy.stats import norm
 
 from mltool.descriptors import *
@@ -61,6 +63,10 @@ def plot_distribution(id, metric):
         normal_y = norm.pdf(bins, loc=mean, scale=std)
         plt.plot(bins, normal_y, 'r--', linewidth=1.5)
         plt.title('Metric: %s, $\mu=%0.4f,\ \sigma=%0.4f$' % (metric, mean, std))
+
+        if not os.path.exists('plots'):
+            os.makedirs('plots')
+        savefig('plots/%d-%s.png' % (id, metric), bbox_inches='tight')
 
         plt.show()
 
