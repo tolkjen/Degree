@@ -6,6 +6,7 @@ colorama==0.3.2
 cov-core==1.15.0
 coverage==3.7.1
 kombu==3.0.24
+matplotlib==1.4.3
 numpy==1.8.1
 pika==0.9.5
 psutil==2.1.3

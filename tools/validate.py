@@ -148,9 +148,12 @@ class SpaceDataStore(object):
         session = self._session_factory()
         return [pickle.loads(obj.space) for obj in session.query(SearchOperation).all()]
 
-    def get_scores(self, space):
+    def get_scores(self, space=None, id=-1):
         session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
+        if space:
+            space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
+        else:
+            space_obj = session.query(SearchOperation).filter_by(id=id).first()
         total_scores = []
         for score_obj in space_obj.score_entries:
             total_scores.extend(pickle.loads(score_obj.scores))
@@ -162,6 +165,13 @@ class SpaceDataStore(object):
         if space_obj:
             session.delete(space_obj)
             session.commit()
+
+    def get_id(self, space):
+        session = self._session_factory()
+        space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
+        if space_obj:
+            return space_obj.id
+        return False
 
 
 class Task(object):

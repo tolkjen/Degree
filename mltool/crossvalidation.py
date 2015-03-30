@@ -2,7 +2,7 @@ __author__ = 'tolkjen'
 
 from numpy import concatenate
 from numpy.random import RandomState
-from sklearn.cross_validation import cross_val_score, StratifiedKFold
+from sklearn.cross_validation import StratifiedKFold
 
 
 class CrossValidator(object):
@@ -22,9 +22,30 @@ class CrossValidator(object):
         total_scores = []
         split_group = self._split_groups[n_rows]
         for split in split_group:
-            scores = cross_val_score(classifier, sample.attributes, sample.categories, cv=split, scoring="accuracy")
+            scores = self._cross_validate(classifier, sample.attributes, sample.categories, split)
             total_scores.extend(scores)
         return total_scores
+
+    def _cross_validate(self, clf, attributes, category, splits):
+        results = []
+        for split in splits:
+            training_indices, test_indices = split
+            clf.fit(attributes[training_indices], category[training_indices])
+            prediction = clf.predict(attributes[test_indices])
+            truth = category[test_indices]
+
+            tp, tn, fp, fn = 0, 0, 0, 0
+            for i in xrange(len(truth)):
+                tp += truth[i] and prediction[i]
+                #tn += not truth[i] and not prediction[i]
+                fp += not truth[i] and prediction[i]
+                fn += truth[i] and not prediction[i]
+
+            precision = float(tp) / (tp + fp)
+            sensivity = float(tp) / (tp + fn)
+            f1 = 2.0*tp / (2.0*tp + fp + fn)
+            results.append([sensivity, precision, f1])
+        return results
 
     def _clone_random_state(self):
         if self._random:
