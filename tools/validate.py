@@ -146,7 +146,7 @@ class SpaceDataStore(object):
 
     def get_spaces(self):
         session = self._session_factory()
-        return [pickle.loads(obj.space) for obj in session.query(SearchOperation).all()]
+        return [pickle.loads(obj.space) for obj in session.query(SearchOperation).order_by(SearchOperation.id).all()]
 
     def get_scores(self, space=None, id=-1):
         session = self._session_factory()

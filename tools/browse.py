@@ -25,13 +25,15 @@ class Parser(object):
         return args
 
 
-def list_objects():
+def list_objects(requested_id):
     store = SpaceDataStore('postgresql+psycopg2://guest:guest@localhost/db')
     for space in store.get_spaces():
-        print 'Id: %d' % store.get_id(space)
-        print 'Space: %s' % str(space)
-        print 'Length: %d' % len(store.get_scores(space))
-        print ''
+        id = store.get_id(space)
+        if requested_id == -1 or requested_id == id:
+            print 'Id: %d' % store.get_id(space)
+            print 'Space: %s' % str(space)
+            print 'Length: %d' % len(store.get_scores(space))
+            print ''
 
 
 def plot_distribution(id, metric):
@@ -73,7 +75,7 @@ def plot_distribution(id, metric):
 
 def run(args):
     operations = {
-        'list': lambda: list_objects(),
+        'list': lambda: list_objects(args.id),
         'plot': lambda: plot_distribution(args.id, args.metric)
     }
     if not args.action in operations.keys():
