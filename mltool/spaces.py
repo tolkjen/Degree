@@ -250,9 +250,10 @@ class QuantifySpace(AbstractSearchSpace):
         if not self._columns or not self._clusterers or not self._count_list:
             return ''
         args = []
+        count_list_str = [str(c) for c in self._count_list]
         if self._columns: args.append('columns=%s' % ','.join(self._columns))
         if self._clusterers: args.append('algorithms=%s' % ','.join(self._clusterers))
-        if self._count_list: args.append('counts=%s' % ','.join(count_list))
+        if self._count_list: args.append('counts=%s' % ','.join(count_list_str))
         args.append('maxcols=%s' % self._max_cols)
         args.append('granularity=%s' % self._granularity)
         return 'Quantify(%s)' % ', '.join(args)

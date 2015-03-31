@@ -9,7 +9,7 @@ from scipy.stats import norm
 
 from mltool.descriptors import *
 from mltool.spaces import *
-from tools.validate import SpaceDataStore
+from tools.calculate import SpaceDataStore
 
 
 class Parser(object):
@@ -42,7 +42,10 @@ def list_objects(requested_ids):
             precision_mean = np.array([score[1] for score in scores]).mean()
             f1_mean = np.array([score[2] for score in scores]).mean()
 
-            print 'Id: %d' % store.get_id(space)
+            id_msg = 'Id: %d' % store.get_id(space)
+            if not store.is_enabled(id):
+                id_msg = 'Id: %d (disabled)' % store.get_id(space)
+            print id_msg
             print 'Space: %s' % str(space)
             print 'Length: %d' % len(store.get_scores(space))
             print 'Mean: %0.4f (recall) %0.4f (precision) %0.4f (f1)\n' % (recall_mean, precision_mean, f1_mean)
@@ -87,10 +90,28 @@ def plot_distribution(requested_ids, metric):
             plt.show()
 
 
+def enable(ids):
+    store = SpaceDataStore('postgresql+psycopg2://guest:guest@localhost/db')
+    for space in store.get_spaces():
+        id = store.get_id(space)
+        if id in ids or not ids:
+            store.enable(id)
+
+
+def disable(ids):
+    store = SpaceDataStore('postgresql+psycopg2://guest:guest@localhost/db')
+    for space in store.get_spaces():
+        id = store.get_id(space)
+        if id in ids or not ids:
+            store.disable(id)
+
+
 def run(args):
     operations = {
         'list': lambda: list_objects(args.ids),
-        'plot': lambda: plot_distribution(args.ids, args.metric)
+        'plot': lambda: plot_distribution(args.ids, args.metric),
+        'enable': lambda: enable(args.ids),
+        'disable': lambda: disable(args.ids)
     }
     if not args.action in operations.keys():
         print 'Incorrect action'

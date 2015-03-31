@@ -1,11 +1,12 @@
 import argparse
 import scipy.stats
 import numpy as np
+import math
 import sys
 
 from mltool.descriptors import *
 from mltool.spaces import *
-from tools.validate import SpaceDataStore
+from tools.calculate import SpaceDataStore
 
 
 class Parser(object):
@@ -41,7 +42,7 @@ class ScoreInfo(object):
 
 
 def load_scores(store):
-    spaces = store.get_spaces()
+    spaces = store.get_spaces(require_enabled=True)
     return [ScoreInfo(store.get_id(space), space, store.get_scores(space)) for space in spaces]
 
 
@@ -58,7 +59,10 @@ def calculate_method_ranks(space_information, method_selector):
             method_a = method_selector(info_a)
             method_b = method_selector(info_b)
 
-            z, p_val = scipy.stats.ranksums(method_a.scores, method_b.scores)
+            z, p_val = scipy.stats.mannwhitneyu(method_a.scores, method_b.scores)
+            if math.isnan(p_val):
+                raise Exception('Ranking function returned NaN')
+
             if p_val < p:
                 if method_a.mean > method_b.mean:
                     method_a.better_than.append(info_b)

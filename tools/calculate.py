@@ -68,8 +68,6 @@ class Parser(object):
         self._parser.add_argument("-cg", "--classification-granularity",
                             help="The level of granularity when iterating over classification parameters.", default=5,
                             dest="classify_granularity")
-        self._parser.add_argument("-d", "--distribution", help="Number of processes which run the search in parallel on local "
-                            "machine or 'queue'", default=1, dest="distrib")
         self._parser.add_argument("-gs", "--group-size", help="Packet size for queue", default=10, dest="group_size")
         self._parser.add_argument("-ws", "--set-size", help="Size of the working set", default=100, dest="set_size")
         self._parser.add_argument('-r', '--reset', help='Resets previously calculated progress', action='store_true', dest='reset')
@@ -91,6 +89,8 @@ class SearchOperation(Base):
     space_descr = Column(String)
     latest = Column(Integer)
     unfinished = Column(String)
+    scores = Column(String)
+    enabled = Column(Boolean)
     done = Column(Boolean)
 
     score_entries = relationship('SearchSpaceScore', cascade="all, delete-orphan")
@@ -105,7 +105,7 @@ class SearchSpaceScore(Base):
 
 class SpaceDataStore(object):
     def __init__(self, dburl):
-        engine = create_engine(dburl, echo=False, echo_pool=False, poolclass=StaticPool)
+        engine = create_engine(dburl, echo=False, echo_pool=False)
         SearchOperation.metadata.create_all(engine) 
         self._session_factory = sessionmaker(bind=engine)
 
@@ -113,7 +113,8 @@ class SpaceDataStore(object):
         session = self._session_factory()
         space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
         if not space_obj:
-            space_obj = SearchOperation(space_descr=str(space), space=pickle.dumps(space), done=False)
+            space_obj = SearchOperation(space_descr=str(space), space=pickle.dumps(space),
+                                        enabled=True, done=False)
             session.add(space_obj)
             session.commit()
         space_obj.latest = latest
@@ -123,6 +124,27 @@ class SpaceDataStore(object):
         scores_obj.scores = pickle.dumps(scores)
         session.add(scores_obj)
         session.commit()
+
+    def enable(self, id):
+        session = self._session_factory()
+        space_obj = session.query(SearchOperation).filter_by(id=id).first()
+        if space_obj:
+            space_obj.enabled = True
+            session.commit()
+
+    def disable(self, id):
+        session = self._session_factory()
+        space_obj = session.query(SearchOperation).filter_by(id=id).first()
+        if space_obj:
+            space_obj.enabled = False
+            session.commit()
+
+    def is_enabled(self, id):
+        session = self._session_factory()
+        space_obj = session.query(SearchOperation).filter_by(id=id).first()
+        if space_obj:
+            return space_obj.enabled
+        return False
 
     def get_retry_info(self, space):
         session = self._session_factory()
@@ -134,6 +156,7 @@ class SpaceDataStore(object):
     def mark_done(self, space):
         session = self._session_factory()
         space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
+        space_obj.scores = pickle.dumps(self._get_scores_from_children(space_obj))
         space_obj.done = True
         session.commit()
 
@@ -144,9 +167,13 @@ class SpaceDataStore(object):
             return space_obj.done
         return False
 
-    def get_spaces(self):
+    def get_spaces(self, require_enabled=False):
         session = self._session_factory()
-        return [pickle.loads(obj.space) for obj in session.query(SearchOperation).order_by(SearchOperation.id).all()]
+        if require_enabled:
+            objects = session.query(SearchOperation).filter_by(enabled=True).order_by(SearchOperation.id).all()
+        else:
+            objects = session.query(SearchOperation).order_by(SearchOperation.id).all()
+        return [pickle.loads(obj.space) for obj in objects]
 
     def get_scores(self, space=None, id=-1):
         session = self._session_factory()
@@ -154,10 +181,9 @@ class SpaceDataStore(object):
             space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
         else:
             space_obj = session.query(SearchOperation).filter_by(id=id).first()
-        total_scores = []
-        for score_obj in space_obj.score_entries:
-            total_scores.extend(pickle.loads(score_obj.scores))
-        return total_scores
+        if space_obj.done:
+            return pickle.loads(space_obj.scores)
+        return self._get_scores_from_children(space_obj)
 
     def delete(self, space):
         session = self._session_factory()
@@ -172,6 +198,12 @@ class SpaceDataStore(object):
         if space_obj:
             return space_obj.id
         return False
+
+    def _get_scores_from_children(self, obj):
+        total_scores = []
+        for score_obj in obj.score_entries:
+            total_scores.extend(pickle.loads(score_obj.scores))
+        return total_scores
 
 
 class Task(object):
@@ -411,6 +443,7 @@ if __name__ == '__main__':
     arguments = parser.parse(sys.argv[1:])
 
     app = ValidateApplication(arguments, 'postgresql+psycopg2://guest:guest@localhost/db')
+
     if arguments.reset:
         app.reset_space()
 

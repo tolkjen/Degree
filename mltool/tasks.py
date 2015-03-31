@@ -25,7 +25,7 @@ def get_queue_url():
         return os.environ.get('RABBITMQ_BIGWIG_URL', 'amqp://guest@localhost//')
     return url
 
-sample_cache = SampleCache(5)
+sample_cache = SampleCache(10)
 
 app = celery.Celery('tasks')
 app.conf.update(BROKER_URL=get_queue_url(),
