@@ -8,6 +8,16 @@ from mltool.descriptors import *
 from mltool.spaces import *
 from tools.calculate import SpaceDataStore
 
+# How this script works:
+#
+# It loads the evaluation metrics for each SearchOperation. Then it runs a Mann 
+# Whitney U test for every operation pair in order to determine if the 
+# evaluation distributions are similar or different. If they are different, a 
+# "better" distribution is chosen based on the mean and standard deviation 
+# values. The "better" SearchOperation is given +1 and the procedure repeats. 
+#
+# After the scores are figured out, the SearchOperations are ordered according 
+# to those scores. Order depends on the metric.
 
 class Parser(object):
     def __init__(self):
@@ -28,6 +38,7 @@ class MethodInfo(object):
     def __init__(self, scores):
         self.scores = np.array(scores)
         self.mean = self.scores.mean()
+        self.std = self.scores.std()
         self.better_than = []
         self.rank = 0
 
@@ -52,6 +63,12 @@ def calculate_method_ranks(space_information, method_selector):
         m_b = method_selector(b)
         return len(m_b.better_than) - len(m_a.better_than)
 
+    def compare_distrib(a, b):
+        if a.mean-a.std > b.mean-b.std:
+            return a
+        else:
+            return b
+
     for i in xrange(len(space_information)):
         for j in xrange(i + 1, len(space_information)):
             info_a = space_information[i]
@@ -59,12 +76,12 @@ def calculate_method_ranks(space_information, method_selector):
             method_a = method_selector(info_a)
             method_b = method_selector(info_b)
 
-            z, p_val = scipy.stats.mannwhitneyu(method_a.scores, method_b.scores)
+            z, p_val = scipy.stats.ranksums(method_a.scores, method_b.scores)
             if math.isnan(p_val):
                 raise Exception('Ranking function returned NaN')
 
             if p_val < p:
-                if method_a.mean > method_b.mean:
+                if compare_distrib(method_a, method_b):
                     method_a.better_than.append(info_b)
                 else:
                     method_b.better_than.append(info_a)

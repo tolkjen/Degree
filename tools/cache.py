@@ -1,5 +1,9 @@
-class LRUCache(object):
+from mltool.input.xlsfile import XlsFile
 
+class LRUCache(object):
+    """
+    Least Recently Used algorithm.
+    """
     class Node(object):
         def __init__(self, key, value):
             self.key = key
@@ -33,28 +37,30 @@ class LRUCache(object):
                 self._hash.pop(removed_node.key, None)
 
 
-class DummyCache(object):
-    def get(self, datafile, preprocessing_descr):
-        return None
+class Cache(object):
+    def __init__(self, n):
+        self._cache = LRUCache(n)
 
-    def add(self, datafile, preprocessing_descr, sample):
-        pass
+    def contains(self, checksum, splits, pd):
+        return not self.get(checksum, splits, pd) is None
+
+    def set(self, checksum, splits, pd, value):
+        key = (str(checksum), str(splits), str(pd))
+        self._cache.add(key, value)
+
+    def get(self, checksum, splits, pd):
+        key = (str(checksum), str(splits), str(pd))
+        return self._cache.get(key)
 
 
-class SampleCache(object):
-    def __init__(self, n=20):
-        self._cache_per_file = {}
-        self._n = n
-
-    def get(self, datafile, descr):
-        cache = self._cache_per_file.get(datafile, None)
-        if cache:
-            return cache.get(descr)
-        return None
-
-    def add(self, datafile, descr, sample):
-        cache = self._cache_per_file.get(datafile, None)
-        if not cache:
-            self._cache_per_file[datafile] = LRUCache(self._n)
-            cache = self._cache_per_file[datafile]
-        cache.add(descr, sample)
+class FileCache(object):
+    def __init__(self):
+        self._cache = {}
+    
+    def get(self, filepath):
+        if not filepath in self._cache:
+            xls = XlsFile(filepath)
+            xls.read()
+            self._cache[filepath] = xls
+            return xls
+        return self._cache[filepath]

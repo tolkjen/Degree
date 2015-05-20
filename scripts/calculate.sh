@@ -5,7 +5,7 @@ app='python -m tools.calculate -gs 30 -ws 50 -cg 10'
 classifiers=( 'tree' 'random_forest' 'knn' 'svc_linear' 'extra_trees' )
 n_classifiers=${#classifiers[@]}
 
-fix=( 'remove' 'average' )
+fix=( 'mean' 'median' )
 n_fix=${#fix[@]}
 
 for (( i=0;i<$n_classifiers;i++)); do

@@ -4,7 +4,6 @@ import os
 import pytest
 from numpy import array, array_equiv
 from ..descriptors import DescriptorException, QuantizationDescriptor, PreprocessingDescriptor, ClassificationDescriptor
-from ..input.clusterers import KMeansClusterer
 from ..input.sample import Sample
 from ..input.xlsfile import XlsFile
 
@@ -30,25 +29,8 @@ def test_quant_descriptor_wrong_method():
         d.validate()
 
 
-def test_quant_descriptor_wrong_args():
-    incorrect_args_count = KMeansClusterer.param_count + 1
-    incorrect_args = [0] * incorrect_args_count
-    d = QuantizationDescriptor(["Col_0"], "k-means", incorrect_args)
-    with pytest.raises(DescriptorException):
-        d.validate()
-
-
-def test_quant_descriptor_execute():
-    sample = Sample.from_file(from_current_dir("sample.xlsx"))
-    descriptor = QuantizationDescriptor(["Age"], "ed", [3])
-    descriptor.execute(sample)
-
-    expected_attributes = array([0, 1, 2, 0, 1, 2, 0, 1, 2]).reshape(9, 1)
-    assert array_equiv(sample.attributes, expected_attributes)
-
-
 def test_pre_descriptor_validate():
-    d = PreprocessingDescriptor("remove", [], [], [])
+    d = PreprocessingDescriptor("mean", [], [], [])
     d.validate()
 
 
@@ -71,15 +53,6 @@ def test_pre_descriptor_merge_removed():
         d.validate()
 
 
-def test_pre_descriptor_generate_sample():
-    q = QuantizationDescriptor(["Weight"], "k-means", [1])
-    d = PreprocessingDescriptor(fix_method="remove", remove=["Height"], normalize=["Age"], q_descriptors=[q])
-    sample = d.generate_sample(from_current_dir("sample2.xlsx"))
-
-    expected_attributes = array([[-1.0, 0], [0.0, 0], [1.0, 0]])
-    assert array_equiv(sample.attributes, expected_attributes)
-
-
 def test_class_descriptor_wrong_name():
     description = ClassificationDescriptor("???", [1])
     with pytest.raises(DescriptorException):
@@ -95,3 +68,12 @@ def test_class_descriptor_wrong_arguments():
 def test_class_descriptor_create():
     d = ClassificationDescriptor("bayes", [])
     d.create_classifier()
+
+
+def test_impute():
+    d = PreprocessingDescriptor("mean", [], [], [])
+    sample = Sample.from_file(from_current_dir("sample6.xlsx"))
+    impute_model = d.impute(sample)
+    sample.impute_nan(impute_model)
+
+    assert array_equiv(sample.attributes, [[3], [3], [3], [3], [3]])

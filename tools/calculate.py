@@ -5,26 +5,25 @@ import pickle
 import argparse
 import threading
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy.pool import StaticPool
-from mltool.descriptors import *
-
-Base = declarative_base()
-
-from abc import ABCMeta, abstractmethod
 from numpy.random import RandomState
 from math import ceil
 from datetime import datetime, timedelta
 
 from mltool.spaces import *
-from mltool.tasks import validate, app
+from mltool.descriptors import *
+from data import *
+from worker import evaluate, app
 
 
 class Parser(object):
+    """
+    Parses command line arguments for this script.
+    """
     class SplitAction(argparse.Action):
+        """
+        Used for turning arguments such as "1,2,3" into lists such as 
+        ["1", "2", "3"].
+        """
         def __init__(self, option_strings, dest, nargs=None, **kwargs):
             super(Parser.SplitAction, self).__init__(option_strings, dest, nargs, **kwargs)
 
@@ -40,7 +39,7 @@ class Parser(object):
                                  ", ".join(ClassificationSpace.algorithms),
                             action=Parser.SplitAction)
         self._parser.add_argument("-f", "--fix", help="List of methods for fixing missing data that search can choose from.",
-                            default=["remove"], action=Parser.SplitAction, dest="fix_methods")
+                            default=["mean"], action=Parser.SplitAction, dest="fix_methods")
         self._parser.add_argument("-rc", "--remove-cols", help="List of columns which search can remove.", default=[],
                             action=Parser.SplitAction, dest="remove_cols")
         self._parser.add_argument("-rs", "--remove-sizes", help="List of the sizes of groups of columns which can be removed "
@@ -75,139 +74,31 @@ class Parser(object):
                             dest='random_state')
 
     def parse(self, arguments):
+        """
+        Parses given command line arguments and returns an object containing 
+        script settings derived from those arguments.
+        :param arguments: Command line arguments
+        :returns: Object with settings.
+        """
         args = self._parser.parse_args(arguments)
         args.group_size = int(args.group_size)
         args.set_size = int(args.set_size)
         return args
 
 
-class SearchOperation(Base):
-    __tablename__ = 'spaces'
-
-    id = Column(Integer, primary_key=True)
-    space = Column(String)
-    space_descr = Column(String)
-    latest = Column(Integer)
-    unfinished = Column(String)
-    scores = Column(String)
-    enabled = Column(Boolean)
-    done = Column(Boolean)
-
-    score_entries = relationship('SearchSpaceScore', cascade="all, delete-orphan")
-
-class SearchSpaceScore(Base):
-    __tablename__ = 'scores'
-
-    id = Column(Integer, primary_key=True)
-    space_id = Column(Integer, ForeignKey('spaces.id'))
-    scores = Column(String)
-
-
-class SpaceDataStore(object):
-    def __init__(self, dburl):
-        engine = create_engine(dburl, echo=False, echo_pool=False)
-        SearchOperation.metadata.create_all(engine) 
-        self._session_factory = sessionmaker(bind=engine)
-
-    def add_scores(self, space, scores, latest, unfinished):
-        session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
-        if not space_obj:
-            space_obj = SearchOperation(space_descr=str(space), space=pickle.dumps(space),
-                                        enabled=True, done=False)
-            session.add(space_obj)
-            session.commit()
-        space_obj.latest = latest
-        space_obj.unfinished = pickle.dumps(unfinished)
-
-        scores_obj = SearchSpaceScore(space_id=space_obj.id)
-        scores_obj.scores = pickle.dumps(scores)
-        session.add(scores_obj)
-        session.commit()
-
-    def enable(self, id):
-        session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(id=id).first()
-        if space_obj:
-            space_obj.enabled = True
-            session.commit()
-
-    def disable(self, id):
-        session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(id=id).first()
-        if space_obj:
-            space_obj.enabled = False
-            session.commit()
-
-    def is_enabled(self, id):
-        session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(id=id).first()
-        if space_obj:
-            return space_obj.enabled
-        return False
-
-    def get_retry_info(self, space):
-        session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
-        if space_obj:
-            return (space_obj.latest, pickle.loads(space_obj.unfinished))
-        return None
-
-    def mark_done(self, space):
-        session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
-        space_obj.scores = pickle.dumps(self._get_scores_from_children(space_obj))
-        space_obj.done = True
-        session.commit()
-
-    def isdone(self, space):
-        session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
-        if space_obj:
-            return space_obj.done
-        return False
-
-    def get_spaces(self, require_enabled=False):
-        session = self._session_factory()
-        if require_enabled:
-            objects = session.query(SearchOperation).filter_by(enabled=True).order_by(SearchOperation.id).all()
-        else:
-            objects = session.query(SearchOperation).order_by(SearchOperation.id).all()
-        return [pickle.loads(obj.space) for obj in objects]
-
-    def get_scores(self, space=None, id=-1):
-        session = self._session_factory()
-        if space:
-            space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
-        else:
-            space_obj = session.query(SearchOperation).filter_by(id=id).first()
-        if space_obj.done:
-            return pickle.loads(space_obj.scores)
-        return self._get_scores_from_children(space_obj)
-
-    def delete(self, space):
-        session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
-        if space_obj:
-            session.delete(space_obj)
-            session.commit()
-
-    def get_id(self, space):
-        session = self._session_factory()
-        space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
-        if space_obj:
-            return space_obj.id
-        return False
-
-    def _get_scores_from_children(self, obj):
-        total_scores = []
-        for score_obj in obj.score_entries:
-            total_scores.extend(pickle.loads(score_obj.scores))
-        return total_scores
-
-
 class Task(object):
+    """
+    Represents a piece of work sent to a worker application. Every piece of work
+    consists of doing some calculations on a group of descriptor pairs
+    (preprocessing and classification descriptors). 
+    """
     def __init__(self, signature, number_begin, number_end):
+        """
+        Creates a Task object.
+        :param signature: Celery signature object referring to the work
+        :param number_begin: The index of the first descriptor pair in the group.
+        :param number_end: The index of the last descriptor pair in the group.
+        """
         self.signature = signature
         self.result = None 
         self.number_begin = number_begin
@@ -215,6 +106,12 @@ class Task(object):
         self._started_at = None
 
     def is_lost(self, timeout):
+        """
+        Decides wether the execution of the task takes more time than it should.
+        :param timeout: Timedelta object specifying the maximum execution duration.
+        :returns: True if the task takes more time that the timeout, False 
+        otherwise.
+        """
         if not self._started_at and self.result.state in ['STARTED', 'FAILED']:
             self._started_at = datetime.now()
         if self._started_at:
@@ -222,18 +119,43 @@ class Task(object):
         return False
 
     def retry(self):
+        """
+        Stops the current task and starts it again. The task will be removed 
+        from the queue but it doesn't mean it will stop executing in the worker
+        application.
+        """
         self.revoke()
         self.start()
 
     def revoke(self):
+        """
+        Stops the current task.
+        """
         self.result.revoke()
 
     def start(self):
+        """
+        Starts the task.
+        """
         self.result = self.signature.delay()
 
 
-class ValidationProcedure(object):
+class EvaluationProcedure(object):
+    """
+    Manages calculation distribution between workers and gathering the work 
+    results in a parallel thread.
+    """
     def __init__(self, filepath, space, random, group_size, set_size):
+        """
+        Procedure constructor
+        :param filepath: Path to the data file.
+        :param space: SearchSpace to explore in calculations.
+        :param random: RandomState object.
+        :param group_size: How many descriptor pairs will be sent to each 
+        worker application in one go.
+        :param set_size: Maximum number of groups of descriptors calculated in 
+        parallel.
+        """
         self._filepath = filepath
         self._space = space
         self._random = random
@@ -247,21 +169,38 @@ class ValidationProcedure(object):
         self._observer = None
 
     def start(self):
+        """
+        Starts the procedure.
+        """
         self._worker_thread = threading.Thread(target=self._worker_method)
         self._worker_thread.start()
 
     def stop(self):
+        """
+        Stops the procedure and waits until it finishes.
+        """
         self._set_stop_requested(True)
         self._worker_thread.join()
 
     def set_observer(self, obj):
+        """
+        Registers an observer for reacting to new partial results coming in. The 
+        observer must implement a update_results(new_scores, latest, 
+        unfinished_ranges) method.
+        """
         self._observer = obj
 
     def isdone(self):
+        """
+        Returns True iff the procedure (calculations) finished.
+        """
         with self._stop_request_lock:
             return not self._worker_thread.is_alive() and not self._stop_requested
 
     def progress(self):
+        """
+        Returns the overall calculations progress in range [0, 1].
+        """
         with self._progress_lock:
             return self._progress
 
@@ -317,7 +256,7 @@ class ValidationProcedure(object):
                 except StopIteration:
                     workitems_depleted = True
                 group_number_end = space_item_latest - 1
-                new_task = Task(validate.s(self._filepath, self._random, workitem_group), 
+                new_task = Task(evaluate.s(self._filepath, self._random, workitem_group), 
                                 group_number_begin, group_number_end)
                 new_task.start()
                 working_set.append(new_task)
@@ -336,6 +275,9 @@ class ValidationProcedure(object):
 
 
 class TimeLeftEstimator(object):
+    """
+    Estimates the time left to finish some kind of work.
+    """
     def __init__(self):
         self.eta = timedelta(days=99)
         self._started_dt = None
@@ -343,9 +285,20 @@ class TimeLeftEstimator(object):
         self._progress_last = 0
 
     def start(self):
+        """
+        Tells the estimator that the work has just started.
+        """
+        # eta is the time left estimate and is updated in each update() call.
+        self.eta = timedelta(days=99)
         self._started_dt = datetime.now()
+        self._total_time_estimate = None
+        self._progress_last = 0
 
     def update(self, progress):
+        """
+        Report the work progress to the estimator.
+        :param progress: The progress value from range [0, 1].
+        """
         time_d = datetime.now() - self._started_dt
         
         if abs(progress - self._progress_last) > 0.01:
@@ -360,32 +313,61 @@ class TimeLeftEstimator(object):
                 self.eta = timedelta()
 
     def elapsed(self):
+        """
+        How much time passed since the work started?
+        :returns: timedelta object
+        """
         return datetime.now() - self._started_dt
 
 
-class ValidateApplication(object):
+class CalculateApplication(object):
     def __init__(self, arguments, database_url, random_filename='random.bin'):
+        """
+        Creates an application object.
+        :param arguments: List of command line arguments.
+        :param database_url: URL to the SQL database backend.
+        :param random_filename: Filename of the file with random seed.
+        """
         self._random_filename = random_filename
         self._search_space = self._create_search_space(arguments)
         self._datastore = SpaceDataStore(database_url)
         self._random = self._get_random_state()
-        self._procedure = ValidationProcedure(arguments.filepath, self._search_space, 
+        self._procedure = EvaluationProcedure(arguments.filepath, self._search_space, 
                                               self._random, arguments.group_size, 
                                               arguments.set_size)
         self._procedure.set_observer(self)
 
     def reset_space(self):
+        """
+        Removes a SearchSpace from the database.
+        """
         self._datastore.delete(self._search_space)
 
     def recreate_random_state(self):
+        """
+        Creates a new file with random seed in it. The seed will be used by
+        each worker application.
+        """
         self._random = RandomState()
         with open(self._random_filename, 'w') as f:
             f.write(pickle.dumps(self._random))
 
-    def update_results(self, new_scores, space_item_finished, unfinished_ranges):
-        self._datastore.add_scores(self._search_space, new_scores, space_item_finished, unfinished_ranges)
+    def update_results(self, new_scores, latest, unfinished_ranges):
+        """
+        Callback function. Updates the information about the calculation 
+        progress in the database.
+        :param new_scores: New partial results of the calculations.
+        :param latest: Highest index of the descriptor pair for which the 
+        results are available.
+        :param unfinished_ranges: List of tuples describing indices ranges 
+        of descriptor pairs of unfinished work.
+        """
+        self._datastore.add_scores(self._search_space, new_scores, latest, unfinished_ranges)
 
     def run(self):
+        """
+        Starts the calculate application.
+        """
         if not self._datastore.isdone(self._search_space):
             retry_info = self._datastore.get_retry_info(self._search_space)
             if retry_info:
@@ -442,7 +424,7 @@ if __name__ == '__main__':
     parser = Parser()
     arguments = parser.parse(sys.argv[1:])
 
-    app = ValidateApplication(arguments, 'postgresql+psycopg2://guest:guest@localhost/db')
+    app = CalculateApplication(arguments, 'postgresql+psycopg2://guest:guest@localhost/db')
 
     if arguments.reset:
         app.reset_space()

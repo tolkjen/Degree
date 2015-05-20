@@ -6,7 +6,7 @@ def lists_equiv(a, b):
     If a and b contain the same elements (order not important) returns True. False otherwise.
     :param a: First list
     :param b: Second list
-    :return: Above.
+    :returns: Above.
     """
     def sort_recursive(objects):
         for obj in objects:

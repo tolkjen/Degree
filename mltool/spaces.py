@@ -167,7 +167,7 @@ class NormalizeSpace(AbstractSearchSpace):
         Creates a search space object.
         :param columns: A list of columns from which the normalized columns will be picked.
         :param set_sizes: A list of numbers of columns to be normalized at the same time.
-        :return:
+        :returns:
         """
         if columns and not set_sizes:
             raise SpaceException("No subset size specified.")
@@ -215,11 +215,7 @@ class QuantifySpace(AbstractSearchSpace):
     _param_spaces = {
         "k-means": [LinearValueSpace(2, 20)],
         "k-means++": [LinearValueSpace(2, 20)],
-        "ed": [LinearValueSpace(2, 20)],
-        "dbscan": [ExpValueSpace(0.0001, 0.5), NominalValueSpace([2, 3, 4, 5])],
-        "hierarchy_ward": [LinearValueSpace(2, 20)],
-        "hierarchy_complete": [LinearValueSpace(2, 20)],
-        "hierarchy_avg": [LinearValueSpace(2, 20)],
+        "meanshift": []
     }
 
     algorithms = _param_spaces.keys()
@@ -300,8 +296,8 @@ class ClassificationSpace(object):
         "svc_rbf": [ExpValueSpace(0.0001, 10000), ExpValueSpace(0.0001, 10000)],
         "svc_linear": [ExpValueSpace(0.0001, 10000)],
         "knn": [NominalValueSpace([1, 3, 5, 7, 9, 11])],
-        "random_forest": [NominalValueSpace([5, 10, 15, 20, 25, 30]), NominalValueSpace([2, 3, 4])],
-        "extra_trees": [NominalValueSpace([5, 10, 15, 20, 25, 30]), NominalValueSpace([2, 3, 4])],
+        "random_forest": [NominalValueSpace([10, 20, 40, 80, 160]), NominalValueSpace([2, 3, 4, 5, 6])],
+        "extra_trees": [NominalValueSpace([10, 20, 40, 80, 160]), NominalValueSpace([2, 3, 4, 5, 6])],
     }
 
     algorithms = _param_spaces.keys()

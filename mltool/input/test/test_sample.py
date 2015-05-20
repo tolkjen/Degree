@@ -2,15 +2,16 @@ __author__ = 'tolkjen'
 
 import os
 import pytest
-from numpy import array, array_equiv, zeros
+from numpy import array, array_equiv, zeros, nan
 from numpy.random import RandomState
+from numpy.testing import assert_equal
 
 from ..sample import Sample, SampleException
 from ..xlsfile import XlsFile
 
 
 class TestClusterer:
-    def transform(self, attributes):
+    def predict(self, attributes):
         row_count, col_count = attributes.shape
         return zeros((row_count, 1))
 
@@ -36,8 +37,18 @@ def test_xls_contents():
 
 def test_xls_empty_line():
     sample = Sample.from_file(from_current_dir('empty.line.xlsx'))
-    expected_attributes = array([[1], [2], [3], [4]])
-    expected_categories = array([1, 2, 3, 4])
+    expected_attributes = array([[1], [2], [nan], [3], [4]])
+    expected_categories = array([1, 2, nan, 3, 4])
+    expected_columns = ["Age"]
+    assert_equal(sample.attributes, expected_attributes)
+    assert_equal(sample.categories, expected_categories)
+    assert sample.columns == expected_columns
+
+
+def test_from_file_with_indices():
+    sample = Sample.from_file(from_current_dir('sample2.xlsx'), [0, 4])
+    expected_attributes = array([[1], [5]])
+    expected_categories = array([1, 5])
     expected_columns = ["Age"]
     assert array_equiv(sample.attributes, expected_attributes)
     assert array_equiv(sample.categories, expected_categories)
@@ -47,16 +58,6 @@ def test_xls_empty_line():
 def test_index_column_with_empty_values():
     with pytest.raises(SampleException):
         Sample.from_file(from_current_dir('empty.index.xlsx'))
-
-
-def test_xls_with_empty_removing():
-    sample = Sample.from_file(from_current_dir('empty.fields.xlsx'), missing='remove')
-    expected_attributes = array([[21], [22], [23], [24]])
-    expected_categories = array([1, 2, 3, 4])
-    expected_columns = ["Age"]
-    assert array_equiv(sample.attributes, expected_attributes)
-    assert array_equiv(sample.categories, expected_categories)
-    assert sample.columns == expected_columns
 
 
 def test_remove_non_existing_column():
@@ -79,13 +80,15 @@ def test_remove_existing_column():
 
 def test_normalize_non_existing_column():
     sample = Sample.from_file(from_current_dir('sample2.xlsx'))
+    normalizer = sample.get_normalizer()
     with pytest.raises(SampleException):
-        sample.normalize_column('Woo-hoo')
+        sample.normalize(normalizer, ["UGH"])
 
 
 def test_normalize_existing_column():
     sample = Sample.from_file(from_current_dir('sample2.xlsx'))
-    sample.normalize_column('Age')
+    normalizer = sample.get_normalizer((0.0, 1.0))
+    sample.normalize(normalizer, ["Age"])
 
     expected_attributes = array([[0.0], [0.25], [0.5], [0.75], [1.0]])
     expected_categories = array([1, 2, 3, 4, 5])
@@ -122,34 +125,3 @@ def test_transform_not_existing_column():
     sample = Sample.from_file(from_current_dir('sample3.xlsx'))
     with pytest.raises(SampleException):
         sample.merge_columns(['Not-existing-column'], TestClusterer())
-
-
-def test_split_distribution():
-    sample = Sample.from_file(from_current_dir('sample5.xlsx'))
-    positive_count = len([0 for cat in sample.categories if cat])
-
-    test_ratio = 0.25
-    eval, test = sample.split(test_ratio=test_ratio)
-
-    assert array_equiv(sample.columns, eval.columns)
-    assert array_equiv(sample.columns, test.columns)
-
-    eval_positive_count = len([0 for cat in eval.categories if cat])
-    test_positive_count = len([0 for cat in test.categories if cat])
-
-    assert eval_positive_count == positive_count * (1.0 - test_ratio)
-    assert test_positive_count == positive_count * test_ratio
-
-def test_split_repro():
-    sample = Sample.from_file(from_current_dir('sample5.xlsx'))
-
-    random = RandomState()
-    test_ratio = 0.25
-
-    eval_first, test_first = sample.split(random, test_ratio)
-    eval_second, test_second = sample.split(random, test_ratio)
-
-    assert array_equiv(eval_first.attributes, eval_second.attributes)
-    assert array_equiv(eval_first.categories, eval_second.categories)
-    assert array_equiv(test_first.attributes, test_second.attributes)
-    assert array_equiv(test_first.categories, test_second.categories)

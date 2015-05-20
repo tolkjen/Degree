@@ -33,6 +33,9 @@ class Parser(object):
 
 
 def list_objects(requested_ids):
+    """
+    Prints a summary list of all SearchOperations.
+    """
     store = SpaceDataStore('postgresql+psycopg2://guest:guest@localhost/db')
     for space in store.get_spaces():
         id = store.get_id(space)
@@ -52,6 +55,10 @@ def list_objects(requested_ids):
 
 
 def plot_distribution(requested_ids, metric):
+    """
+    Plots a distribution of a selected classifier evaluation metric. Plots are
+    ale saved into the plots/ directory.
+    """
     if not requested_ids:
         print 'Specify Ids.'
     else:
@@ -91,6 +98,9 @@ def plot_distribution(requested_ids, metric):
 
 
 def enable(ids):
+    """
+    Enables a SearchOperation so that it's used by the compare script.
+    """
     store = SpaceDataStore('postgresql+psycopg2://guest:guest@localhost/db')
     for space in store.get_spaces():
         id = store.get_id(space)
@@ -99,6 +109,9 @@ def enable(ids):
 
 
 def disable(ids):
+    """
+    Disables a SearchOperation so that it isn't used by the compare script.
+    """
     store = SpaceDataStore('postgresql+psycopg2://guest:guest@localhost/db')
     for space in store.get_spaces():
         id = store.get_id(space)

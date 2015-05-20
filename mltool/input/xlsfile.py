@@ -55,14 +55,14 @@ class XlsFile:
     def columns(self):
         """
         Returns a list of column names.
-        :return: A list of column names.
+        :returns: A list of column names.
         """
         return self._column_names
 
     def rows(self):
         """
         Returns a list of entry rows from the file. Each entry row is a string list.
-        :return: A list of entry rows.
+        :returns: A list of entry rows.
         """
         return self._row_list
 

@@ -1,0 +1,16 @@
+# Project files
+*.pyproj
+*.sln
+
+# Python compiled files
+*.pyc
+
+# TeX compiled files
+thesis/**/*.aux
+thesis/**/*.out
+thesis/**/*.pdf
+thesis/**/*.gz
+thesis/**/*.toc
+
+# Plots produced by browse.py
+plots/

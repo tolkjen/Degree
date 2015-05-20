@@ -5,11 +5,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC, LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
+from sklearn.preprocessing import Imputer
+from sklearn.cluster import KMeans, MeanShift
 
-from cache import DummyCache
-from input.sample import Sample
-from input.clusterers import KMeansClusterer, KMeansPlusPlusClusterer, EqualDistributionClusterer, DBScanClusterer, \
-    WardHierarchyClusterer, CompleteHierarchyClusterer, AverageHierarchyClusterer
+from input.models import Clusterer
 
 
 class DescriptorException(Exception):
@@ -22,36 +21,53 @@ class DescriptorException(Exception):
 
 
 class QuantizationDescriptor:
-    _algorithms = {"k-means": KMeansClusterer,
-                   "k-means++": KMeansPlusPlusClusterer,
-                   "ed": EqualDistributionClusterer,
-                   "dbscan": DBScanClusterer,
-                   "hierarchy_ward": WardHierarchyClusterer,
-                   "hierarchy_complete": CompleteHierarchyClusterer,
-                   "hierarchy_avg": AverageHierarchyClusterer}
+    """
+    Describes clustering of a selected group of data attributes thus turning 
+    them into a single, label attribute.
+    """
+    def _create_kmeans(self, buckets):
+        return KMeans(int(buckets), "random")
+
+    def _create_kmeans_pp(self, buckets):
+        return KMeans(int(buckets), "k-means++")
+
+    def _create_mean_shift(self):
+        return MeanShift()
+
+    _factories = {
+        "k-means": _create_kmeans,
+        "k-means++": _create_kmeans_pp,
+        "meanshift": _create_mean_shift
+    }
 
     def __init__(self, columns, method, args):
+        """
+        Descriptor constructor.
+        :param columns: List of attribute names which should be turned into a 
+        one label attribute using the clustering algorithm.
+        :param method: Name of the clustering algorithm.
+        :param args: List of clustering algorithm parameters.
+        """
         self.columns = columns
         self.quantization_method = method
         self.quantization_args = args
 
-    def execute(self, sample):
-        clusterer = QuantizationDescriptor._algorithms[self.quantization_method](*self.quantization_args)
-        sample.merge_columns(self.columns, clusterer)
+    def create_clusterer(self):
+        """
+        Returns a clustering algorithm instance.
+        """
+        return QuantizationDescriptor._factories[self.quantization_method](self, *self.quantization_args)
 
     def validate(self):
+        """
+        Make sure the descriptor contents are semanticly correct. Raise a 
+        DescriptorException if not.
+        """
         if len(self.columns) < 1:
             raise DescriptorException("List of columns used for quantization can't be empty.")
 
-        if not self.quantization_method in QuantizationDescriptor._algorithms.keys():
+        if not self.quantization_method in QuantizationDescriptor._factories.keys():
             raise DescriptorException("Incorrect quantization method.")
-
-        clusterer_type = QuantizationDescriptor._algorithms[self.quantization_method]
-        if len(self.quantization_args) != clusterer_type.param_count:
-            raise DescriptorException(
-                "Wrong number of arguments for {0} method: expected {1} not {2}.".format(self.quantization_method,
-                                                                                         clusterer_type.param_count,
-                                                                                         len(self.quantization_args)))
 
     def __str__(self):
         string_args = [str(arg) for arg in self.quantization_args]
@@ -62,31 +78,44 @@ class QuantizationDescriptor:
 
 
 class PreprocessingDescriptor:
-    def __init__(self, fix_method="remove", remove=[], normalize=[], q_descriptors=[]):
+    """
+    Describes the preprocessing phase of the algorithm.
+    """
+    supported_fix_methods = ["median", "mean"]
+
+    def __init__(self, fix_method="mean", remove=[], normalize=[], q_descriptors=[]):
         self.fix_method = fix_method
         self.removed_columns = remove
         self.normalized_columns = normalize
         self.quantization_descriptors = q_descriptors
 
-    def generate_sample(self, tabular_file, cache=None):
-        if not cache:
-            cache = DummyCache()
+    def impute(self, sample):
+        """
+        Create a Sample imputation model according to the method specified in 
+        the descriptor.
+        :param sample: Sample instance to create the imputer for.
+        :returns: Imputer instance.
+        """
+        imp = Imputer(missing_values='NaN', strategy=self.fix_method, axis=0)
+        imp.fit(sample.attributes)
+        return imp
 
-        sample = cache.get(tabular_file, str(self))
-        if not sample:
-            sample = Sample.from_file(tabular_file, self.fix_method)
-            for col_name in self.removed_columns:
-                sample.remove_column(col_name)
-            for col_name in self.normalized_columns:
-                sample.normalize_column(col_name, (-1.0, 1.0))
-            for descriptor in self.quantization_descriptors:
-                descriptor.execute(sample)
-            cache.add(tabular_file, str(self), sample)
-
-        return sample
+    def cluster(self, sample):
+        """
+        Creates a clustering model for the sample.
+        :param sample: Sample to be clustered.
+        :returns: A Clusterer instance.
+        """
+        clusterer = Clusterer(self.quantization_descriptors)
+        clusterer.fit(sample)
+        return clusterer
 
     def validate(self):
-        if not self.fix_method in Sample.supported_fix_methods:
+        """
+        Make sure the descriptor contents are semanticly correct. Raise a 
+        DescriptorException if not.
+        """
+        if not self.fix_method in PreprocessingDescriptor.supported_fix_methods:
             raise DescriptorException("Incorrect value of 'missing_fix_method' attribute.")
 
         for col in self.normalized_columns:
@@ -184,10 +213,17 @@ class ClassificationDescriptor:
         self._arguments = arguments
 
     def create_classifier(self, sample=None):
+        """
+        Returns a classifier instance.
+        """
         factory, count = ClassificationDescriptor._classifiers[self._name]
         return factory(self, self._arguments, sample)
 
     def validate(self):
+        """
+        Make sure the descriptor contents are semanticly correct. Raise a 
+        DescriptorException if not.
+        """
         if not self._name in ClassificationDescriptor._classifiers.keys():
             raise DescriptorException("Incorrect classifier name.")
 
