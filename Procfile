@@ -1,1 +1,1 @@
-worker: celery worker -A mltool.tasks --concurrency=$CONCURRENCY
+worker: celery worker -A tools.worker --concurrency=$CONCURRENCY
