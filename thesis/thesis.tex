@@ -14,11 +14,18 @@
 \usepackage{titlesec} 
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{fixltx2e}
 
-% marginesy 
+% Mała czcionka podpisów pod obrazkami
+\usepackage[skip=2pt,font=footnotesize]{caption}
+
+% Odstęp pomiędzy obrazkiem a podpisem
+\setlength{\abovecaptionskip}{10pt plus 2pt minus 2pt}
+
+% Marginesy 
 \usepackage[ bindingoffset = 1cm, hmargin = 2cm, vmargin = 2cm]{geometry} 
-% interlinia 
-\linespread{1.5} 
+% Rozmiar interlinii 
+\linespread{1.0} 
 
 \widowpenalty=10000 % ostatni wiersz akapitu nie zostanie przeniesiony na następną stronę 
 \clubpenalty=10000 % pierwszy wiersz akapitu nie będzie kończył strony
@@ -28,35 +35,29 @@
 \brokenpenalty=10000 % nie dzieli stron jeżeli podział wyrazu
 \sloppy % zakaz wydłużania lini
 
-% wcięcia 
+% Wcięcia 
 \setlength{\parindent}{1cm} 
 \setcounter{secnumdepth}{2} % only sections and subsections are numbered 
 \setcounter{tocdepth}{2} % table of contents shows up to three levels 
 
-% EiTI
-% rozdział 16pt, pogrubiona, kapitalki, interlinia 2 
-
 \titleformat{\chapter}[hang] 
-{\Large\bfseries}{\thechapter}{10pt}{\Large\bfseries} 
+{\Large\bfseries}{\thechapter}{12pt}{\Large\bfseries} 
 \titlespacing{\chapter}{0pt}{1em}{1em} 
 
-% podrozdział 12pt, pogrubiona, kapitalki, il 2 
 \titleformat{\section}[hang] 
-{\normalfont\bf}{\thesection}{10pt}{\normalfont\large\bf} 
+{\normalfont\bf}{\thesection}{12pt}{\normalfont\large\bf} 
 \titlespacing{\section}{0pt}{1em}{1em} 
 
-% punkt 12pt, pogrubiona, il 2 
 \titleformat{\subsection}[hang] 
-{\normalfont\bf}{\thesubsection}{10pt}{\normalfont\large\bf} 
+{\normalfont\bf}{\thesubsection}{12pt}{\normalfont\large\bf} 
 \titlespacing{\subsection}{0pt}{1em}{1em} 
 
-% podpunkt 12pt, il 2 
 \titleformat{\subsubsection}[hang] 
-{\normalfont}{\thesubsubsection}{10pt}{\normalfont\bf} 
+{\normalfont}{\thesubsubsection}{12pt}{\normalfont\bf} 
 \titlespacing{\subsubsection}{0pt}{1em}{1em} 
 
 \titleformat{\paragraph}[hang] 
-{\normalfont}{\theparagraph}{10pt}{\normalfont\it} 
+{\normalfont}{\theparagraph}{12pt}{\normalfont\it} 
 \titlespacing{\paragraph}{15pt}{1em}{1em} 
 
 \renewcommand{\contentsname}{Spis treści} 
@@ -68,18 +69,17 @@
 \begin{document} 
 
 \subfile{tex/title}
-\subfile{tex/abstract}
 \subfile{tex/cv}
+\subfile{tex/abstract}
 	
 \tableofcontents
 \newpage
 
 \subfile{tex/intro}
-\subfile{tex/classification}
+\subfile{tex/theory}
 \subfile{tex/requirements}
 \subfile{tex/project}
 \subfile{tex/implementation}
-\subfile{tex/tests}
 \subfile{tex/results}
 \subfile{tex/conclusion}
 \subfile{tex/bibliography}
