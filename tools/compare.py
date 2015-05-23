@@ -63,12 +63,6 @@ def calculate_method_ranks(space_information, method_selector):
         m_b = method_selector(b)
         return len(m_b.better_than) - len(m_a.better_than)
 
-    def compare_distrib(a, b):
-        if a.mean-a.std > b.mean-b.std:
-            return a
-        else:
-            return b
-
     for i in xrange(len(space_information)):
         for j in xrange(i + 1, len(space_information)):
             info_a = space_information[i]
@@ -81,7 +75,7 @@ def calculate_method_ranks(space_information, method_selector):
                 raise Exception('Ranking function returned NaN')
 
             if p_val < p:
-                if compare_distrib(method_a, method_b):
+                if method_a.mean-method_a.std > method_b.mean-method_b.std:
                     method_a.better_than.append(info_b)
                 else:
                     method_b.better_than.append(info_a)
