@@ -1,8 +1,8 @@
 #!/bin/bash
-app='python -m tools.calculate -gs 30 -ws 50 -cg 10'
+app='python -m tools.calculate -gs 15 -ws 50 -cg 10'
 #app='python mock.py'
 
-classifiers=( 'tree' 'random_forest' 'knn' 'svc_linear' 'svc_rbf' 'extra_trees' )
+classifiers=( 'tree' 'random_forest' 'knn' 'svc_linear' 'svc_rbf' )
 n_classifiers=${#classifiers[@]}
 
 fix=( 'mean' 'median' )
