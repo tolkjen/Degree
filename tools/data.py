@@ -34,11 +34,6 @@ class SearchOperation(Base):
     # descriptor pairs for which the results haven't been calculated yet. 
     unfinished = Column(String)
 
-    # Serialized list of tuples (precision, sensivity, f1) of calculation 
-    # results. scores is written to once the calculations finish. It's used to 
-    # get the results faster than doing join operation on SearchSpaceResults.
-    scores = Column(String)
-
     # Should those results be considered by the compare script?
     enabled = Column(Boolean)
 
@@ -156,13 +151,11 @@ class SpaceDataStore(object):
 
     def mark_done(self, space):
         """
-        Marks a SearchOperation as done. It also writes all partial results 
-        into the scores field for faster access.
+        Marks a SearchOperation as done. 
         :param space: SearchSpace of SearchOperation to mark.
         """
         session = self._session_factory()
         space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
-        space_obj.scores = pickle.dumps(self._get_scores_from_children(space_obj))
         space_obj.done = True
         session.commit()
 
@@ -206,8 +199,6 @@ class SpaceDataStore(object):
             space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
         else:
             space_obj = session.query(SearchOperation).filter_by(id=id).first()
-        if space_obj.done:
-            return pickle.loads(space_obj.scores)
         return self._get_scores_from_children(space_obj)
 
     def delete(self, space):

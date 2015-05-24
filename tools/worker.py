@@ -3,6 +3,7 @@ import os
 import hashlib
 
 from datetime import datetime
+from numpy import isnan
 from numpy.random import RandomState
 from sklearn.cross_validation import StratifiedKFold
 
@@ -127,7 +128,9 @@ def evaluate(filepath, random_state, pairs):
                 training_sample, test_sample = sample_cache.get(checksum, split, pd)
 
             clf = pair.classification_descriptor.create_classifier(training_sample)
-            scores.append(get_scores(clf, training_sample, test_sample))
+            score_tuple = get_scores(clf, training_sample, test_sample)
+            if (not isnan(score_tuple[0])) and (not isnan(score_tuple[1])) and (not isnan(score_tuple[2])):
+                scores.append(score_tuple)
 
     print 'Work finished (%d)' % (datetime.now() - dt_started).total_seconds()
     return scores
