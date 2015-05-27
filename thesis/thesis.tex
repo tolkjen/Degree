@@ -15,12 +15,29 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{fixltx2e}
+\usepackage{enumitem}
+\usepackage{algorithm2e}
+\usepackage{xcolor, colortbl}
+\usepackage{framed}
+
+% Algorytmy
+\NoCaptionOfAlgo
+\SetAlgoNoLine
+\SetAlCapSkip{2mm}
+\RestyleAlgo{boxed}
+\SetKwInput{KwIn}{Wejście}
+\SetKwInput{KwOut}{Wyjście}
+\SetKw{Return}{Zwróć}
+\SetKwFor{ForEach}{Dla każdego}{}{Koniec}
 
 % Mała czcionka podpisów pod obrazkami
 \usepackage[skip=2pt,font=footnotesize]{caption}
 
 % Odstęp pomiędzy obrazkiem a podpisem
 \setlength{\abovecaptionskip}{10pt plus 2pt minus 2pt}
+
+% Lewy odstęp wyliczeń
+\setlist[enumerate]{leftmargin = 1.5cm}
 
 % Marginesy 
 \usepackage[ bindingoffset = 1cm, hmargin = 2cm, vmargin = 2cm]{geometry} 

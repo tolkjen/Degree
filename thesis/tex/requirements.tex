@@ -1,4 +1,5 @@
 \documentclass[../thesis.tex]{subfiles}
+\graphicspath{{../gfx/}{gfx/}}
 \begin{document}
 
 \pagestyle{plain}
@@ -7,52 +8,92 @@
 
 Zdefiniowanie wymagań ma bardzo duże znaczenie podczas realizacji projektu informatycznego. Właściwe sformułowanie wymagań uszczegóławia wizję systemu oraz jest źródłem wiedzy o pożądanych możliwościach i cechach rozwiązania. Dodatkowo, prawidłowa identyfikacja wymagań nakreśla cel projektu i, co za tym idzie, pozwala uniknąć potrzeby wprowadzania kosztownych poprawek.
 
-Wymagania dzielimy na funkcjonalne, jakościowe (niefunkcjonalne) oraz wymagania ograniczeń. Do pierwszej grupy zaliczamy wymagania opisujące możliwości, jakie projektowany system daje użytkownikom. Przykładem wymagania funkcjonalnego może być klasyfikowanie danych przy użyciu algorytmu drzew decyzyjnych. Wymagania jakościowe skupiają się na ilościowych regułach oceniania systemu, np. czy baza danych potrafi odzyskać utracone dane w mniej niż jedną sekundę. Ostatnia kategoria wymagań precyzuje granice rozwiązania.
+Wymagania dzielimy na funkcjonalne, jakościowe (niefunkcjonalne) oraz wymagania ograniczeń. Do pierwszej grupy zaliczamy wymagania opisujące możliwości, jakie projektowany system daje użytkownikom. Przykładem wymagania funkcjonalnego może być klasyfikowanie danych przy użyciu algorytmu drzew decyzyjnych. Wymagania jakościowe skupiają się na ilościowych regułach oceniania systemu, np. czy baza danych potrafi odzyskać utracone dane w mniej niż jedną sekundę. Ostatnia kategoria wymagań precyzuje granice rozwiązania. 
 
 \section{Wymagania funkcjonalne}
 
-Zgodnie z tym, co przedstawiłem w rozdziale poświęconym celowi pracy, tworzona przeze mnie aplikacja służy ułatwieniu zadań związanych z klasyfikacją danych. Aplikacja ma za zadania wykonywać operacje, które dla użytkownika zajęły by bardzo dużo czasu. Do czynności takich można zaliczyć wstępne przetwarzanie danych oraz ich późniejszą klasyfikację, jak również wyszukiwanie kombinacji metod oraz parametrów, których użycie prowadzi do najlepszej jakości klasyfikacji. Takie sformułowanie wymagań prowadzi do wyłonienia dwóch podstawowych funkcjonalności projektowanego rozwiązania.
+Zgodnie z tym, co opisane jest w rozdziale poświęconym celowi pracy, przygotowywany przeze mnie system służy porównywaniu jakości klasyfikacji wielu zbiorów algorytmów. Użytkownik systemu powinien być w stanie wprowadzić informacje o grupach algorytmów, które chce porównać pod kątem pewnej miary jakości klasyfikacji. Użytkownik powinien również dostarczyć dane medyczne zapisane w pewnym ustalonym formacie. W efekcie tego system powinien zwrócić dane o cechach szczególnych wprowadzonych grup (np. wartość średnia oceny). Dodatkowo system powinien uszeregować grupy algorytmów pod kątem wybranej miary jakości, dając w ten sposób pogląd na wzajemną skuteczność grup algorytmów. Informacje o wzajemnej skuteczności grup mogą okazać się pomocne przy późniejszym decydowaniu, na której z grup należy skoncentrować dalsze badania.
 
-\subsection{Przetwarzanie wstępne i klasyfikacja}
+Takie spojrzenie na podstawowe wymagania pozwala wyróżnić trzy podstawowe zestawy funkcjonalności: wprowadzanie danych wejściowych, wykonywanie obliczeń i prezentację wyników.
 
-Pierwszą z głównych funkcjonalności jest przetwarzanie wstępne oraz klasyfikacja danych zgodnie z nastawami użytkownika. W dalszej części pracy dla obu tych czynności stosować będę jeden termin -- \emph{przetwarzanie}. Odbiorca aplikacji powinien mieć pełną kontrolę nad tym w jaki sposób dane zostaną zmodyfikowane (o ile w ogóle) oraz jak ma przebiegać klasyfikacja. Powołując się na to, co opisałem we rozdziale o klasyfikacji, użytkownik powinien być w stanie:
+\subsection{Wprowadzanie danych wejściowych}
+\label{req:input}
 
+Jednym z podstawowych zadań systemu jest wstępne przetwarzanie danych, klasyfikacja oraz obliczenie miary jakości klasyfikacji. Taki ciąg obliczeń w reszcie pracy dla uproszczenia nazywać będę \emph{algorytmem}. Użytkownik, rozpoczynając obliczenia, powinien wprowadzić informacje o grupie algorytmów, dla których wyniki oceny chce uzyskać. Każdy algorytm będzie wykonywał pewne operacje na dostarczonym zbiorze danych. Aby ustalić przebieg działania pojedynczego algorytmu należy najpierw przyjrzeć się posiadanym danym biomedycznym.
+
+\subsubsection{Opis danych wejściowych}
+
+Dostępny zbiór danych zawiera ok. 1000 obserwacji. Każda z nich to zestaw prawdziwych, anonimowych danych otrzymanych w wyniku przebadania pacjentek pod kątem zachorowalności na raka piersi. Każda obserwacja w próbie zawiera sześć atrybutów ciągłych oraz jedną dyskretną kategorię chorobową (choruje/nie choruje). 
+
+Pierwszym atrybutem w każdej obserwacji jest wiek pacjentki. Kolejne pięć to poziomy ekspresji:
 \begin{enumerate}
-	\item Wybrać metodę radzenia sobie z brakującymi danymi w wierszach
-	\item Wskazać kolumny, które powinny zostać usunięte ze zbioru danych
-	\item Wskazać kolumny z danymi, które powinny zostać poddane normalizacji
-	\item Określić metodę kwantyzacji danych w kolumnach wraz z parametrami
-	\item Określić metodę klasyfikacji danych wraz z parametrami
+  \item Swoistego antygenu sterczowego (PSA, z ang. \emph{prostate-specific antigen})
+  \item Czynnika martwicy guza alfa (TNFA, z ang. \emph{tumor necrosis factor-alpha})
+  \item Interleukiny 6
+  \item Interleukiny 8
+  \item Czynnika wzrostu śródbłonka naczyniowego (VEGF, z ang. \emph{vascular endothelial growth factor})
+\end{enumerate}
+Zbiór danych zawiera zbliżoną liczbę obserwacji ze stanem chorobowym oraz bez stanu chorobowego.
+
+Dodatkowo, zestaw danych biomedycznych posiada ok. 8\% brakujących wartości różnych atrybutów (kategoria nie zawiera braków).
+
+\begin{figure}[h]
+\centering
+\includegraphics{data.png}
+\caption{Fragment zbioru danych dotyczących zachorowalności na raka piersi u kobiet wraz z wyszczególnionymi atrybutami i kategorią (\textit{Index}).}
+\label{req:data}
+\end{figure}
+
+\subsubsection{Pojedynczy algorytm}
+
+Każdy algorytm składa się z czterech etapów wstępnego przetwarzania oraz z pojedynczego etapu końcowej klasyfikacji:
+\begin{enumerate}
+	\item Przetwarzanie wstępne
+	\begin{enumerate}
+		\item Metoda imputacji danych brakujących
+		\item Wskazanie atrybutów do usunięcia
+		\item Wskazanie atrybutów do przeskalowania
+		\item Określenie metod grupowania i ich parametrów, wybór atrybutów do zgrupowania
+	\end{enumerate}
+	\item Metoda klasyfikacji wraz z parametrami
 \end{enumerate}
 
-Spośród wyżej wymienionych operacji tylko pierwsza i ostatnia powinny być zawsze określone. Wynika to z faktu, że wiele algorytmów klasyfikacji zakłada obecność wszystkich danych i nie uwzględnia sytuacji, w których pewnych wartości brakuje. Inaczej jest w przypadku pozostałych czynności. Usuwanie, normalizacja oraz kwantyzacja kolumn mogą mieć zasadniczy wpływ na przebieg całego algorytmu, ale nie są konieczne.
+Spośród wyżej wymienionych operacji tylko pierwsza i ostatnia powinny być zawsze określone. Wynika to z faktu, że wiele algorytmów klasyfikacji zakłada obecność wszystkich danych i nie uwzględnia sytuacji, w których pewnych wartości brakuje. Inaczej jest w przypadku pozostałych czynności. Usuwanie, skalowanie oraz grupowanie atrybutów mogą mieć zasadniczy wpływ na przebieg całego algorytmu, ale nie są konieczne. Najprostszy pojedynczy algorytm polegać będzie zatem na imputacji danych wybraną metodą oraz na późniejszej klasyfikacji danych. Najbardziej złożony algorytm zawierać będzie w sobie wszystkie wymienione etapy. 
 
-Należy zwrócić uwagę na wymaganie dotyczące kwantyzacji wartości w kolumnach. Aplikacja powinna pozwalać na wykorzystanie wielu różnych algorytmów łączenia jednocześnie. Dla każdego wybranego algorytmu kwantyzacji użytkownik powinien móc wskazać grupę kolumn poddanych łączeniu oraz parametry algorytmu.
+Należy zwrócić uwagę na wymaganie dotyczące grupowania wartości w atrybutach. Aplikacja powinna pozwalać na wykorzystanie wielu różnych algorytmów łączenia jednocześnie. Dla każdego wybranego algorytmu grupowania użytkownik powinien móc wskazać grupę atrybutów poddanych łączeniu oraz parametry algorytmu.
 
-Rezultatem działania aplikacji powinna być wartość walidacji krzyżowej na przetworzonych danych z użyciem określonego algorytmu.
+Fazy algorytmu związane z usuwaniem, skalowaniem i grupowaniem atrybutów wymagają wskazania zbioru atrybutów, na którym konkretna operacja ma zostać wykonana. Liczba możliwych kombinacji atrybutów zależy wykładniczo od liczby atrybutów w zbiorze. Oznacza to, że w ogólnym przypadku grupa algorytmów nie może zawierać algorytmów ze wszystkimi możliwymi kombinacjami. Wiązałoby się to z nieakceptowalnie długim czasem obliczeń. Biorąc jednak pod uwagę, że dostępne dane zawierają tylko 6 atrybutów, można pozwolić sobie na tworzenie grup zawierających wszystkie kombinacje. Dalsze wymagania zakładać będą, że zbiór danych zawierać będzie nie więcej niż 10 atrybutów.
 
-\subsection{Przeszukiwanie}
-\label{req:sec_search}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{algorithm.png}
+\caption{Przykład działania pojedynczego algorytmu. Dane w postaci początkowej (a), po imputacji medianą (b), po usunięciu atrybutu \textit{x\textsubscript{2}} (c), po przeskalowaniu do przedziału [-1, 1] (d), po zgrupowaniu atrybutów \textit{x\textsubscript{1}} i \textit{x\textsubscript{3}} w nowy atrybut \textit{x\textsubscript{4}} (e), po predykcji wybraną metodą klasyfikacji (f).}
+\label{req:algorithm}
+\end{figure}
 
-Drugą podstawową funkcjonalnością jest wyszukiwanie najlepszej metody przetwarzania określonych danych. Ogromna rozmaitość dostępnych ustawień całego algorytmu sprawia, że zazwyczaj udaje nam się przejrzeć jedynie niewielki fragment wszystkich możliwości. Z tego powodu dla ludzi zadanie to wiąże się często z dobieraniem kombinacji metod oraz ich parametrów ,,na chybił trafił''. Czynność, która dla wielu ludzi okazuje się czasochłonna i nużąca, może być w znacznie szybszy sposób zrealizowana przez komputer.
+\subsubsection{Grupa algorytmów}
 
-Przeszukiwanie polegać będzie zatem na dobieraniu parametrów całego algorytmu maksymalizujących wartość funkcji celu - walidacji krzyżowej. Aby uniknąć przeuczenia i nadmiernego dopasowania ustawień do wprowadzonych danych, przeszukiwanie wykorzystywać będzie jedynie część danych. Wielkość tej części użytkownik będzie mógł ustalić samodzielnie w postaci liczby procentowej. Domyślną wartością tej części uczącej będzie 90\%. Pozostałe dane zostaną użyte do ostatecznego określenia jakości parametrów algorytmu - odbędzie się to ponownie przy użyciu walidacji krzyżowej. Jak widać zatem, dane zostaną podzielone na zbiór uczący dla poszukiwań oraz na zbiór testowy. Zbiór uczący będzie dzielony na podzbiory uczące i testowe podczas określania jakości parametrów algorytmu w każdej iteracji. 
+System powinien obliczać jakość klasyfikacji grupy algorytmów zdefiniowanej w pewien sposób przez użytkownika. Projektując metodę opisu grup algorytmów należy zachować równowagę pomiędzy jej skrótowością oraz ekspresywnością. 
 
-Całkowita liczba wszystkich możliwych kombinacji metod przetwarzania wstępnego i klasyfikacji zależy wykładniczo od liczby atrybutów (kolumn) danych. Przykładowo, liczba możliwych kombinacji atrybutów, które aplikacja podda normalizacji, wynosi $2^{n}$, gdzie $n$ oznacza liczbę kolumn. Aby uniknąć długiego czasu przeszukiwania związanego z eksplozją wykładniczą, użytkownik powinien być w stanie określić podzbiór wszystkich kombinacji, które program ma przeanalizować.
+Opis rozwlekły byłby kłopotliwy w użyciu, gdyż wymagałby dużego nakładu pracy, aby opisać grupę metod. Dokładna metoda opisu mogłaby wymagać od użytkownika bezpośredniego wprowadzania opisów kombinacji, które aplikacja miałaby obsłużyć. Jednakże przy gigantycznej liczbie wszystkich możliwych wariantów, rozwiązanie to nie znalazłoby zastosowania - opisy grup stałyby się po prostu za długie. 
 
-Dobierając metodę określania podprzestrzeni poszukiwań, należy osiągnąć kompromis pomiędzy precyzyjnością metody oraz stopniem jej skomplikowania. Dokładna metoda mogłaby wymagać od użytkownika bezpośredniego wprowadzania opisów kombinacji, które aplikacja miałaby obsłużyć. Jednakże przy gigantycznej liczbie wszystkich możliwych wariantów, rozwiązanie to nie znalazłoby zastosowania. Skrajną alternatywą mogłoby być pytanie użytkownika, czy przeszukiwanie powinno uwzględniać określone operacje, np. usuwanie kolumn lub ich kwantyzację. Odpowiedzi ,,tak lub nie'' byłyby wygodne dla odbiorcy, ale odbierałyby jakikolwiek wpływ na proces wyszukiwania.
+Skrajną alternatywą mogłoby być pytanie użytkownika, czy algorytmy w grupie powinny uwzględniać określone operacje, np. usuwanie atrybutów lub ich grupowanie. Taki krótki, nieprecyzyjny opis nie pozwalałby na wyrażanie konkretnych rodzajów algorytmów w grupie.  Odpowiedzi ,,tak lub nie'' byłyby wygodne dla użytkownika, ale odbierałyby jakikolwiek wpływ na kształtowanie grup algorytmów.
 
-Zaproponowane przeze mnie rozwiązanie stanowi złoty środek pomiędzy dwoma skrajnymi metodami. Polega ono na podziale przestrzeni poszukiwań na podprzestrzenie i na precyzowaniu każdej z osobna.
+Całkowita liczba wszystkich możliwych kombinacji metod przetwarzania wstępnego i klasyfikacji zależy wykładniczo od liczby atrybutów danych. Przykładowo, liczba możliwych kombinacji atrybutów, które aplikacja podda skalowaniu, wynosi $2^{n}$, gdzie $n$ oznacza liczbę atrybutów. Aby uniknąć długiego czasu obliczeń związanego z eksplozją wykładniczą, użytkownik powinien być w stanie określić podzbiór wszystkich kombinacji, które program ma przeanalizować. Podzbiór taki można traktować jako podprzestrzeń kombinacji parametrów wszystkich możliwych algorytmów.
 
-Na samym początku użytkownik powinien wybrać metody radzenia sobie z brakującymi danymi, na przykład: $\{\textrm{usuń wiersze}, \textrm{wartość średnia}\}$.
+Zaproponowane przeze mnie rozwiązanie stanowi złoty środek pomiędzy dwoma skrajnymi metodami opisu grup. Polega ono na deklaratywnym opisie parametrów algorytmów należących do grupy. 
+
+Na samym początku użytkownik powinien wybrać metody imputacji brakujących wartości atrybutów, na przykład: $\{\emph{mediana}, \emph{wartość średnia}\}$.
 
 W następnej kolejności użytkownik powinien określić zbiór atrybutów $R_\textrm{attr}$, spośród których aplikacja może wybrać te, które zostaną usunięte. Dodatkowo użytkownik powinien określić zbiór liczb $\textbf{R} = \{r_1, r_2, \ldots, r_n\}$, taki, że każda liczba $r_i$ oznacza liczbę atrybutów, które algorytm będzie mógł usunąć jednocześnie ze zbioru $R_\textrm{attr}$.
 
-Analogicznie powinno przebiegać określanie szczegółów normalizacji atrybutów. Użytkownik powinien wybrać zbiór atrybutów $N_\textrm{attr}$ oraz wprowadzić zbiór liczb $\textbf{N}$, którego każdy element oznaczać będzie liczbę atrybutów normalizowanych jednocześnie.
+Analogicznie powinno przebiegać określanie szczegółów skalowania atrybutów. Użytkownik powinien wybrać zbiór atrybutów $N_\textrm{attr}$ oraz wprowadzić zbiór liczb $\textbf{N}$, którego każdy element oznaczać będzie liczbę atrybutów skalowanych jednocześnie.
 
-Opis podprzestrzeni przeszukiwań związanej z kwantyzacją okazuje się bardziej skomplikowany. Podobnie jak poprzednio, odbiorca powinien wskazać zbiór atrybutów poddanych kwantyzacji $Q_\textrm{attr}$. Następnie użytkownik powinien określić zbiór algorytmów kwantyzacji $\textbf{Q}$, które mogą być użyte. W kolejnym kroku należy wprowadzić zbiór liczb $Q_\textrm{pass}$. Każdy element zbioru oznaczać będzie liczbę jednoczesnych przebiegów kwantyzacji. W dalszej kolejności odbiorca określi liczbę $n_\textrm{max}$ oznaczającą maksymalną liczbę atrybutów, które mogą być łączone przez algorytmy ze zbioru $\textbf{Q}$. Na samym końcu osoba będzie musiała opisać podzbiór wszystkich kombinacji parametrów, jakie mogą przyjąć wybrane wcześniej algorytmy kwantyzacji. Aby uprościć to zadanie, użytkownik wprowadzi tylko jedną liczbę $g$, oznaczającą \textit{granularność} podprzestrzeni parametrów. 
+Opis podprzestrzeni związanej z grupowaniem okazuje się bardziej skomplikowany. Podobnie jak poprzednio, użytkownik powinien wskazać zbiór atrybutów poddanych grupowaniu $Q_\textrm{attr}$. Następnie użytkownik powinien określić zbiór algorytmów grupowania $\textbf{Q}$, które mogą być użyte. W kolejnym kroku należy wprowadzić zbiór liczb $Q_\textrm{pass}$. Każdy element zbioru oznaczać będzie liczbę jednoczesnych przebiegów grupowania. W dalszej kolejności odbiorca określi liczbę $n_\textrm{max}$ oznaczającą maksymalną liczbę atrybutów, które mogą być łączone przez algorytmy ze zbioru $\textbf{Q}$. Na samym końcu osoba będzie musiała opisać podzbiór wszystkich kombinacji parametrów, jakie mogą przyjąć wybrane wcześniej algorytmy grupowania. Aby uprościć to zadanie, użytkownik wprowadzi tylko jedną liczbę $g$, oznaczającą \textit{granularność} podprzestrzeni parametrów. 
 
 Wiele algorytmów często przyjmuje parametry początkowe należące do określonych dziedzin. Przykładami takich dziedzin mogą być: wartości ,,tak'' i ,,nie'', zbiór liczb rzeczywistych od $0.01$ do $100$. W ogólnym przypadku nie jest możliwe przeglądanie wszystkich kombinacji parametrów dla dowolnego algorytmu -- jest ich zbyt dużo lub ich wartości są nieprzeliczalne. Z tego powodu, w mojej pracy przeszukiwanie przestrzeni ograniczam do jej wybranych elementów. Naturalnym podejściem do tego problemu jest wybór takich wartości z każdej dziedziny, które byłby dla niej reprezentatywne. 
+
+\emph{Granularnością} nazywam liczbę, która określa, ile równo oddalonych od siebie wartości należy wybrać z danego przedziału. Parametr ten pozwala próbkować dany przedział liczb z określoną częstością. Umożliwia to mniej lub bardziej dokładne przeglądanie parametrów liczbowych dla algorytmów grupowania i klasyfikacji. W zależności od zastosowania, różnica pomiędzy kolejnymi wartościami z przedziału może być równa na skali liniowej lub logarytmicznej.
 
 \textit{Granularność liniową} $g_l$ dla zbioru $\{a, \ldots, b\}$ definiuję jako liczność zbioru $\textbf{L} = \{l_1, l_2, \ldots, l_n\}$ takiego, że:
 \begin{eqnarray*}
@@ -70,74 +111,178 @@ gdzie $c$ jest stałą, a $i \in \{1, \ldots, n-1\}$. Intuicyjnie granularność
 \end{eqnarray*}
 gdzie $q$ jest stałą, a $i \in \{1, \ldots, n-1\}$. Posługując się intuicją, granularność wykładniczą można rozumieć jako liczbę o 1 większą od liczby podziałów zbioru na przedziały należące do różnych rzędów wielkości. Zbiory $\textbf{L}$ i $\textbf{W}$ nazywam \textit{zbiorami granularnymi}.
 
-\textit{Granularnością} nazywam granularność dziedziny każdego parametru algorytmu. Przeszukiwanie przestrzeni parametrów algorytmu sprowadzam zatem do przeglądania tylko tych wartości, na jakie wskazuje granularność. Konkretniej oznacza to przeglądanie elementów iloczynu kartezjańskiego zbiorów granularnych każdego parametru algorytmu. Metoda ta wymaga wcześniejszego określenia dziedzin parametrów, ale nie stanowi to problemu, ponieważ zazwyczaj są one znane. Posługiwanie się granularnością pozwala zatem na ilościowe określenie dokładności przeszukiwań bez względu na to, z ilu parametrów dany algorytm korzysta. 
+Po zakończeniu ustalania szczegółów grupowania, użytkownikowi pozostanie ustawienie procesu klasyfikowania danych. Odbiorca aplikacji będzie musiał wskazać algorytmy, których działanie ma zostać sprawdzone, jak również granularność dla tych algorytmów. Jak zatem widać, zbiór parametrów grupy jednoznacznie wyznacza algorytmy, które do niej należą. Umiejętne dobranie parametrów grupy umożliwia wygenerowanie mniejszej lub większej liczby algorytmów wewnątrz grupy.
 
-Po zakończeniu ustalania szczegółów kwantyzacji użytkownikowi pozostanie ustawienie procesu klasyfikowania danych. Odbiorca aplikacji będzie musiał wskazać algorytmy, których działanie ma zostać sprawdzone, jak również granularność dla tych algorytmów.
+\begin{figure}[h]
+\centering
+\begin{framed}
+  \begin{enumerate}
+    \item Imputacja: 
+    \begin{enumerate}
+      \item Zbiór metod, np. $\{$\emph{średnia}, \emph{mediana}$\}$
+    \end{enumerate}
+    \item Usuwanie i skalowanie atrybutów:
+    \begin{enumerate}
+      \item Zbiór atrybutów, np. $\{X_1, X_4, X_5\}$
+      \item Zbiór liczności podzbiorów, np. $\{0, 1, 3\}$
+    \end{enumerate}
+    \item Grupowanie:
+    \begin{enumerate}
+      \item Zbiór algorytmów, np. $\{$\emph{K-Średnich}$\}$
+      \item Zbiór atrybutów, np. $\{X_1, ..., X_6\}$
+      \item Zbiór liczb algorytmów używanych jednocześnie, np. $\{2\}$
+      \item Maksymalna liczba atrybutów podlegających grupowaniu przez algorytm, np. $2$
+      \item Granularność, np. $5$
+    \end{enumerate}
+    \item Klasyfikacji
+    \begin{enumerate}
+      \item Zbiór algorytmów, np. $\{$\emph{Las Losowy}$\}$
+      \item Granularność, np. $6$
+    \end{enumerate}
+  \end{enumerate}
+\end{framed}
+\caption{Parametry wchodzące w skład opisu pojedynczej grupy algorytmów. Opis jest podzielony na części poświęcone imputacji braków, usuwaniu, skalowaniu i grupowaniu atrybutów oraz klasyfikowaniu danych.}
+\label{req:as}
+\end{figure}
 
-Podsumowując wymagania dotyczące przeszukiwania przestrzeni kombinacji, użytkownik będzie mógł:
+\subsection{Wykonywanie obliczeń}
+
+Część ta koncentruje się na dokładnym opisie obliczeń przeprowadzanych przez system. Jako pierwszy zaprezentowany jest schemat obliczeń, czyli algorytm wg którego system wytwarza wyniki dla danych wejściowych. Następnie omówione jest zagadnienie związane z przechowywaniem wyników obliczeń. W dalszej kolejności omówiona jest kwestia wykonywania obliczeń równolegle. Na samym końcu znajduje się kilka słów na temat podziału danych na zbiory trenujące i testowe.
+
+\subsubsection{Schemat obliczeń}
+\label{req:research_scheme}
+
+Dla ustalonych danych wejściowych $X$ oraz pojedynczego algorytmu $A_i$ ze zbioru algorytmów $A$, generowanych jest $10$ losowych podziałów na zbiory trenujące $X_{s} = X_{s1}, \ldots, X_{s10}$ oraz testowe $X_{t} = X_{t1}, \ldots, X_{t10}$ (walidacja krzyżowa).
+
+W pierwszej kolejności dane są wstępnie przetwarzane. Na danych trenujących $X_{si}$ tworzony jest model imputacji $m_{p}$ zgodny z wybraną metodą algorytmu $A_i$. Następnie brakujące dane trenujące są zastępowane wartościami zwróconymi przez ten model. Jeżeli algorytm uwzględnia usuwanie atrybutów, czynność ta jest wykonywana zaraz po tym. Kolejnym krokiem jest przeskalowanie wybranych atrybutów. W tym celu tworzony jest model skali atrybutów $m_{s}$, który następnie użyty jest to transformacji wybranych atrybutów zbioru trenującego. Ostatnim krokiem przetwarzania wstępnego jest grupowanie. Opierając się na przekształconych danych trenujących, system generuje model grupowania $m_{g}$ odpowiadający algorytmom grupowania zawartym w opisie algorytmu $A_i$. Model grupowania użyty jest następnie na danych trenujących doprowadzając je do ich ostatecznej formy.
+
+Przetwarzanie wstępne danych testowych $X_{ti}$ przebiega podobnie, z tą różnicą, że do imputacji, skalowania oraz grupowania używa się gotowych modeli $m_p$, $m_s$ i $m_g$.
+
+Po zakończeniu fazy przetwarzania nadchodzi kolej na ocenę klasyfikacji. Na przetworzonym zbiorze trenującym wytworzony jest model klasyfikacji $m_k$ zgodnie z wybranym algorytmem klasyfikacji zawartym w opisie $A_i$. Model $m_k$ użyty jest do predykcji kategorii na przetworzonym zbiorze testowym. W oparciu na wartościach komórek z macierzy pomyłek obliczane są miary jakości oceny - precyzja, wrażliwość oraz F1. 
+
+Powyższe obliczenia powtarzane są dla każdego z 10 podziałów na zbiory trenujące i testowe. Oznacza to, że wynikiem dla każdego algorytmu $A_i$ ze zbioru $A$ jest 30 liczb - 10 trójek miar jakości oceny. 
+
+Wyżej opisane obliczenia wykonywane są dla każdego algorytmu w grupie. Po zakończeniu obliczeń oceny poszczególnych algorytmów są łączone w jeden zbiór i przypisywane do grupy algorytmów.
+
+Posiadając wyniki obliczeń dla każdej z grup, można przejść do porównania grup. Najpierw dla każdej pary grup należy ocenić, czy wyniki w grupach różnią się od siebie. W tym celu używa się testu Manna-Whitneya-Wilcoxona. Jeżeli wyniki grup różnią się od siebie, wygrywa ta z nich, której różnica średniej i odchylenia standardowego jest większa. Dla każdej grupy $i$ należy policzyć wartość $t_i$ oznaczającą z iloma pozostałymi grupami ,,wygrała''. Na końcu należy uszeregować grupy używając wartości $t_i$.
+
+Całość obliczeń w dużym skrócie prezentuje algorytm \ref{req:algorithm}.
+
+\begin{algorithm}[ht]
+  \KwIn{zbiór grup algorytmów $A$}
+  \KwOut{ranking $R$}
+  \ForEach{$A_i \in A$} {
+    \ForEach{$a_j \in A_i$} {
+      Oblicz miary oceny klasyfikacji $M_{a_j}$\;
+    }
+    $Y_i = \bigcup M_{a_j}$\;
+    Porównaj oceny $Y_i$ z ocenami poprzednich grup $Y_k, k \in [1, i)$\;
+  }
+  Utwórz ranking grup $R$\;
+  \Return{$R$}
+  \caption{\textbf{Algorytm \ref{req:algorithm}:} Uproszczony schemat obliczeń}
+  \label{req:algorithm}
+\end{algorithm}
+
+\subsubsection{Prowadzenie obliczeń}
+
+Wykonywanie obliczeń opisanych w poprzednim podpunkcie może być bardzo czasochłonne. Z tego powodu system powinien dawać możliwość wstrzymania obliczeń w dowolnym momencie oraz kontynuowania ich po dowolnie długiej przerwie. Dodatkowo, system powinien pokazywać użytkownikowi uproszczoną informację o postępie obliczeń oraz o przewidywanym czasie zakończenia.
+
+\subsubsection{Przechowywanie wyników}
+
+Z wymagania dotyczącego wstrzymywania i wznawiania obliczeń wynika konieczność przechowywania informacji o cząstkowych rezultatach. Co więcej, system powinien zapamiętywać wyniki obliczeń dla grup algorytmów, aby późniejsze zapytania o te grupy zwracały informacje błyskawicznie.
+
+\subsubsection{Rozproszenie obliczeń}
+
+Jak łatwo zauważyć, możliwe jest zdefiniowanie grup algorytmów, których liczność jest bardzo duża (zależna wykładniczo od niektórych parametrów). Oznacza to, że badania przeprowadzanie na takich grupach będą bardzo czasochłonne. W celu skrócenia czasu, obliczenia można wykonywać równolegle na wielu maszynach. Projektowany system powinien umożliwiać wykonywanie obliczeń na pojedynczej maszynie (np. na laptopie) lub na grupie maszyn połączonych siecią komputerową.
+
+\subsubsection{Ustalony podział zbioru danych}
+
+Porównując oceny jakości klasyfikacji dla różnych grup algorytmów należy zadbać o to, aby podziały na zbiory trenujące i testowe były jednakowe dla każdego algorytmu. Tylko wtedy mamy pewność że miary jakości klasyfikacji odnoszą się do efektów predykcji klasyfikatora na tych samych zbiorach danych. Warunek ten powinien być spełniony również wtedy, gdy obliczenia robione są na wielu niezależnych maszynach oraz, gdy raz przerwane obliczenia zostały wznowione.
+
+\subsection{Prezentacja wyników}
+
+Ostatnią częścią poświęconą wymaganiom funkcjonalnym są wymagania dotyczące prezentacji wyników obliczeń. Istotnym jest, aby raz policzone rozkłady miar można było łatwo zobrazować i przeanalizować.
+
+\subsubsection{Informacje o grupach algorytmów}
+
+System komputerowy powinien pozwalać na podgląd obliczonych miar jakości klasyfikacji dla grup algorytmów zdefiniowanych przez użytkownika. System powinien dawać możliwość podglądu podstawowych statystyk dla każdej z grup algorytmów. Do wartości tych powinny zaliczać się średnia ocen oraz odchylenie standardowe dla każdej z miar (precyzja, wrażliwość, F1) z osobna. Dodatkowo, aplikacja musi umożliwiać graficzny podgląd histogramów rozkładów ocen wraz z uwzględnieniem zapisu wykresów do plików. Warto również wspomnieć o tym, że dla każdej grupy algorytmów system powinien wyświetlić prosty i zrozumiały opis, pozwalający zrozumieć jak grupa została zdefiniowana (metoda imputacji, atrybuty do usunięcia itp).
+
+\subsubsection{Ranking grup}
+
+Celem projektowanego systemu komputerowego jest porównywanie jakości predykcji grup algorytmów. Porównanie to powinno być zrealizowane w postaci rankingu tych grup. Jak zostało to opisane w sekcji  \ref{req:research_scheme}, porządek w rankingu powinien być oparty na liczbie ,,zwycięstw'' pomiędzy grupami algorytmów. Grupy powinny być przedstawione od najlepszej do najgorszej wg kryterium wybranej miary oceny (np. precyzji). W celu uproszczenia porównywania grup między sobą, każda pozycja w rankingu powinna zawierać:
 \begin{enumerate}
-\item Wskazać metody radzenia sobie z brakującymi danymi.
-\item Wytypować możliwe kombinacje atrybutów przeznaczonych do usunięcia
-\item Ustalić możliwe kombinacje atrybutów przeznaczonych do normalizacji
-\item Określić kombinacje algorytmów łączenia atrybutów oraz ich parametry
-\item Wskazać zbiór algorytmów klasyfikacji oraz ich parametry
+  \item Opis grupy algorytmów wynikający z parametrów grupy
+  \item Informacje o miejscu w rankingach tworzonych wg pozostałych miar ocen
+  \item Wartości średnie miar oceny klasyfikacji
+  \item Informacje o grupach z którymi zwyciężyła (dla każdej z miar ocen)
 \end{enumerate}
-
-\subsection{Opis systemu komputerowego}
-
-Biorąc pod uwagę różnorodność popularnie używanych systemów operacyjnych, projektowany system nie powinien wymuszać na użytkowniku żadnej konkretnej platformy. Projektowane rozwiązanie powinno działać równie dobrze zarówno na systemach z rodziny MS Windows, jak i Linux (na przykład). Jednocześnie aplikacja powinna umożliwiać przetwarzanie wstępne, klasyfikowanie danych oraz przeszukiwanie w prosty i intuicyjny sposób. W tym celu system powinien oferować przejrzysty i nieskomplikowany graficzny interfejs użytkownika. Interfejs musi pozwalać na wprowadzanie danych do przetwarzania oraz na łatwe ustawianie parametrów opisanych w poprzednich częściach rozdziału.
-
-Projektowane narzędzie powinno radzić sobie z odczytem danych zgromadzonych w popularnych formatach plików, np. MS Excel lub CSV (\textit{Comma Separated Values}). Z racji tego, że wprowadzane dane poddawane są algorytmom klasyfikacji, plik powinien posiadać wyszczególnioną kolumnę zawierającą informacje o kategorii obserwacji. Nagłówek tej kolumny powinien nosić nazwę \textit{Index}.
-
-Zadaniem systemu jest ułatwienie odnajdywania ustawień algorytmu klasyfikacji. Typowa sesja pracy z aplikacją polegać powinna na wyszukiwaniu najlepszych ustawień ,,na chybił trafił'' lub automatycznie (przeszukiwanie). W obu wariantach pożyteczne byłoby przechowywanie informacji o wynikach wcześniejszych operacji. Mając łatwy dostęp do wcześniejszych rezultatów, użytkownik mógłby w prostszy sposób wnioskowań na temat skuteczności użytych metod. Biorąc to pod uwagę, aplikacja powinna zapisywać informacje o wynikach przeprowadzonych operacji. W przypadku przetwarzania, system zapamiętywałby wprowadzone parametry oraz wynik walidacji krzyżowej. W przypadku procesu przeszukiwania, aplikacja zapisywałaby dwie rzeczy. Po pierwsze, opis podprzestrzeni przeszukiwań. Po drugie, najlepszy znaleziony wynik oraz opis metody, która do niego prowadzi. Aplikacja powinna umożliwiać również usuwanie wybranych zapisów.
-
-Biorą pod uwagę możliwie długi czas przeszukiwania, system komputerowy musi pozwalać na wykonywanie tej operacji w tle. Po uruchomieniu przeszukiwania użytkownik powinien być w stanie wykonywać inne operacje w systemie. Stąd też kolejne wymaganie -- system powinien umożliwiać przeprowadzanie wielu przeszukiwań jednocześnie. Oprócz tego, system powinien pozwalać odbiorcy na podglądanie aktualnego postępu operacji. W dowolnym momencie użytkownik powinien móc dowiedzieć się, jaka część wszystkich wybranych kombinacji została już sprawdzona.
-
-Dodatkowo system nie powinien wymagać dostępu do Internetu. Aplikacja powinna być w stanie wykonać wszystkie konieczne obliczenia na pojedynczym komputerze, nie korzystając z sieci.
-
-Poza wyżej wymienioną funkcjonalnością system komputerowy powinien oferować nieskomplikowaną metodę instalacji. 
 
 \section{Wymagania niefunkcjonalne}
 
-System komputerowy powinien umożliwiać wykonywanie co najmniej $20$ operacji przeszukiwań jednocześnie. Wymaganie to pokrywa większość scenariuszy użycia operacji przeszukiwania. Nie spodziewamy się bowiem, aby użytkownik uruchamiał ponad kilkadziesiąt operacji w tym samym czasie.
+W związku z tym, że praca dyplomowa ma głównie charakter badawczy, etap analizy wymagań skupia się na wymaganiach funkcjonalnych. Mimo to, opis wymagań niefunkcjonalnych nie może być pominięty, ponieważ mogłoby to doprowadzić do sytuacji, w której działanie systemu stwarzałoby problemy utrudniające prowadzenie badań.
 
-Aplikacja powinna pozwalać na zapisanie co najmniej $100000$ wyników klasyfikacji oraz $100000$ wyników przeszukiwań. Takie wymaganie gwarantuje, że odbiorca, będący wielkim entuzjastą uczenia maszynowego, mógłby dokonywać 50 badań każdego typu codziennie przez ponad pięć lat\footnote{Pięćdziesiąt operacji przez trzysta sześćdziesiąt pięć dni w roku przez pięć lat daje $50 * 365 * 5 = 91250$ przeprowadzonych operacji, czyli nieco mniej niż $100000$.}.
+\subsection{Rozmiar przechowywanych danych}
 
-Ze względu na to, że posiadane przeze mnie dane zostały dostarczone w postaci pliku MS Excel, aplikacja powinna potrafić odczytywać pliki tego typu. Odczyt danych z innych rodzajów plików nie jest konieczny.
+Projektowany system komputerowy powinien umożliwiać zapis informacji o wynikach dla 1000 grup algorytmów. Każda grupa może posiadać do 1000000 wyników dla każdej z miar oceny klasyfikacji. System powinien być w stanie wygenerować ranking dla grup z takimi ograniczeniami.
 
-Ostatnim wymaganiem jest określenie liczby algorytmów klasyfikacji i łączenia, jakie aplikacja będzie oferowała. Aby umożliwić użytkownikowi szeroki wybór, aplikacja pozwalać będzie na skorzystanie z co najmniej pięciu algorytmów klasyfikacji oraz tej samej liczby metod klasteryzacji.
+\subsection{Dane wejściowe}
+
+Dostępne dane medyczne znajdują się w pliku MS Excel, a wyszczególniona kolumna z kategorią chorobową nosi nazwę \emph{Index}. Projektowane narzędzie powinno być dostosowane do posiadanych danych jak również umożliwiać pracę na innych zbiorach zapisanych w podobny sposób. Z tego powodu system powinien radzić sobie z odczytem danych zgromadzonych w popularnych formatach plików, np. MS Excel lub CSV (\textit{Comma Separated Values}). Z racji tego, że wprowadzane dane poddawane są algorytmom klasyfikacji, plik powinien posiadać wyszczególnioną kolumnę zawierającą informacje o kategorii obserwacji. Podobnie jak ma to miejsce w podstawowym zestawie danych, nagłówek tej kolumny powinien nosić nazwę \textit{Index}.
+
+\subsection{Algorytmy uczenia maszynowego}
+
+System powinien stwarzać możliwość porównania grup używających popularnych algorytmów klasyfikacji i grupowania. Aplikacja powinna udostępniać co najmniej 4 algorytmy klasyfikacji danych oraz co najmniej 2 algorytmy grupowania atrybutów.
+
+\section{Wymagania systemowe}
+
+Biorąc pod uwagę różnorodność popularnie używanych systemów operacyjnych, projektowany system nie powinien wymuszać na użytkowniku żadnej konkretnej platformy. Projektowane rozwiązanie powinno działać równie dobrze zarówno na systemach z rodziny MS Windows, jak i Linux (na przykład). Jednocześnie aplikacja powinna umożliwiać przetwarzanie wstępne oraz klasyfikowanie danych w prosty i intuicyjny sposób. W tym celu system powinien oferować nieskomplikowany, konsolowy interfejs użytkownika. Interfejs musi pozwalać na wprowadzanie danych do przetwarzania oraz na łatwe ustawianie parametrów opisanych w części \ref{req:input}.
 
 \section{Wymagania ograniczeń}
 
 Projektując oprogramowanie, należy uwzględnić obecność wielu czynników ograniczających. Do czynników ograniczających można zaliczyć ograniczenia finansowe, związane z określonym budżetem przeznaczonym na realizację projektu lub jego określonej fazy. Innym rodzajem ograniczenia jest specyfika środowiska uruchomieniowego. Aplikacje wykonujące przetwarzanie rozproszone mogą wymagać określonej architektury sieci, podczas gdy niektóre systemy wbudowane potrafią działać poprawnie tylko na dedykowanych platformach sprzętowych. Ograniczenia nałożone na projekt mają często bezpośredni wpływ na architekturę końcowego rozwiązania i dlatego są równie istotne jak wymagania funkcjonalne i jakościowe.
 
-Podstawowym ograniczeniem w mojej pracy środowisko uruchomieniowe -- jest nim pojedynczy komputer PC. Poprawne działanie aplikacji nie wymaga pracy wielu komputerów, wystarczyć powinna jedna maszyna. Wymaganie to gwarantuje, że odbiorca będzie mógł korzystać z systemu np. na laptopie, będąc w podróży.
+Podstawowym ograniczeniem w mojej pracy środowisko uruchomieniowe -- jest nim pojedynczy komputer PC. Poprawne działanie aplikacji nie wymaga pracy wielu komputerów, wystarczyć powinna jedna maszyna.  System nie powinien wymagać dostępu do Internetu aby działał poprawnie. Tak przedstawione wymaganie nie stoi w sprzeczności z możliwością równoległego liczenia na wielu komputerach, o którym mowa w punkcie \ref{req:research_scheme}. Oznacza ono po prostu, że użytkownik będzie mógł korzystać z systemu np. na pojedynczym laptopie, będąc w podróży.
 
-\section{Podsumowanie wymagań}
+\section{Podsumowanie}
 
 Tabela \ref{req:table} stanowi zestawienie wymagań projektowych opisanych w tym rozdziale.
 
 \begin{table}[h]
 \begin{center}
-\begin{tabular}{ l | p{110mm} }
-Rodzaj wymagania & Opis wymagania \\ \hline
-Funkcjonalne & Przetwarzanie wstępne i klasyfikacja zgodnie z ustawieniami użytkownika \\ 
-Funkcjonalne & Przeszukiwanie przestrzeni kombinacji metod przetwarzania zgodnie z ustawieniami użytkownika \\
-Funkcjonalne & Praca pod systemami operacyjnymi z rodziny MS Windows i Linux \\
-Funkcjonalne & Prosty i intuicyjny interfejs graficzny \\ 
-Funkcjonalne & Odczyt danych posiadających wyszczególnioną kolumnę kategorii \\ 
-Funkcjonalne & Zapisywanie rezultatów przetwarzania: ustawień algorytmu i wyniku walidacji krzyżowej \\
-Funkcjonalne & Zapisywanie rezultatów przeszukiwania: ustawień przeszukiwania oraz nastaw najlepszej znalezionej metody oraz wyniku walidacji krzyżowej dla tej metody \\ 
-Funkcjonalne & Uruchamianie wielu operacji przeszukiwania w tle \\ 
-Funkcjonalne & Aktualizowanie informacji o postępie procesu przeszukiwania \\
-Funkcjonalne & Nieskomplikowana metoda instalacji \\
-Funkcjonalne & Aplikacja nie wymaga dostępu do Internetu \\
-Niefunkcjonalne & Wykonywanie 20 operacji przeszukiwania jednocześnie \\
-Niefunkcjonalne & Zapisywanie co najmniej $100000$ wyników klasyfikacji oraz $100000$ wyników przeszukiwań \\
-Niefunkcjonalne & Obsługa formatu MS Excel \\
-Niefunkcjonalne & Wybór spośród co najmniej 5 algorytmów klasyfikacji \\ 
-Niefunkcjonalne & Wybór spośród co najmniej 5 algorytmów łączenia atrybutów \\ 
-Ograniczeń & Aplikacja przeznaczona na pojedynczy komputer PC 
+\begin{tabular}{ | l | p{110mm} | }
+\hline
+\rowcolor{lightgray} Rodzaj wymagania & Opis wymagania \\\hline
+
+Funkcjonalne & Obliczanie miar jakości klasyfikacji dla zdefiniowanych przez użytkownika grup algorytmów metodą walidacji krzyżowej. \\\hline
+Funkcjonalne & Definiowanie grup algorytmów poprzez wprowadzanie odpowiednich parametrów. \\\hline
+Funkcjonalne & Każdy algorytm zawiera etapy imputacji i klasyfikacji. Opcjonalne etapy to usuwanie, skalowanie i grupowanie atrybutów. \\\hline
+Funkcjonalne & Porównywanie zbiorów ocen testem Manna Whitneya Wilcoxona. \\\hline
+Funkcjonalne & Możliwość wstrzymywania obliczeń. \\\hline
+Funkcjonalne & Możliwość uruchamiania obliczeń od momentu wstrzymania. \\\hline
+Funkcjonalne & Zapis rezultatów obliczeń (ocen) w bazie danych. \\\hline
+Funkcjonalne & Skrócenie czasu obliczeń poprzez wykonywanie ich na wielu maszynach jednocześnie. \\\hline
+Funkcjonalne & Ustalony podział na zbiory trenujące i testowe. \\\hline
+Funkcjonalne & Informacja o postępie obliczeń. \\\hline
+Funkcjonalne & Informacja o przewidywanym czasie zakończenia obliczeń. \\\hline
+Funkcjonalne & Podgląd średniej i odchylenia standardowego dla każdej policzone grupy algorytmów. \\\hline
+Funkcjonalne & Generowanie histogramu miar jakości dla każdej grupy algorytmów. \\\hline
+Funkcjonalne & Wyświetlanie czytelnych i zrozumiałych opisów grup. \\\hline
+Funkcjonalne & Tworzenie rankingu grup. \\\hline
+
+Niefunkcjonalne & Zapis do 1000 grup algorytmów w bazie danych. \\\hline
+Niefunkcjonalne & Zapis do 1000000 ocen dla każdej miary dla każdej grupy algorytmów. \\\hline
+Niefunkcjonalne & Odczyt danych posiadających wyszczególnioną kolumnę kategorii. \\\hline 
+Niefunkcjonalne & Obsługa formatu MS Excel. \\\hline
+Niefunkcjonalne & Wybór spośród co najmniej 4 algorytmów klasyfikacji. \\\hline 
+Niefunkcjonalne & Wybór spośród co najmniej 2 algorytmów grupowania.\\\hline
+
+Systemowe & Praca pod systemami operacyjnymi z rodziny MS Windows i Linux. \\\hline
+Systemowe & Prosty i intuicyjny interfejs konsolowy. \\\hline 
+
+Ograniczeń & Aplikacja nie wymaga dostępu do Internetu. \\\hline
+Ograniczeń & Aplikacja działa na pojedynczym komputerze PC. \\\hline
+
 \end{tabular}
 \caption{Wymagania projektowe}
 \label{req:table}
