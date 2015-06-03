@@ -180,7 +180,7 @@ Całość obliczeń w dużym skrócie prezentuje algorytm \ref{req:algorithm}.
   }
   Utwórz ranking grup $R$\;
   \Return{$R$}
-  \caption{\textbf{Algorytm \ref{req:algorithm}:} Uproszczony schemat obliczeń}
+  \caption{Uproszczony schemat obliczeń}
   \label{req:algorithm}
 \end{algorithm}
 
@@ -195,6 +195,8 @@ Z wymagania dotyczącego wstrzymywania i wznawiania obliczeń wynika koniecznoś
 \subsubsection{Rozproszenie obliczeń}
 
 Jak łatwo zauważyć, możliwe jest zdefiniowanie grup algorytmów, których liczność jest bardzo duża (zależna wykładniczo od niektórych parametrów). Oznacza to, że badania przeprowadzanie na takich grupach będą bardzo czasochłonne. W celu skrócenia czasu, obliczenia można wykonywać równolegle na wielu maszynach. Projektowany system powinien umożliwiać wykonywanie obliczeń na pojedynczej maszynie (np. na laptopie) lub na grupie maszyn połączonych siecią komputerową.
+
+Rozpraszając obliczenia na wiele maszyn, należy mieć na uwadze wpływ opóźnień w sieci na wydajność przebiegu badań. Komunikacja sieciowa jest wolniejszą metodą wymiany informacji niż np. komunikacja międzywątkowa lub międzyprocesowa. Należy również zdawać sobie sprawę z problemu związanego z zawodnością zdalnych komputerów. Z losowych przyczyn mogą się one zawiesić, wyłączyć, wprowadzając za-kłócenia do całego procesu obliczeń. 
 
 \subsubsection{Ustalony podział zbioru danych}
 
