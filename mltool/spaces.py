@@ -213,8 +213,8 @@ class QuantifySpace(AbstractSearchSpace):
     """
 
     _param_spaces = {
-        "k-means": [LinearValueSpace(2, 20)],
-        "k-means++": [LinearValueSpace(2, 20)],
+        "k-means": [NominalValueSpace([2,3,4,5,6])],
+        "k-means++": [NominalValueSpace([2,3,4,5,6])],
         "meanshift": []
     }
 

@@ -39,7 +39,7 @@ Poglądowy schemat architektury systemu komputerowego umieszczony został na rys
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{missing.png}
+\includegraphics[width=\textwidth]{arch.png}
 \caption{Schemat architektury systemu komputerowego}
 \label{proj:arch_diagram}
 \end{figure}
@@ -707,11 +707,81 @@ Ostatnią metodą publiczną klasy \emph{DataStore} jest \emph{markDone()}. Meto
 
 \section{Program liczący}
 
+Zadaniem programu liczącego jest odbieranie zadań z systemu kolejkowego, wykonywanie niezbędnych obliczeń i zwracanie wyników do systemu kolejkowego.
+
+Odbieranie zadań jest zapewnione przez biblioteki programistyczne dostarczone przez twórców systemu kolejkowego. Wykonywanie obliczeń polega na wytworzeniu zbioru metryk klasyfikacji dla każdego algorytmu zawartego w bloku dostarczonym razem z zadaniem. Metryki są łączone w jeden zbiór i wysyłane z powrotem do systemu kolejkowego jako rezultat pojedynczego zadania.
+
+Program liczący używa biblioteki \emph{mltool} w celu przeprowadzenia obliczeń oraz bibliotek związanych z systemem kolejkowym aby odebrać zadanie i wysłać wyniki.
+
 \section{Prezentowanie wyników obliczeń}
+
+Celem obliczania metryk jakości klasyfikacji dla grup algorytmów jest ich późniejsza analiza. Badanie polega na przyglądaniu się cechom wyników wewnątrz grup (np. wartość średnia, odchylenie standardowe, kształt rozkładu) oraz na porównaniu wyników między grupami. Do realizacji tych zadań służą programy \emph{browse} i \emph{compare}.
 
 \subsection{Program browse}
 
+Program \emph{browse} służy do przeglądu otrzymanych wyników jakości klasyfikacji grup algorytmów. Program umożliwia przegląd wyników wybranych grupa algorytmów lub wszystkich z nich.
+
+\subsubsection{Interfejs użytkownika}
+
+Użytkownik ma wpływ na działanie programu poprzez konsolowy interfejs. Argumenty programu \emph{browse} prezentuje tabela \ref{proj:table_browse_args}.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ | l | p{110mm} | }
+\hline
+\rowcolor{lightgray} Parametr & Opis \\\hline
+
+-a \emph{akcja} & Wybór metody przeglądania. Możliwe wartości akcji to \emph{list} i \emph{plot}.\\\hline
+-ids \emph{identyfikatory} & Lista identyfikatorów grup algorytmów, o których informacje należy wyświetlić.\\\hline
+-m \emph{metryka} & Rodzaj metryki, którą należy wyświetlić.\\\hline
+
+\end{tabular}
+\caption{Argumenty programu \emph{browse}.}
+\label{proj:table_browse_args}
+\end{center}
+\end{table}
+
+Wyświetlanie informacji o wynikach grup działa na dwa sposoby. Tryb pierwszy wyświetla szczegółową listę grup algorytmów oraz informacje o wynikach tj. średnie wartości metryk, liczba algorytmów w grupie. Tryb drugi wyświetla histogramy wybranej metryki dla ustalonych grup algorytmów. Do przełączania trybów pracy służy argument \emph{-a}.
+
+Program \emph{browse} pozwala wybrać grupy algorytmów, które mają być pokazane na ekranie. Do wyboru służy opcja \emph{-ids.} Jeżeli opcja ta nie jest sprecyzowana, zostaną wyświetlone wszystkie grupy.
+
+Podczas wyświetlania histogramów wybranych metryk należy wybrać rodzaj metryki. Służy do tego argument \emph{-m}. Jeżeli argument ten nie jest jawnie zdefiniowany, domyślnym rodzajem oceny jest metryka F1.
+
+\subsubsection{Struktura programu}
+
+Program \emph{browse} posiada klasę o nazwie \emph{BrowseCmdParser} odpowiedzialną za parsowanie argumentów linii poleceń. Metoda \emph{parse()} klasy \emph{BrowseCmdParser} zwraca strukturę zawierającą pola odpowiadające argumentom linii poleceń. 
+
+Aplikacja używa biblioteki \emph{mltool} w celu przetwarzania wyników poszczególnych grup (np. liczenie histogramu) oraz bibliotek umożliwiających komunikację z bazą danych.
+
 \subsection{Program compare}
+
+Porównywanie wyników grup algorytmów między sobą jest realizowane przez program o nazwie \emph{compare}. Efektem działania programu jest ranking grup zgodny z założeniami opisanymi w części \ref{req:research_scheme}.
+
+\subsubsection{Interfejs programu}
+
+Program \emph{compare} jest aplikacją konsolową. Argumenty linii poleceń programu pokazane są w tabeli \ref{proj:table_compare_args}.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ | l | p{110mm} | }
+\hline
+\rowcolor{lightgray} Parametr & Opis \\\hline
+
+-p \emph{poziom} & Poziom istotności (od 0 do 1) dla testu Manna-Whitneya-Wilcoxona.\\\hline
+-o \emph{metryka} & Metryka wg której tworzony jest ranking.\\\hline
+-c \emph{liczba} & Liczba najlepszych pozycji w rankingu do wyświetlenia.\\\hline
+
+\end{tabular}
+\caption{Argumenty programu \emph{compare}.}
+\label{proj:table_compare_args}
+\end{center}
+\end{table}
+
+\subsubsection{Struktura aplikacji}
+
+Klasa \emph{CompareCmdParser} pozwala na parsowanie argumentów linii poleceń i otrzymanie struktury zawierającej odpowiadające im pola. 
+
+Program \emph{compare} używa biblioteki \emph{mltool}, bibliotek umożliwiających komunikację z bazą danych oraz bibliotek matematycznych posiadających implementację testu Manna-Whitneya-Wilcoxona.
 
 \section{Testy}
 
