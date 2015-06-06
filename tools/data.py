@@ -99,6 +99,7 @@ class SpaceDataStore(object):
         scores_obj.scores = pickle.dumps(scores)
         session.add(scores_obj)
         session.commit()
+        session.close()
 
     def enable(self, id):
         """
@@ -110,6 +111,7 @@ class SpaceDataStore(object):
         if space_obj:
             space_obj.enabled = True
             session.commit()
+        session.close()
 
     def disable(self, id):
         """
@@ -121,6 +123,7 @@ class SpaceDataStore(object):
         if space_obj:
             space_obj.enabled = False
             session.commit()
+        session.close()
 
     def is_enabled(self, id):
         """
@@ -130,9 +133,11 @@ class SpaceDataStore(object):
         """
         session = self._session_factory()
         space_obj = session.query(SearchOperation).filter_by(id=id).first()
+        enabled = False
         if space_obj:
-            return space_obj.enabled
-        return False
+            enabled = space_obj.enabled
+        session.close()
+        return enabled
 
     def get_retry_info(self, space):
         """
@@ -145,9 +150,11 @@ class SpaceDataStore(object):
         """
         session = self._session_factory()
         space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
+        result = None
         if space_obj:
-            return (space_obj.latest, pickle.loads(space_obj.unfinished))
-        return None
+            result = (space_obj.latest, pickle.loads(space_obj.unfinished))
+        session.close()
+        return result
 
     def mark_done(self, space):
         """
@@ -158,6 +165,7 @@ class SpaceDataStore(object):
         space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
         space_obj.done = True
         session.commit()
+        session.close()
 
     def isdone(self, space):
         """
@@ -168,9 +176,11 @@ class SpaceDataStore(object):
         """
         session = self._session_factory()
         space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
+        is_done = False
         if space_obj:
-            return space_obj.done
-        return False
+            is_done = space_obj.done
+        session.close()
+        return is_done
 
     def get_spaces(self, require_enabled=False):
         """
@@ -184,7 +194,9 @@ class SpaceDataStore(object):
             objects = session.query(SearchOperation).filter_by(enabled=True).order_by(SearchOperation.id).all()
         else:
             objects = session.query(SearchOperation).order_by(SearchOperation.id).all()
-        return [pickle.loads(obj.space) for obj in objects]
+        result = [pickle.loads(obj.space) for obj in objects]
+        session.close()
+        return result
 
     def get_scores(self, space=None, id=-1):
         """
@@ -199,7 +211,9 @@ class SpaceDataStore(object):
             space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
         else:
             space_obj = session.query(SearchOperation).filter_by(id=id).first()
-        return self._get_scores_from_children(space_obj)
+        result = self._get_scores_from_children(space_obj)
+        session.close()
+        return result
 
     def delete(self, space):
         """
@@ -211,6 +225,7 @@ class SpaceDataStore(object):
         if space_obj:
             session.delete(space_obj)
             session.commit()
+        session.close()
 
     def get_id(self, space):
         """
@@ -220,9 +235,11 @@ class SpaceDataStore(object):
         """
         session = self._session_factory()
         space_obj = session.query(SearchOperation).filter_by(space_descr=str(space)).first()
+        id = False
         if space_obj:
-            return space_obj.id
-        return False
+            id = space_obj.id
+        session.close()
+        return id
 
     def _get_scores_from_children(self, obj):
         total_scores = []

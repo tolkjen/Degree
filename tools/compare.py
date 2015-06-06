@@ -125,8 +125,9 @@ if __name__ == '__main__':
             print info.space
             print 'Ranks: %d (recall) %d (precision) %d (r+p) %d (f1)' % (r, p, rp, f1)
             if arguments.detailed:
-                print 'Mean: %0.4f (recall) %0.4f (precision) %0.4f (f1)' % (
-                    info.recall.mean, info.precision.mean, info.f1.mean)
+                print 'Mean: %0.4f+%0.4f (recall) %0.4f+%0.4f (precision) %0.4f+%0.4f (f1)' % (
+                    info.recall.mean, info.recall.std, info.precision.mean, info.precision.std, 
+                    info.f1.mean, info.f1.std)
                 print 'Better than:'
                 print '  - recall:', ','.join([str(x.id) for x in info.recall.better_than])
                 print '  - precision:', ','.join([str(x.id) for x in info.precision.better_than])
