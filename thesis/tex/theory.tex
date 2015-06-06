@@ -152,7 +152,7 @@ W celu wybrania właściwych atrybutów do usunięcia możemy usuwać kolejne ko
 
 \subsubsection{Grupowanie jako redukcja wymiarów}
 
-Ostatnim podejściem do redukcji wymiarów jest grupowanie atrybutów. Celem grupowania jest taki podział nieetykietowanych przykładów, który zapewnia ich maksymalne podobieństwo w ramach każdej kategorii i maksymalne zróżnicowanie pomiędzy różnymi kategoriami \cite{pcichosz}. W kontekście pracy dyplomowej, grupowanie traktuje wartości $n$-elementowego podzbioru atrybutów jako punkty w przestrzeni $n$-wymiarowej. Punkty te są grupowane za pomocą odpowiednich algorytmów uczenia maszynowego (np. \emph{K-średnich}, \emph{DBSCAN}) a następnie zamieniane na etykiety tych grup. W ten sposób z $n$ atrybutów powstaje pojedynczy atrybut etykiet, a $n-1$ zostaje usuniętych.
+Ostatnim podejściem do redukcji wymiarów jest grupowanie atrybutów. Celem grupowania jest taki podział nieetykietowanych przykładów, który zapewnia ich maksymalne podobieństwo w ramach każdej kategorii i maksymalne zróżnicowanie pomiędzy różnymi kategoriami \cite{pcichosz}. W kontekście pracy dyplomowej, grupowanie traktuje wartości $n$-elementowego podzbioru atrybutów jako punkty w przestrzeni $n$-wymiarowej. Punkty te są grupowane za pomocą odpowiednich algorytmów uczenia maszynowego (np. \emph{K-średnich}, \emph{DBSCAN}, \emph{Mean Shift}) a następnie zamieniane na etykiety tych grup. W ten sposób z $n$ atrybutów powstaje pojedynczy atrybut etykiet, a $n-1$ zostaje usuniętych.
 
 \begin{figure}[h]
 \centering
