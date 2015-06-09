@@ -6,7 +6,7 @@
 
 \chapter{Projekt systemu komputerowego}
 
-Rozdział ten skupia się nad projektem systemu komputerowego umożliwiającego porównywanie jakości klasyfikacji dla różnych grup algorytmów. Aplikacja jest podzielona na oddzielne, współpracujące ze sobą, elementy. Zaproponowany przeze mnie system komputerowy składa się z gotowych komponentów, o którym mowa w części \ref{proj:arch}, oraz z fragmentów, które należy, chociaż w pewnej części, zaimplementować samodzielnie. W skład tych części wchodzi przede wszystkim biblioteka obliczeniowa \emph{mltool}, program wykonujący obliczenia, program nadzorujący przeprowadzanie obliczeń oraz programy prezentujące ostateczne wyniki.
+Rozdział ten skupia się nad projektem systemu komputerowego umożliwiającego porównywanie jakości klasyfikacji dla różnych rodzin algorytmów. Aplikacja jest podzielona na oddzielne, współpracujące ze sobą, elementy. Zaproponowany przeze mnie system komputerowy składa się z gotowych komponentów, o którym mowa w części \ref{proj:arch}, oraz z fragmentów, które należy, chociaż w pewnej części, zaimplementować samodzielnie. W skład tych części wchodzi przede wszystkim biblioteka obliczeniowa \emph{mltool}, program wykonujący obliczenia, program nadzorujący przeprowadzanie obliczeń oraz programy prezentujące ostateczne wyniki.
 
 \section{Architektura systemu}
 \label{proj:arch}
@@ -23,17 +23,17 @@ Po drugie, platforma Hadoop jest wysoko rozwiniętym i skomplikowanym systemem. 
 
 Alternatywnym rozwiązaniem jest użycie rozproszonego systemu kolejkowego tj. \emph{Apache ActiveMQ}, \emph{RabbitMQ} lub \emph{ZeroMQ}. Podstawowym zadaniem systemów kolejkowych jest kolejkowanie zleceń wykonania pewnych czynności (np. obliczeń) i późniejsze rozsyłanie ich pomiędzy procesy realizujące te zlecenia. Systemy kolejkowe pozwalają na elastyczne definiowanie przepływu danych pomiędzy różnymi kolejkami. 
 
-W odróżnieniu od platformy Hadoop, procesy wykonujące zlecenia odbierają je w jako komunikaty, bardzo często dowolnej postaci. Systemy kolejkowe są również z reguły proste do opanowania i nie wymagają skomplikowanej konfiguracji od użytkownika. Wadą systemów kolejkowych jest brak odporności na awarie procesów-odbiorców oraz maszyn, na których procesy te są uruchomione. Mając na uwadze, że czas obliczeń w projektowanym systemie nie powinien przekraczać kilku dni, prawdopodobieństwo awarii i ryzyko z nim związane jest pomijalne. W związku z tym, dwie wymienione zalety zadecydowały o wyborze architektury opartej na systemie kolejkowym.
+W odróżnieniu od platformy Hadoop, procesy wykonujące zlecenia odbierają je w jako komunikaty, bardzo często dowolnej postaci. Systemy kolejkowe są również z reguły proste do opanowania i nie wymagają skomplikowanej konfiguracji od użytkownika. Wadą systemów kolejkowych jest brak odporności na awarie procesów-odbiorców oraz maszyn, na których procesy te są uruchomione. Mając na uwadze, że czas obliczeń w projektowanym systemie nie powinien przekraczać kilku dni, prawdopodobieństwo awarii i ryzyko z nim związane jest pomijalne. W związku z tym, wybrano architekturę opartą na systemie kolejkowym.
 
 \subsection{Opis architektury}
 
-System komputerowy składa się z \emph{procesów-robotników} wykonujących ciężkie obliczenia (związane z oceną klasyfikacji) oraz pojedynczego \emph{procesu-nadzorcy} rozdzielającego zadania do wykonania. Dodatkowym zadaniem nadzorcy jest odbieranie cząstkowych wyników od każdego robotnika i umieszczanie ich w bazie danych. Komunikacja pomiędzy nadzorcą a robotnikami jest zapewniona poprzez zastosowanie systemu kolejkowego RabbitMQ. System ten został wybrany ze względu na cenę (darmowy), prostotę instalacji, wysoką wydajność oraz bardzo dobre wsparcie w wielu językach programowania (np. w języku Python).
+System komputerowy składa się z \emph{procesów-robotników} wykonujących czasochłonne obliczenia (związane z oceną klasyfikacji) oraz pojedynczego \emph{procesu-nadzorcy} rozdzielającego zadania do wykonania. Dodatkowym zadaniem nadzorcy jest odbieranie cząstkowych wyników od każdego robotnika i umieszczanie ich w bazie danych. Komunikacja pomiędzy nadzorcą a robotnikami jest zapewniona poprzez zastosowanie systemu kolejkowego RabbitMQ. System ten został wybrany ze względu na cenę (darmowy), prostotę instalacji, wysoką wydajność oraz bardzo dobre wsparcie w wielu językach programowania (np. w języku Python).
 
 Dane przechowywane są w wolno dostępnej bazie \emph{PostgreSQL}. Wybierając bazę danych kierowałem się przede wszystkim ceną (baza darmowa), łatwością instalacji i konfiguracji oraz wydajnością. Na wybór bazy miały wpływ również moja znajomość języka SQL oraz obecność wielu narzędzi mapowania obiektowo-relacyjnego, uproszczających pracę z danymi. 
 
 Proces nadzorujący oraz procesy wykonujące obliczenia używają wspólnej biblioteki obliczeniowej \emph{mltool}. 
 
-Programy służące do prezentacji wyników obliczeń dla każdej grupy algorytmów oraz do policzenia rankingu grup pobierają dane z bazy PostgreSQL oraz również używają biblioteki \emph{mltool}.
+Programy służące do prezentacji wyników obliczeń dla każdej rodziny algorytmów oraz do policzenia rankingu rodzin pobierają dane z bazy PostgreSQL oraz również używają biblioteki \emph{mltool}.
 
 Poglądowy schemat architektury systemu komputerowego umieszczony został na rysunku \ref{proj:arch_diagram}.
 
@@ -49,7 +49,7 @@ Poglądowy schemat architektury systemu komputerowego umieszczony został na rys
 \subsection{Struktura biblioteki}
 \label{proj:sec_structure}
 
-Biblioteka obliczeniowa składa się z czterech części. Pierwszą z nich jest zbiór klas odpowiedzialnych za odczyt i dostęp do danych biomedycznych. W skład drugiej części biblioteki wchodzą klasy pozwalające na manipulowanie danymi (np. na skalowanie atrybutów) oraz na ich klasyfikację. Kolejną częścią biblioteki są klasy związane z przetwarzaniem wstępnym i klasyfikacją danych w sposób zdefiniowany przez użytkownika. Stanowią one sparametryzowany opis operacji, jakie powinny być wykonane przez proces liczący (robotnika). Ostatnim fragmentem biblioteki obliczeniowej są klasy związane z generowaniem algorytmów przetwarzania i klasyfikacji odpowiadających opisowi danej grupy algorytmów.
+Biblioteka obliczeniowa składa się z czterech części. Pierwszą z nich jest zbiór klas odpowiedzialnych za odczyt i dostęp do danych biomedycznych. W skład drugiej części biblioteki wchodzą klasy pozwalające na manipulowanie danymi (np. na skalowanie atrybutów) oraz na ich klasyfikację. Kolejną częścią biblioteki są klasy związane z przetwarzaniem wstępnym i klasyfikacją danych w sposób zdefiniowany przez użytkownika. Stanowią one sparametryzowany opis operacji, jakie powinny być wykonane przez proces liczący (robotnika). Ostatnim fragmentem biblioteki obliczeniowej są klasy związane z generowaniem algorytmów przetwarzania i klasyfikacji odpowiadających opisowi danej rodziny algorytmów.
 
 \subsection{Odczyt danych}
 
@@ -244,7 +244,7 @@ Metoda \emph{fit()} służy do nauki modelu danych. Metoda ta przyjmuje pojedync
 
 Zadaniem metody \emph{predict()} jest predykcja kategorii przykładu ze zbioru danych. Metoda przyjmuje tablicę wartości odpowiadającą pojedynczemu przykładowi ze zbioru danych. Wynikiem wywołania metody jest wartość predykcji - przewidywana kategoria przykładu.
 
-Interfejs \emph{Classifier} jest zaimplementowany przez cztery klasy: \emph{NaiveBayesClassifier}, \emph{DecisionTreeClassifier}, \emph{SVMClassifier} oraz \emph{RandomForestClassifier}. Odpowiadają one algorytmom klasyfikacji naiwny klasyfikator bayessowski, drzewo decyzyjne, maszyna wektorów nośnych i las losowy. Całość przedstawia rysunek \ref{proj:diagram_classifier}.
+Interfejs \emph{Classifier} jest zaimplementowany przez cztery klasy: \emph{NaiveBayesClassifier}, \emph{DecisionTreeClassifier}, \emph{SVMClassifier} oraz \emph{RandomForestClassifier}. Odpowiadają one algorytmom klasyfikacji naiwny klasyfikator bayesowski, drzewo decyzyjne, maszyna wektorów nośnych i las losowy. Całość przedstawia rysunek \ref{proj:diagram_classifier}.
 
 \subsection{Deskryptory operacji}
 \label{proj:descriptors}
@@ -345,11 +345,11 @@ Zadaniem metody wytwórczej \emph{createClassifier()} jest zwrócenie obiektu im
 
 Metoda \emph{validate()} klasy \emph{ClassificationDescriptor} sprawdza poprawność pól klasy. Jeżeli wartości pól są nieprawidłowe, metoda rzuca wyjątkiem \emph{DescriptorException}.
 
-\subsection{Generowanie algorytmów wewnątrz grup}
+\subsection{Generowanie algorytmów wewnątrz rodzin}
 
-Kluczową cechą systemu jest rozwijanie opisu grupy algorytmów w zbiór algorytmów, które mają być poddane ocenie. Zgodnie z założeniami opisanymi w rozdziale poświęconym wymaganiom systemu, aplikacja umożliwiać będzie sprecyzowanie grupy algorytmów, a następnie przystąpienie oceniać algorytmy wchodzące w skład grupy. Aplikacja sprawdzać będzie poszczególne kombinacje operacji związanych z przetwarzaniem wstępnym oraz klasyfikacją. Przeszukiwanie sprawdzi wszystkie warianty, które będą odpowiadać opisowi wprowadzonemu przez użytkownika. W zależności od opisu, czas wykonywania operacji przewiduję na od kilku sekund do kilkunastu godzin. Z tego względu postarałem się zaprojektować przeszukiwanie w sposób umożliwiający łatwe sprawdzenie jego poprawności. Dodatkowo, przygotowany przeze mnie projekt rozdziela przeszukiwanie na luźno powiązane fragmenty, uproszczając tym samym bardzo skomplikowaną implementację.
+Kluczową cechą systemu jest rozwijanie opisu rodziny algorytmów w zbiór algorytmów, które mają być poddane ocenie. Zgodnie z założeniami opisanymi w rozdziale poświęconym wymaganiom systemu, aplikacja umożliwiać będzie sprecyzowanie rodziny algorytmów, a następnie przystąpienie oceniać algorytmy wchodzące w skład rodziny. Aplikacja sprawdzać będzie poszczególne kombinacje operacji związanych z przetwarzaniem wstępnym oraz klasyfikacją. Przeszukiwanie sprawdzi wszystkie warianty, które będą odpowiadać opisowi wprowadzonemu przez użytkownika. W zależności od opisu, czas wykonywania operacji przewiduję na od kilku sekund do kilkunastu godzin. Z tego względu postarałem się zaprojektować przeszukiwanie w sposób umożliwiający łatwe sprawdzenie jego poprawności. Dodatkowo, przygotowany przeze mnie projekt rozdziela przeszukiwanie na luźno powiązane fragmenty, uproszczając tym samym bardzo skomplikowaną implementację.
 
-Rozwijanie grup, najprościej mówiąc, polegać będzie na generowaniu wszystkich kombinacji metod przetwarzania wstępnego i klasyfikacji, zgodnie z opisem zawartym w deskryptorach (patrz: \ref{proj:descriptors}).
+Rozwijanie rodzin, najprościej mówiąc, polegać będzie na generowaniu wszystkich kombinacji metod przetwarzania wstępnego i klasyfikacji, zgodnie z opisem zawartym w deskryptorach (patrz: \ref{proj:descriptors}).
 
 Pomysł ten postanowiłem sprowadzić do sekwencji zagnieżdżonych pętli (rysunek \ref{proj:algorithm_loops}). Każda pętla odpowiadać będzie osobnej operacji związanej z przetwarzaniem danych. Zadaniem wszystkich pętli będzie przyrostowe tworzenie opisu czynności do wykonania. Polegać to będzie na uzupełnianiu pól deskryptorów informacjami związanymi z etapami przetwarzania odpowiadającym danym pętlom. Po uzupełnieniu odpowiedniego pola deskryptora, każda pętla przekaże go do pętli wewnętrznej. Dzięki temu, podczas każdej iteracji pętli najgłębiej zagnieżdżonej otrzymamy deskryptory opisujące konkretną kombinację elementów przetwarzania. Informacja zawarta w deskryptorach będzie wystarczająca aby wykonać pojedynczy algorytm i otrzymać wynik walidacji krzyżowej. 
 
@@ -385,7 +385,7 @@ Pomysł ten postanowiłem sprowadzić do sekwencji zagnieżdżonych pętli (rysu
     }
   }
   \Return{$A$}
-  \caption{Rozwijanie opisu grup algorytmów w zbiór konkretnych algorytmów}
+  \caption{Rozwijanie opisu rodzin algorytmów w zbiór konkretnych algorytmów}
   \label{proj:algorithm_loops}
 \end{algorithm}
 
@@ -413,7 +413,7 @@ W celu uproszczenia kodu związanego z obsługą każdej z pętli, iterowanie po
 \umlimpl[geometry=--]{NormalizeSpace}{AbstractSpace}
 \umlimpl[geometry=-|,anchor2=-60]{GroupingSpace}{AbstractSpace}
 \end{tikzpicture}
-\caption{Diagram UML klas służących do generowania deskryptorów na podstawie opisu grupy algorytmów}
+\caption{Diagram UML klas służących do generowania deskryptorów na podstawie opisu rodziny algorytmów}
 \label{proj:diagram_spaces}
 \end{figure}
 
@@ -467,7 +467,7 @@ Za generowanie kombinacji atrybutów do usunięcia odpowiedzialna jest metoda \e
 
 \subsubsection{Klasa ScaleSpace}
 
-Klasa \emph{ScaleSpace} przypomina w działaniu klasę \emph{RemoveSpace}. Zadaniem klasy jest wytwarzanie deskryptorów przetwarzania wstępnego posiadających informację o przeskalowaniu wybranej grupy atrybutów. Diagram klasy pokazano na rysunku \ref{proj:diagram_scale_space}.
+Klasa \emph{ScaleSpace} przypomina w działaniu klasę \emph{RemoveSpace}. Zadaniem klasy jest wytwarzanie deskryptorów przetwarzania wstępnego posiadających informację o przeskalowaniu wybranej rodziny atrybutów. Diagram klasy pokazano na rysunku \ref{proj:diagram_scale_space}.
 
 \begin{figure}[h]
 \centering
@@ -509,7 +509,7 @@ Metoda \emph{generate()} zwraca kolekcję deskryptorów przetwarzania z wypełni
 
 \subsubsection{Klasa ClassificationSpace}
 
-Ostatnią klasą pomocną przy rozwijaniu opisów grup algorytmów jest klasa \emph{ClassificationSpace}.
+Ostatnią klasą pomocną przy rozwijaniu opisów rodzin algorytmów jest klasa \emph{ClassificationSpace}.
 
 Konstruktor klasy przyjmuje dwa parametry. Pierwszy parametr to tablica nazw metod klasyfikacji, które mają być użyte wewnątrz gruy algorytmów (każdy pojedynczy algorytm używa tylko jednej metody klasyfikacji). Drug parametr to \emph{granularność} doboru parametrów klasyfikacji.
 
@@ -547,16 +547,16 @@ W związku z tym, że system używa relacyjne bazy danych PostgreSQL, schemat da
 \label{proj:diagram_data}
 \end{figure}
 
-Tabela \emph{AlgorithmGroup} stanowi reprezentację obliczeń związanych z pojedynczą grupą algorytmów. Atrybut space jest zserializowanym obiektem klasy \emph{SearchSpace}. Atrybut ten jest potrzebny, aby program przetwarzający informacje o grupach miał dostęp do szczegółów każdej z nich. Atrybut \emph{spaceDescriptor} to czytelny opis grupy algorytmów. Ostatni atrybut o nazwie \emph{done} przechowuje wartość 0 lub 1 i wskazuje czy obliczenia dla danej grupy zostały ukończone, czy nie. Kolumna \emph{id} to unikalny identyfikator wiersza.
+Tabela \emph{AlgorithmGroup} stanowi reprezentację obliczeń związanych z pojedynczą rodziną algorytmów. Atrybut \emph{space} jest zserializowanym obiektem klasy \emph{SearchSpace}. Atrybut ten jest potrzebny, aby program przetwarzający informacje o rodzinach miał dostęp do szczegółów każdej z nich. Atrybut \emph{spaceDescriptor} to czytelny opis rodziny algorytmów. Ostatni atrybut o nazwie \emph{done} przechowuje wartość 0 lub 1 i wskazuje czy obliczenia dla danej rodziny zostały ukończone, czy nie. Kolumna \emph{id} to unikalny identyfikator wiersza.
 
-Dla każdego wiersza w tabeli AlgorithmGroup istnieje przynajmniej jeden wiersz w tabeli PartialScores. Tabela ta przechowuje cząstkowe wyniki obliczeń pochodzące z pojedynczego programu wykonującego obliczenia. Zbiór wszystkich wierszy tabeli PartialScores $P_a$ odpowiadający konkretnemu wierszowi tabeli AlgorithmGroup $a$ zawiera wszystkie wyniki oceny klasyfikacji grupy algorytmów opisanej w $a$.
+Dla każdego wiersza w tabeli AlgorithmGroup istnieje przynajmniej jeden wiersz w tabeli PartialScores. Tabela ta przechowuje cząstkowe wyniki obliczeń pochodzące z pojedynczego programu wykonującego obliczenia. Zbiór wszystkich wierszy tabeli PartialScores $P_a$ odpowiadający konkretnemu wierszowi tabeli AlgorithmGroup $a$ zawiera wszystkie wyniki oceny klasyfikacji rodziny algorytmów opisanej w $a$.
 
 Kolumna \emph{id} tabeli \emph{PartialScores} to unikalny identyfikator wiersza. Pole \emph{scores} to zserializowana tablica trójek wartości - miary wrażliwości, precyzji i F1. \emph{AlgorithmGroupId} to klucz obcy tabeli.
 
 \section{Program nadzorujący obliczenia}
 \label{proj:supervisor}
 
-Program nadzorujący obliczenia ma za zadanie pobrać od użytkownika opis grupy algorytmów do oceny, dokonać oceny oraz zapisać wyniki do bazy danych. Część ta skupia się na opisie algorytmów oraz klas użytych w programie nadzorującym.
+Program nadzorujący obliczenia ma za zadanie pobrać od użytkownika opis rodziny algorytmów do oceny, dokonać oceny oraz zapisać wyniki do bazy danych. Część ta skupia się na opisie algorytmów oraz klas użytych w programie nadzorującym.
 
 \subsection{Interfejs użytkownika}
 
@@ -581,7 +581,7 @@ Nadzorca jest aplikacją konsolową. Szczegóły dotyczące uruchomienia oblicze
 -cg \emph{granularność} & Granularność algorytmów klasyfikacji.\\\hline
 -gs \emph{rozmiar} & Maksymalny rozmiar pojedynczego bloku algorytmów.\\\hline
 -ws \emph{rozmiar} & Maksymalny rozmiar puli zadań obserwowanych przez nadzorcę.\\\hline
--r & Nadpisz istniejące wyniki dla grupy algorytmów.\\\hline
+-r & Nadpisz istniejące wyniki dla rodziny algorytmów.\\\hline
 -s & Utwórz nowe ziarno pseudolosowe.\\\hline
 
 \end{tabular}
@@ -590,7 +590,7 @@ Nadzorca jest aplikacją konsolową. Szczegóły dotyczące uruchomienia oblicze
 \end{center}
 \end{table}
 
-Jak można zauważyć, argumenty programu umożliwiają sprecyzowanie grupy algorytmów tak, jak jest to opisane w rozdziale poświęconym założeniom i wymaganiom systemu. Interfejs pozwala tworzyć nowe ziarna pseudolosowe używane do podziału zbioru danych podczas walidacji krzyżowej. Nadzorca zapisuje informacje o wynikach oceny w bazie danych i, w razie ponownego uruchomienia dla tej samej grupy algorytmów, nie wykonuje żadnej akcji. Argument \emph{-r} pozwala ,,zresetować'' stan wiedzy o wynikach i uruchomić obliczenia jeszcze raz.
+Jak można zauważyć, argumenty programu umożliwiają sprecyzowanie rodziny algorytmów tak, jak jest to opisane w rozdziale poświęconym założeniom i wymaganiom systemu. Interfejs pozwala tworzyć nowe ziarna pseudolosowe używane do podziału zbioru danych podczas walidacji krzyżowej. Nadzorca zapisuje informacje o wynikach oceny w bazie danych i, w razie ponownego uruchomienia dla tej samej rodziny algorytmów, nie wykonuje żadnej akcji. Argument \emph{-r} pozwala ,,zresetować'' stan wiedzy o wynikach i uruchomić obliczenia jeszcze raz.
 
 Argumenty programu parsowane są przez klasę o nazwie \emph{Parser}. Zadaniem klasy jest przyjęcie ciągów znaków (argumentów), przeanalizowanie go i wyprodukowanie struktury danych typu \emph{CmdArguments} zawierającej pola odpowiadające poszczególnym argumentom.
 
@@ -622,7 +622,7 @@ Metoda \emph{start()} rozpoczyna pomiar czasu przez estymator. Metoda \emph{upda
 
 Podstawę prezentacji i komunikacji z użytkownikiem stanowi klasa \emph{CalculateApplication}. Konstruktor klasy pobiera trzy parametry. Pierwszym z nich jest obiekt klasy \emph{CmdArguments} reprezentujący argumenty linii poleceń. Następnym parametrem jest URL serwera bazy danych. Ostatnim parametrem jest ścieżka do pliku z zapisanym ziarnem pseudolosowym.
 
-Metoda \emph{resetSpace()} usuwa z bazy danych wpis o obliczeniach dotyczących aktualnej grupy algorytmów wybranej przez użytkownika. 
+Metoda \emph{resetSpace()} usuwa z bazy danych wpis o obliczeniach dotyczących aktualnej rodziny algorytmów wybranej przez użytkownika. 
 
 Ziarno pseudolosowe może być wygenerowane ponownie i zapisane do pliku dzięki metodzie \emph{recreateRandomState()}.
 
@@ -648,9 +648,9 @@ Metoda \emph{run()} odpowiada za uruchomienie obliczeń w programie. Całość p
 
 \subsubsection{Klasa EvaluationProcedure}
 
-Zarządzanie przeprowadzaniem obliczeń powinno przebiegać w następujący sposób. Nadzorca generuje wszystkie algorytmy wchodzące w skład zdefiniowanej przez użytkownika grupy algorytmów. Następnie tworzona jest pusta pula zadań, które są aktualnie wykonywanie przez robotników. Nadzorca przydziela algorytmy do zadań, które następnie umieszcza w puli. Dodanie zadania do puli jest jednoznaczne z wysłaniem zadania do systemu kolejkowego i rozpoczęciem obserwowania jego postępów. Pula zadań ma ustalony maksymalny rozmiar, np. 100 zadań monitorowanych jednocześnie. Gdy któreś zadanie zostanie ukończone, nadzorca odbiera wyniki z systemu kolejkowego, umieszcza je w bazie danych i dodaje do puli nowe zadanie. Nadzorca kończy pracę gdy zadania się wyczerpią i gdy wszystkie zadania zostaną ukończone.
+Zarządzanie przeprowadzaniem obliczeń powinno przebiegać w następujący sposób. Nadzorca generuje wszystkie algorytmy wchodzące w skład zdefiniowanej przez użytkownika rodziny algorytmów. Następnie tworzona jest pusta pula zadań, które są aktualnie wykonywanie przez robotników. Nadzorca przydziela algorytmy do zadań, które następnie umieszcza w puli. Dodanie zadania do puli jest jednoznaczne z wysłaniem zadania do systemu kolejkowego i rozpoczęciem obserwowania jego postępów. Pula zadań ma ustalony maksymalny rozmiar, np. 100 zadań monitorowanych jednocześnie. Gdy któreś zadanie zostanie ukończone, nadzorca odbiera wyniki z systemu kolejkowego, umieszcza je w bazie danych i dodaje do puli nowe zadanie. Nadzorca kończy pracę gdy zadania się wyczerpią i gdy wszystkie zadania zostaną ukończone.
 
-Jak zostało to powiedziane w części \ref{req:research_scheme}, prowadząc obliczenia na wielu maszynach, należy mieć na uwadze wpływ opóźnień w sieci na wydajność systemu. Proces nadzorujący obliczenia powinien zatem wysyłać bloki deskryptorów, a nie pojedyncze deskryptory. Przesyłanie informacji o algorytmach do oceny w dużych grupach minimalizuje narzut związany z komunikacją sieciową. 
+Jak zostało to powiedziane w części \ref{req:research_scheme}, prowadząc obliczenia na wielu maszynach, należy mieć na uwadze wpływ opóźnień w sieci na wydajność systemu. Proces nadzorujący obliczenia powinien zatem wysyłać bloki deskryptorów, a nie pojedyncze deskryptory. Przesyłanie informacji o algorytmach do oceny w dużych zbiorach minimalizuje narzut związany z komunikacją sieciową. 
 
 Klasa \emph{EvaluationProcedure} jest odpowiedzialna za zarządzanie wykonywaniem obliczeń w nadzorcy. Konstruktor klasy przyjmuje pięć parametrów. Pierwszym z nich jest ścieżka do pliku z danymi. Drugi parametr to to obiekt klasy \emph{SearchSpace}. Kolejny parametr to obiekt reprezentujący ziarno pseudolosowe. Czwartym parametrem konstruktora jest rozmiar bloku wysyłanych deskryptorów. Ostatnim parametrem jest rozmiar puli zadań.
 
@@ -674,7 +674,7 @@ Zarządzanie obliczeniami rozpoczyna się po wywołaniu metody \emph{start()}. M
 
 \subsection{Warstwa dostępu do danych}
 
-Dostęp do danych w bazie zapewnia obiekt klasy DataStore. Metody klasy umożliwiają dodawanie informacji o analizowanej grupie algorytmów, dodawanie wyników cząstkowych do badanej grupy, usuwanie grupy oraz przeglądanie grup algorytmów zapisanych w bazie. Klasę DataStore przedstawia rysunek \ref{proj:diagram_data_store}.
+Dostęp do danych w bazie zapewnia obiekt klasy DataStore. Metody klasy umożliwiają dodawanie informacji o analizowanej rodzinie algorytmów, dodawanie wyników cząstkowych do badanej rodziny, usuwanie rodziny oraz przeglądanie rodzin algorytmów zapisanych w bazie. Klasę DataStore przedstawia rysunek \ref{proj:diagram_data_store}.
 
 \begin{figure}[h]
 \centering
@@ -695,15 +695,15 @@ Dostęp do danych w bazie zapewnia obiekt klasy DataStore. Metody klasy umożliw
 
 Konstruktor klasy \emph{DataStore} przyjmuje jeden argument - adres URL serwera bazy danych.
 
-Dodawanie wyników do bazy realizowane jest poprzez wołania metody \emph{addScores()}. Pierwszym parametrem metody jest obiekt klasy \emph{SearchSpace} opisujący grupę algorytmów, do której należy dodać wyniki. Drugim parametrem metody jest tablica wartości ocen jakości klasyfikacji. Metoda \emph{addScores()} dodaje wyniki do istniejącego wiersza w tabeli \emph{AlgorithmGroup}. Jeżeli wiersz w tabeli nie istnieje, zostanie on utworzony przez metodę.
+Dodawanie wyników do bazy realizowane jest poprzez wołania metody \emph{addScores()}. Pierwszym parametrem metody jest obiekt klasy \emph{SearchSpace} opisujący rodzinę algorytmów, do której należy dodać wyniki. Drugim parametrem metody jest tablica wartości ocen jakości klasyfikacji. Metoda \emph{addScores()} dodaje wyniki do istniejącego wiersza w tabeli \emph{AlgorithmGroup}. Jeżeli wiersz w tabeli nie istnieje, zostanie on utworzony przez metodę.
 
-Zadaniem metody o nazwie delete jest usunięcie z bazy informacji o obliczeniach dotyczących wybranej grupy algorytmów. Parametrem metody jest obiekt klasy \emph{SearchSpace} reprezentujący tę grupę.
+Zadaniem metody o nazwie delete jest usunięcie z bazy informacji o obliczeniach dotyczących wybranej rodziny algorytmów. Parametrem metody jest obiekt klasy \emph{SearchSpace} reprezentujący tę rodzinę.
 
-Metoda \emph{getScores()} zwraca tablicę wyników ocen wybranej grupy algorytmów. Parametrem metody jest obiekt klasy \emph{SearchSpace}.
+Metoda \emph{getScores()} zwraca tablicę wyników ocen wybranej rodziny algorytmów. Parametrem metody jest obiekt klasy \emph{SearchSpace}.
 
-W celu uzyskania informacji o wszystkich grupach algorytmów, dla których obliczenia były prowadzone, należy wywołać metodę \emph{getSpaces()}. Zwróci ona tablicę obiektów klasy \emph{SearchSpace}.
+W celu uzyskania informacji o wszystkich rodzinach algorytmów, dla których obliczenia były prowadzone, należy wywołać metodę \emph{getSpaces()}. Zwróci ona tablicę obiektów klasy \emph{SearchSpace}.
 
-Ostatnią metodą publiczną klasy \emph{DataStore} jest \emph{markDone()}. Metoda to oznacza grupę algorytmów jako taką, dla której wszystkie obliczenia zostały ukończone.
+Ostatnią metodą publiczną klasy \emph{DataStore} jest \emph{markDone()}. Metoda to oznacza rodzinę algorytmów jako taką, dla której wszystkie obliczenia zostały ukończone.
 
 \section{Program liczący}
 
@@ -715,11 +715,11 @@ Program liczący używa biblioteki \emph{mltool} w celu przeprowadzenia oblicze�
 
 \section{Prezentowanie wyników obliczeń}
 
-Celem obliczania metryk jakości klasyfikacji dla grup algorytmów jest ich późniejsza analiza. Badanie polega na przyglądaniu się cechom wyników wewnątrz grup (np. wartość średnia, odchylenie standardowe, kształt rozkładu) oraz na porównaniu wyników między grupami. Do realizacji tych zadań służą programy \emph{browse} i \emph{compare}.
+Celem obliczania metryk jakości klasyfikacji dla rodzin algorytmów jest ich późniejsza analiza. Badanie polega na przyglądaniu się cechom wyników wewnątrz rodzin (np. wartość średnia, odchylenie standardowe, kształt rozkładu) oraz na porównaniu wyników między rodzinami. Do realizacji tych zadań służą programy \emph{browse} i \emph{compare}.
 
 \subsection{Program browse}
 
-Program \emph{browse} służy do przeglądu otrzymanych wyników jakości klasyfikacji grup algorytmów. Program umożliwia przegląd wyników wybranych grupa algorytmów lub wszystkich z nich.
+Program \emph{browse} służy do przeglądu otrzymanych wyników jakości klasyfikacji rodzin algorytmów. Program umożliwia przegląd wyników wybranych rodzin algorytmów lub wszystkich z nich.
 
 \subsubsection{Interfejs użytkownika}
 
@@ -732,7 +732,7 @@ Użytkownik ma wpływ na działanie programu poprzez konsolowy interfejs. Argume
 \rowcolor{lightgray} Parametr & Opis \\\hline
 
 -a \emph{akcja} & Wybór metody przeglądania. Możliwe wartości akcji to \emph{list} i \emph{plot}.\\\hline
--ids \emph{identyfikatory} & Lista identyfikatorów grup algorytmów, o których informacje należy wyświetlić.\\\hline
+-ids \emph{identyfikatory} & Lista identyfikatorów rodzin algorytmów, o których informacje należy wyświetlić.\\\hline
 -m \emph{metryka} & Rodzaj metryki, którą należy wyświetlić.\\\hline
 
 \end{tabular}
@@ -741,9 +741,9 @@ Użytkownik ma wpływ na działanie programu poprzez konsolowy interfejs. Argume
 \end{center}
 \end{table}
 
-Wyświetlanie informacji o wynikach grup działa na dwa sposoby. Tryb pierwszy wyświetla szczegółową listę grup algorytmów oraz informacje o wynikach tj. średnie wartości metryk, liczba algorytmów w grupie. Tryb drugi wyświetla histogramy wybranej metryki dla ustalonych grup algorytmów. Do przełączania trybów pracy służy argument \emph{-a}.
+Wyświetlanie informacji o wynikach rodzin działa na dwa sposoby. Tryb pierwszy wyświetla szczegółową listę rodzin algorytmów oraz informacje o wynikach tj. średnie wartości metryk, liczba algorytmów w rodzinie. Tryb drugi wyświetla histogramy wybranej metryki dla ustalonych rodzin algorytmów. Do przełączania trybów pracy służy argument \emph{-a}.
 
-Program \emph{browse} pozwala wybrać grupy algorytmów, które mają być pokazane na ekranie. Do wyboru służy opcja \emph{-ids.} Jeżeli opcja ta nie jest sprecyzowana, zostaną wyświetlone wszystkie grupy.
+Program \emph{browse} pozwala wybrać rodziny algorytmów, które mają być pokazane na ekranie. Do wyboru służy opcja \emph{-ids.} Jeżeli opcja ta nie jest sprecyzowana, zostaną wyświetlone wszystkie rodziny.
 
 Podczas wyświetlania histogramów wybranych metryk należy wybrać rodzaj metryki. Służy do tego argument \emph{-m}. Jeżeli argument ten nie jest jawnie zdefiniowany, domyślnym rodzajem oceny jest metryka F1.
 
@@ -751,11 +751,11 @@ Podczas wyświetlania histogramów wybranych metryk należy wybrać rodzaj metry
 
 Program \emph{browse} posiada klasę o nazwie \emph{BrowseCmdParser} odpowiedzialną za parsowanie argumentów linii poleceń. Metoda \emph{parse()} klasy \emph{BrowseCmdParser} zwraca strukturę zawierającą pola odpowiadające argumentom linii poleceń. 
 
-Aplikacja używa biblioteki \emph{mltool} w celu przetwarzania wyników poszczególnych grup (np. liczenie histogramu) oraz bibliotek umożliwiających komunikację z bazą danych.
+Aplikacja używa biblioteki \emph{mltool} w celu przetwarzania wyników poszczególnych rodzin (np. liczenie histogramu) oraz bibliotek umożliwiających komunikację z bazą danych.
 
 \subsection{Program compare}
 
-Porównywanie wyników grup algorytmów między sobą jest realizowane przez program o nazwie \emph{compare}. Efektem działania programu jest ranking grup zgodny z założeniami opisanymi w części \ref{req:research_scheme}.
+Porównywanie wyników rodzin algorytmów między sobą jest realizowane przez program o nazwie \emph{compare}. Efektem działania programu jest ranking rodzin zgodny z założeniami opisanymi w części \ref{req:research_scheme}.
 
 \subsubsection{Interfejs programu}
 
@@ -789,7 +789,7 @@ Biblioteka obliczeniowa \emph{mltool} stanowi fundament całej aplikacji. Wyniki
 
 W celu sprawdzenia tego istotnego warunku, poprawność działania klas w bibliotece będzie sprawdzana przy pomocy testów jednostkowych. Dzięki modularnej strukturze biblioteki opisanej w punkcie~\ref{proj:sec_structure}, możliwe jest oddzielne testowanie poszczególnych klas biblioteki. Weryfikacja poprawności działania poszczególnych fragmentów biblioteki umożliwi wyeliminowanie większości możliwych błędów.
 
-Tabela \ref{proj:table_mltool_input} prezentuje opis testów jednostkowych badających poprawność działania części biblioteki odpowiedzialnej za odczyt i przetwarzanie wstępne danych. Testy klas-modeli pokazuje tabela \ref{proj:table_mltool_models}. W tabeli \ref{proj:table_mltool_descriptors} zaprezentowane są testy badające poprawność deskryptorów. Testy klas generujących algorytmy wewnątrz grup algorytmów opisane są w tabeli \ref{proj:table_mltool_spaces}.
+Tabela \ref{proj:table_mltool_input} prezentuje opis testów jednostkowych badających poprawność działania części biblioteki odpowiedzialnej za odczyt i przetwarzanie wstępne danych. Testy klas-modeli pokazuje tabela \ref{proj:table_mltool_models}. W tabeli \ref{proj:table_mltool_descriptors} zaprezentowane są testy badające poprawność deskryptorów. Testy klas generujących algorytmy wewnątrz rodzin algorytmów opisane są w tabeli \ref{proj:table_mltool_spaces}.
 
 \begin{table}[h]
 \begin{center}

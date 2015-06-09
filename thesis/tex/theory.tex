@@ -5,16 +5,16 @@
 \pagestyle{plain}
 \chapter{Wprowadzenie teoretyczne}
 
-Celem tego rozdziału jest pozwolenie czytelnikowi na zrozumienie dalszej części pracy dyplomowej poprzez poznanie podstawowych zagadnień związanych z uczeniem maszynowym. W szczególności rozdział ten poświęcony jest dwóm dziedzinom wiedzy: przetwarzaniu wstępnemu oraz (późniejszej) klasyfikacji danych. Końcowa część rozdziału poświęcona jest testom statystycznym, a szczególnie testowi Manna-Whitneya-Wilcoxona.
+Celem tego rozdziału jest dostarczenie opisu podstawowych zagadnień związanych z uczeniem maszynowym. W szczególności rozdział ten poświęcony jest dwóm dziedzinom wiedzy: przetwarzaniu wstępnemu oraz (późniejszej) klasyfikacji danych. Końcowa część rozdziału poświęcona jest testom statystycznym, a szczególnie testowi Manna-Whitneya-Wilcoxona.
 
 \section{Klasyfikacja}
 
-Klasyfikacja statystyczna to rodzaj algorytmu statystycznego, który przydziela obserwacje statystyczne do klas, bazując na atrybutach tych obserwacji \cite{def_classification}. Algorytm klasyfikacji tworzy model klasyfikacji na podstawie danych trenujących zawierających znane klasy (kategorie). Gotowy model można następnie zastosować  do predykcji kategorii nowych, nieznanych wcześniej, danych. Klasyfikacja jest zatem przykładem uczenia się z nadzorem. Nadzór polega w tym przypadku na obecności informacji o kategoriach danych, które mamy. Algorytm tworzenia modelu stara się nauczyć model docelowych kategorii, jednocześnie dbając o to, aby wiedza na temat problemu była jak najbardziej ogólna i niezależna od próby, którą dysponujemy.
+Klasyfikacja statystyczna to rodzaj algorytmu, który przydziela obserwacje statystyczne do klas, bazując na atrybutach tych obserwacji \cite{def_classification}. Algorytm klasyfikacji tworzy model klasyfikacji na podstawie danych trenujących zawierających znane klasy (kategorie). Gotowy model można następnie zastosować  do predykcji kategorii nowych, nieznanych wcześniej, obserwacji. Klasyfikacja jest zatem przykładem uczenia się z nadzorem. Nadzór polega na obecności w zbiorze trenującym informacji o kategoriach danych, które mamy. Algorytm tworzenia modelu stara się nauczyć model docelowych kategorii, jednocześnie dbając o to, aby wiedza na temat problemu była jak najbardziej ogólna i niezależna od próby, którą dysponujemy.
 
 \begin{figure}[h]
 \centering
 \includegraphics[height=.2\textheight]{classification.png}
-\caption{Przykład klasyfikacji danych o atrybutach \emph{x\textsubscript{1}}, \emph{x\textsubscript{2}} oraz kategorii \emph{c(x)}. Kolumna \emph{h(x)} oznacza hipotezę klasyfikatora (predykcję). Dwa pierwsze przykłady zostały zaklasyfikowane poprawnie, trzy następnie niepoprawnie, następne trzy prawidłowo, a ostatni nieprawidłowo (tzw. \emph{fałszywy alarm}). }
+\caption{Przykład klasyfikacji danych o atrybutach \emph{x\textsubscript{1}}, \emph{x\textsubscript{2}} oraz kategorii \emph{c(x)}. Kolumna \emph{h(x)} oznacza hipotezę klasyfikatora (predykcję). Dwa pierwsze przykłady zostały zaklasyfikowane poprawnie, trzy następnie niepoprawnie, następne trzy poprawnie, a ostatni nieprawidłowo. }
 \label{classification:basic}
 \end{figure}
 
@@ -66,7 +66,7 @@ Metoda bootstrap tworzy zbiór uczący poprzez losowanie ze zwracaniem ze zbioru
 
 \subsection{Przegląd algorytmów klasyfikacji}
 
-Do najpopularniejszych klasyfikatorów stosowanych obecnie należą naiwny klasyfikator bayesowski, drzewo decyzyjne, losowy las oraz maszyna wektorów nośnych. Dalsza część rozdziału skupi się na omówieniu tych algorytmów.
+Do najpopularniejszych klasyfikatorów stosowanych obecnie należą naiwny klasyfikator bayesowski, drzewo decyzyjne, las losowy oraz maszyna wektorów nośnych. Dalsza część rozdziału skupi się na omówieniu tych algorytmów.
 
 \subsubsection{Naiwny klasyfikator bayesowski}
 
@@ -95,7 +95,7 @@ Rozwinięciem pomysłu związanego z drzewami decyzyjnymi jest klasyfikator znan
 
 \subsubsection{Maszyna wektorów nośnych}
 
-Ostatnim klasyfikatorem omówionym w tej części pracy jest Maszyna Wektorów Nośnych. Jest to klasyfikator binarny. Nauka modelu klasyfikatora ma na celu wyznaczenie hiperpłaszczyzny rozdzielającej z maksymalnym marginesem przykłady należące do dwóch klas. W odróżnieniu od naiwnego klasyfikatora bayesowskiego, metoda maszyny wektorów nośnych jest względnie nowa – dokument opisujący tę metodę został opublikowany w latach 90 XX w.
+Ostatnim klasyfikatorem omówionym w tej części pracy jest Maszyna Wektorów Nośnych. Jest to klasyfikator binarny. Nauka modelu klasyfikatora ma na celu wyznaczenie hiperpłaszczyzny rozdzielającej z maksymalnym marginesem przykłady należące do dwóch klas.
 
 \section{Przetwarzanie wstępne}
 
@@ -130,11 +130,11 @@ gdzie $\vec{x_n}$ oznacza przykład znormalizowany, $\vec{x}$ przykład początk
 
 \subsubsection{Binaryzacja}
 
-Przedstawione do tej pory metody koncentrowały się na skalowaniu danych. W odróżnieniu od nich, \emph{binaryzacja} polega na zamianie wartości atrybutów na zera i jedynki. Wybór pomiędzy dwoma liczbami  opiera się na wartości ustalonego progu. Wszystkie wartości atrybutów większe od progu zamieniane są na jedynki, pozostałe zaś – na zera. Po zastosowaniu binaryzacji każdy przykład stanowi pewną kombinację zer lub jedynek. Pozwala to nam interpretować przykłady jako realizacje schematu Bernulliego, gdzie jedynka oznacza sukces, a zero porażkę.
+Przedstawione do tej pory metody koncentrowały się na skalowaniu danych. W odróżnieniu od nich, \emph{binaryzacja} polega na zamianie wartości atrybutów na zera i jedynki. Wybór pomiędzy dwoma liczbami  opiera się na wartości ustalonego progu. Wszystkie wartości atrybutów większe od progu zamieniane są na jedynki, pozostałe zaś – na zera. Po zastosowaniu binaryzacji każdy przykład stanowi pewną kombinację zer lub jedynek. Pozwala to nam interpretować przykłady jako realizacje schematu Bernoulliego, gdzie jedynka oznacza sukces, a zero porażkę.
 
 \subsection{Brakujące wartości atrybutów}
 
-Wszystkie cztery metody zakładają, że wśród danych nie ma brakujących wartości. W realnych zastosowaniach często niestety jest inaczej – dane, którymi dysponujemy, mają  pewien odsetek braków. Przykładowo, dane medyczne użyte w mojej pracy mają 8\% brakujących wartości. Nawet, jeżeli przyjmiemy, że wyżej wymienionych metod nie będzie się stosować, to wciąż niektóre algorytmy klasyfikacji wymagają kompletnych danych. Wyróżniamy zwykle dwie metody rozwiązywania tego problemu.
+Cztery metody opisane w poprzednim punkcie zakładają, że wśród danych nie ma brakujących wartości. W realnych zastosowaniach często niestety jest inaczej – dane, którymi dysponujemy, mają  pewien odsetek braków. Przykładowo, dane medyczne użyte w mojej pracy mają 8\% brakujących wartości. Nawet, jeżeli przyjmiemy, że wyżej wymienionych metod nie będzie się stosować, to wciąż niektóre algorytmy klasyfikacji wymagają kompletnych danych. Wyróżniamy zwykle dwie metody rozwiązywania tego problemu.
 
 \subsubsection{Usuwanie przykładów}
 
@@ -149,8 +149,6 @@ Drugą metodą radzenia sobie z brakującymi wartościami jest \emph{imputacja}.
 Ostatnim z rodzajów metod przetwarzania wstępnego jest redukcja wymiarów, czyli zmniejszenie liczby atrybutów. Często bywa tak, że kategoria przykładu jest uzależniona od podzbioru jego atrybutów. Pozostałe atrybuty, nie dość, że nie powinny wnosić nic do procesu klasyfikacji, to jeszcze swoją obecnością wydłużają czas obliczeń i mogą negatywnie wpływać na proces uczenia (stanowić szum). Usuwając te niepotrzebne atrybuty możemy zmniejszyć czas obliczeń oraz pozytywnie wpłynąć na ocenę klasyfikacji. 
 
 W celu wybrania właściwych atrybutów do usunięcia możemy usuwać kolejne kombinacje atrybutów, a następnie porównywać oceny klasyfikacji dokonanej na reszcie danych. Metoda ta ma oczywistą wadę – jest bardzo czasochłonna. Inne podejście prezentuje metoda \emph{PCA} (ang. \emph{Principal Component Analysis}) – poszukuje ona takich kombinacji atrybutów, które wiernie oddają wariancję całego zestawu danych \cite{def_pca}. 
-
-\subsubsection{Grupowanie jako redukcja wymiarów}
 
 Ostatnim podejściem do redukcji wymiarów jest grupowanie atrybutów. Celem grupowania jest taki podział nieetykietowanych przykładów, który zapewnia ich maksymalne podobieństwo w ramach każdej kategorii i maksymalne zróżnicowanie pomiędzy różnymi kategoriami \cite{pcichosz}. W kontekście pracy dyplomowej, grupowanie traktuje wartości $n$-elementowego podzbioru atrybutów jako punkty w przestrzeni $n$-wymiarowej. Punkty te są grupowane za pomocą odpowiednich algorytmów uczenia maszynowego (np. \emph{K-średnich}, \emph{DBSCAN}, \emph{Mean Shift}) a następnie zamieniane na etykiety tych grup. W ten sposób z $n$ atrybutów powstaje pojedynczy atrybut etykiet, a $n-1$ zostaje usuniętych.
 
@@ -167,17 +165,15 @@ Badając wpływ metod przetwarzania wstępnego na końcową ocenę klasyfikacji 
 
 \section{Testy statystyczne}
 
-Celem mojej pracy dyplomowej jest porównanie jakości klasyfikacji grup pewnych algorytmów. Aby porównanie to było wiarygodne i, aby mogło posłużyć dalszym badaniom, powinno ono używać ocen mierzonych na całej populacji, a nie na losowej próbie. Oczywistym jest, że nie dysponujemy informacjami na temat wszystkich pacjentek i możemy użyć jedynie niewielkiego zbioru danych (ok. 1000 przykładów w próbie). W związku z powyższym, aby porównanie było możliwie dokładne, wykonane zostanie z użyciem testu statystycznego.
+Celem mojej pracy dyplomowej jest porównanie jakości klasyfikacji rodzin pewnych algorytmów. Aby porównanie to było wiarygodne i, aby mogło posłużyć dalszym badaniom, powinno ono używać ocen mierzonych na całej populacji, a nie na losowej próbie. Oczywistym jest, że nie dysponujemy informacjami na temat wszystkich pacjentek i możemy użyć jedynie niewielkiego zbioru danych (ok. 1000 przykładów w próbie). W związku z powyższym, aby porównanie było możliwie dokładne, wykonane zostanie z użyciem testu statystycznego.
 
-Testem statystycznym nazywamy formułę matematyczną pozwalającą oszacować prawdopodobieństwo spełnienia pewnej hipotezy statystycznej w populacji na podstawie próby losowej z tej populacji. W przypadku mojej pracy, hipotezą zerową, którą pragniemy obalić, jest jednakowy rozkład ocen klasyfikacji dla wybranych dwóch grup metod. Obalenie hipotezy zerowej oznacza różnorodność rozkładów, a co za tym idzie, jest warunkiem koniecznym porównania obydwu rozkładów.
+Testem statystycznym nazywamy formułę matematyczną pozwalającą oszacować prawdopodobieństwo spełnienia pewnej hipotezy statystycznej w populacji na podstawie próby losowej z tej populacji. W przypadku mojej pracy, hipotezą zerową, którą pragniemy obalić, jest jednakowy rozkład ocen klasyfikacji dla wybranych dwóch rodzin metod. Obalenie hipotezy zerowej oznacza różnorodność rozkładów.
 
 Testy statystyczne dzielimy na dwa rodzaje: parametryczne i nieparametryczne. Testy pierwszego rodzaju zakładają pewien ustalony rozkład danych oraz parametry tego rozkładu. Przykładami testów statystycznych są testy \emph{t-Studenta} oraz \emph{korelacja Pearsona}.
 
-Testy nieparametryczne nie wymagają założeń odnośnie populacji, z której losowana jest próba. Dzięki mniejszej liczbie założeń do spełnienia mogą być szerzej stosowane niż testy parametryczne. Wadą testów nieparametrycznych jest mniej dokładny pomiar oraz mniejsza moc. Mocą testu nazywamy prawdopodobieństwo odrzucenia fałszywej hipotezy zerowej. W przypadku mojej pracy, testy nieparametryczne rzadziej będą wskazywać rzeczywiste różnice w rozkładach ocen pomiędzy grupami. Przykładami testów nieparametrycznych są test \emph{Manna-Whitneya-Wilcoxona} oraz test \emph{chi kwadrat}. 
+Testy nieparametryczne nie wymagają założeń odnośnie populacji, z której losowana jest próba. Dzięki mniejszej liczbie założeń do spełnienia mogą być szerzej stosowane niż testy parametryczne. Wadą testów nieparametrycznych jest mniej dokładny pomiar oraz mniejsza moc. Mocą testu nazywamy prawdopodobieństwo odrzucenia fałszywej hipotezy zerowej. W przypadku mojej pracy, testy nieparametryczne rzadziej będą wskazywać rzeczywiste różnice w rozkładach ocen pomiędzy rodzinami. Przykładami testów nieparametrycznych są test \emph{Manna-Whitneya-Wilcoxona} oraz test \emph{chi kwadrat}. 
 
-\subsection{Test Manna-Whitneya-Wilcoxona}
-
-Biorąc pod uwagę brak wiedzy a priori na temat rozkładu ocen w grupach metod klasyfikacji, do porównywania użyty został test nieparametryczny Manna-Whitneya-Wilcoxona. Test ten polega na policzeniu statystyki $U$, związanej z liczbą przypadków, gdzie elementy jednej z grup mają wartości wyższe niż elementy z drugiej grupy. Następnie wartość $U$ porównywana jest z wartością graniczną dla ustalonych liczności grup oraz poziomu istotności testu. W przypadku bardzo licznych grup, statystyka $U$ jest zmienną losową o rozkładzie normalnym. Pozwala to w prosty sposób obliczyć \emph{p-wartość} dla danej obserwacji, a następnie porównać ją z ustalonym poziomem istotności testu.
+Biorąc pod uwagę brak wiedzy a priori na temat rozkładu ocen w rodzinach metod klasyfikacji, do porównywania użyty został test nieparametryczny Manna-Whitneya-Wilcoxona. Test ten polega na policzeniu statystyki $U$, związanej z liczbą przypadków, gdzie elementy jednej z rodzin mają wartości wyższe niż elementy z drugiej rodziny. Następnie wartość $U$ porównywana jest z wartością graniczną dla ustalonych liczności rodzin oraz poziomu istotności testu. W przypadku bardzo licznych rodzin, statystyka $U$ jest zmienną losową o rozkładzie normalnym. Pozwala to w prosty sposób obliczyć \emph{p-wartość} dla danej obserwacji, a następnie porównać ją z ustalonym poziomem istotności testu.
 
 \begin{figure}[h]
 \centering

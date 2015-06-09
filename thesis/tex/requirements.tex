@@ -12,14 +12,14 @@ Wymagania dzielimy na funkcjonalne, jakościowe (niefunkcjonalne) oraz wymagania
 
 \section{Wymagania funkcjonalne}
 
-Zgodnie z tym, co opisane jest w rozdziale poświęconym celowi pracy, przygotowywany przeze mnie system służy porównywaniu jakości klasyfikacji wielu zbiorów algorytmów. Użytkownik systemu powinien być w stanie wprowadzić informacje o grupach algorytmów, które chce porównać pod kątem pewnej miary jakości klasyfikacji. Użytkownik powinien również dostarczyć dane medyczne zapisane w pewnym ustalonym formacie. W efekcie tego system powinien zwrócić dane o cechach szczególnych wprowadzonych grup (np. wartość średnia oceny). Dodatkowo system powinien uszeregować grupy algorytmów pod kątem wybranej miary jakości, dając w ten sposób pogląd na wzajemną skuteczność grup algorytmów. Informacje o wzajemnej skuteczności grup mogą okazać się pomocne przy późniejszym decydowaniu, na której z grup należy skoncentrować dalsze badania.
+Zgodnie z tym, co opisane jest w rozdziale poświęconym celowi pracy, przygotowywany przeze mnie system służy porównywaniu jakości klasyfikacji wielu zbiorów algorytmów. Użytkownik systemu powinien być w stanie wprowadzić informacje o rodzinach algorytmów, które chce porównać pod kątem pewnej miary jakości klasyfikacji. Użytkownik powinien również dostarczyć dane medyczne zapisane w pewnym ustalonym formacie. W efekcie tego system powinien zwrócić dane o cechach szczególnych wprowadzonych rodzin algorytmów (np. wartość średnia oceny). Dodatkowo system powinien uszeregować rodziny algorytmów pod kątem wybranej miary jakości, dając w ten sposób pogląd na wzajemną skuteczność rodzin algorytmów. Informacje o wzajemnej skuteczności rodzin mogą okazać się pomocne przy późniejszym decydowaniu, na której z rodzin należy skoncentrować dalsze badania.
 
 Takie spojrzenie na podstawowe wymagania pozwala wyróżnić trzy podstawowe zestawy funkcjonalności: wprowadzanie danych wejściowych, wykonywanie obliczeń i prezentację wyników.
 
 \subsection{Wprowadzanie danych wejściowych}
 \label{req:input}
 
-Jednym z podstawowych zadań systemu jest wstępne przetwarzanie danych, klasyfikacja oraz obliczenie miary jakości klasyfikacji. Taki ciąg obliczeń w reszcie pracy dla uproszczenia nazywać będę \emph{algorytmem}. Użytkownik, rozpoczynając obliczenia, powinien wprowadzić informacje o grupie algorytmów, dla których wyniki oceny chce uzyskać. Każdy algorytm będzie wykonywał pewne operacje na dostarczonym zbiorze danych. Aby ustalić przebieg działania pojedynczego algorytmu należy najpierw przyjrzeć się posiadanym danym biomedycznym.
+Jednym z podstawowych zadań systemu jest wstępne przetwarzanie danych, klasyfikacja oraz obliczenie miary jakości klasyfikacji. Taki ciąg obliczeń w reszcie pracy dla uproszczenia nazywać będę \emph{algorytmem}. Użytkownik, rozpoczynając obliczenia, powinien wprowadzić informacje o rodzinie algorytmów, dla których wyniki oceny chce uzyskać. Każdy algorytm będzie wykonywał pewne operacje na dostarczonym zbiorze danych. Aby ustalić przebieg działania pojedynczego algorytmu należy najpierw przyjrzeć się posiadanym danym biomedycznym.
 
 \subsubsection{Opis danych wejściowych}
 
@@ -60,9 +60,9 @@ Każdy algorytm składa się z czterech etapów wstępnego przetwarzania oraz z 
 
 Spośród wyżej wymienionych operacji tylko pierwsza i ostatnia powinny być zawsze określone. Wynika to z faktu, że wiele algorytmów klasyfikacji zakłada obecność wszystkich danych i nie uwzględnia sytuacji, w których pewnych wartości brakuje. Inaczej jest w przypadku pozostałych czynności. Usuwanie, skalowanie oraz grupowanie atrybutów mogą mieć zasadniczy wpływ na przebieg całego algorytmu, ale nie są konieczne. Najprostszy pojedynczy algorytm polegać będzie zatem na imputacji danych wybraną metodą oraz na późniejszej klasyfikacji danych. Najbardziej złożony algorytm zawierać będzie w sobie wszystkie wymienione etapy. 
 
-Należy zwrócić uwagę na wymaganie dotyczące grupowania wartości w atrybutach. Aplikacja powinna pozwalać na wykorzystanie wielu różnych algorytmów łączenia jednocześnie. Dla każdego wybranego algorytmu grupowania użytkownik powinien móc wskazać grupę atrybutów poddanych łączeniu oraz parametry algorytmu.
+Należy zwrócić uwagę na wymaganie dotyczące grupowania wartości w atrybutach. Aplikacja powinna pozwalać na wykorzystanie wielu różnych algorytmów łączenia jednocześnie. Dla każdego wybranego algorytmu grupowania użytkownik powinien móc wskazać zbiór atrybutów poddanych łączeniu oraz parametry algorytmu.
 
-Fazy algorytmu związane z usuwaniem, skalowaniem i grupowaniem atrybutów wymagają wskazania zbioru atrybutów, na którym konkretna operacja ma zostać wykonana. Liczba możliwych kombinacji atrybutów zależy wykładniczo od liczby atrybutów w zbiorze. Oznacza to, że w ogólnym przypadku grupa algorytmów nie może zawierać algorytmów ze wszystkimi możliwymi kombinacjami. Wiązałoby się to z nieakceptowalnie długim czasem obliczeń. Biorąc jednak pod uwagę, że dostępne dane zawierają tylko 6 atrybutów, można pozwolić sobie na tworzenie grup zawierających wszystkie kombinacje. Dalsze wymagania zakładać będą, że zbiór danych zawierać będzie nie więcej niż 10 atrybutów.
+Fazy algorytmu związane z usuwaniem, skalowaniem i grupowaniem atrybutów wymagają wskazania zbioru atrybutów, na którym konkretna operacja ma zostać wykonana. Liczba możliwych kombinacji atrybutów zależy wykładniczo od liczby atrybutów w zbiorze. Oznacza to, że w ogólnym przypadku rodzina algorytmów nie może zawierać algorytmów ze wszystkimi możliwymi kombinacjami. Wiązałoby się to z nieakceptowalnie długim czasem obliczeń. Biorąc jednak pod uwagę, że dostępne dane zawierają tylko 6 atrybutów, można pozwolić sobie na tworzenie rodzin zawierających wszystkie kombinacje. Dalsze wymagania zakładać będą, że zbiór danych zawierać będzie nie więcej niż 10 atrybutów.
 
 \begin{figure}[h]
 \centering
@@ -71,17 +71,17 @@ Fazy algorytmu związane z usuwaniem, skalowaniem i grupowaniem atrybutów wymag
 \label{req:algorithm}
 \end{figure}
 
-\subsubsection{Grupa algorytmów}
+\subsubsection{Rodzina algorytmów}
 
-System powinien obliczać jakość klasyfikacji grupy algorytmów zdefiniowanej w pewien sposób przez użytkownika. Projektując metodę opisu grup algorytmów należy zachować równowagę pomiędzy jej skrótowością oraz ekspresywnością. 
+System powinien obliczać jakość klasyfikacji rodziny algorytmów zdefiniowanej w pewien sposób przez użytkownika. Projektując metodę opisu rodzin algorytmów należy zachować równowagę pomiędzy jej skrótowością oraz ekspresywnością. 
 
-Opis rozwlekły byłby kłopotliwy w użyciu, gdyż wymagałby dużego nakładu pracy, aby opisać grupę metod. Dokładna metoda opisu mogłaby wymagać od użytkownika bezpośredniego wprowadzania opisów kombinacji, które aplikacja miałaby obsłużyć. Jednakże przy gigantycznej liczbie wszystkich możliwych wariantów, rozwiązanie to nie znalazłoby zastosowania - opisy grup stałyby się po prostu za długie. 
+Opis rozwlekły byłby kłopotliwy w użyciu, gdyż wymagałby dużego nakładu pracy, aby opisać rodzinę metod. Dokładna metoda opisu mogłaby wymagać od użytkownika bezpośredniego wprowadzania opisów kombinacji, które aplikacja miałaby obsłużyć. Jednakże przy gigantycznej liczbie wszystkich możliwych wariantów, rozwiązanie to nie znalazłoby zastosowania - opisy rodzin stałyby się po prostu za długie. 
 
-Skrajną alternatywą mogłoby być pytanie użytkownika, czy algorytmy w grupie powinny uwzględniać określone operacje, np. usuwanie atrybutów lub ich grupowanie. Taki krótki, nieprecyzyjny opis nie pozwalałby na wyrażanie konkretnych rodzajów algorytmów w grupie.  Odpowiedzi ,,tak lub nie'' byłyby wygodne dla użytkownika, ale odbierałyby jakikolwiek wpływ na kształtowanie grup algorytmów.
+Skrajną alternatywą mogłoby być pytanie użytkownika, czy algorytmy w rodzinie powinny uwzględniać określone operacje, np. usuwanie atrybutów lub ich grupowanie. Taki krótki, nieprecyzyjny opis nie pozwalałby na wyrażanie konkretnych rodzajów algorytmów w rodzinie.  Odpowiedzi ,,tak lub nie'' byłyby wygodne dla użytkownika, ale odbierałyby jakikolwiek wpływ na kształtowanie rodzin algorytmów.
 
 Całkowita liczba wszystkich możliwych kombinacji metod przetwarzania wstępnego i klasyfikacji zależy wykładniczo od liczby atrybutów danych. Przykładowo, liczba możliwych kombinacji atrybutów, które aplikacja podda skalowaniu, wynosi $2^{n}$, gdzie $n$ oznacza liczbę atrybutów. Aby uniknąć długiego czasu obliczeń związanego z eksplozją wykładniczą, użytkownik powinien być w stanie określić podzbiór wszystkich kombinacji, które program ma przeanalizować. Podzbiór taki można traktować jako podprzestrzeń kombinacji parametrów wszystkich możliwych algorytmów.
 
-Zaproponowane przeze mnie rozwiązanie stanowi złoty środek pomiędzy dwoma skrajnymi metodami opisu grup. Polega ono na deklaratywnym opisie parametrów algorytmów należących do grupy. 
+Zaproponowane przeze mnie rozwiązanie stanowi kompromis pomiędzy dwoma skrajnymi metodami opisu rodzin. Polega ono na deklaratywnym opisie parametrów algorytmów należących do rodziny. 
 
 Na samym początku użytkownik powinien wybrać metody imputacji brakujących wartości atrybutów, na przykład: $\{\emph{mediana}, \emph{wartość średnia}\}$.
 
@@ -101,7 +101,7 @@ Wiele algorytmów często przyjmuje parametry początkowe należące do określo
 && l_n = b \\
 && l_{i+1} - l_i = c
 \end{eqnarray*}
-gdzie $c$ jest stałą, a $i \in \{1, \ldots, n-1\}$. Intuicyjnie granularność liniowa to liczba od 1 większa od liczby podziałów zbioru na przedziały o jednakowej długości.
+gdzie $c$ jest stałą, a $i \in \{1, \ldots, n-1\}$. Intuicyjnie granularność liniowa to liczba o 1 większa od liczby podziałów zbioru na przedziały o jednakowej długości.
 
 \textit{Granularność wykładniczą} $g_w$ dla zbioru $\{a, \ldots, b\}$ definiuję jako liczność zbioru $\textbf{W} = \{w_1, w_2, \ldots, w_n\}$ takiego, że:
 \begin{eqnarray*}
@@ -111,7 +111,9 @@ gdzie $c$ jest stałą, a $i \in \{1, \ldots, n-1\}$. Intuicyjnie granularność
 \end{eqnarray*}
 gdzie $q$ jest stałą, a $i \in \{1, \ldots, n-1\}$. Posługując się intuicją, granularność wykładniczą można rozumieć jako liczbę o 1 większą od liczby podziałów zbioru na przedziały należące do różnych rzędów wielkości. Zbiory $\textbf{L}$ i $\textbf{W}$ nazywam \textit{zbiorami granularnymi}.
 
-Po zakończeniu ustalania szczegółów grupowania, użytkownikowi pozostanie ustawienie procesu klasyfikowania danych. Odbiorca aplikacji będzie musiał wskazać algorytmy, których działanie ma zostać sprawdzone, jak również granularność dla tych algorytmów. Jak zatem widać, zbiór parametrów grupy jednoznacznie wyznacza algorytmy, które do niej należą. Umiejętne dobranie parametrów grupy umożliwia wygenerowanie mniejszej lub większej liczby algorytmów wewnątrz grupy.
+W projektowanym systemie każdy algorytm grupowania lub klasyfikacji posiada ustaloną przestrzeń dostępnych parametrów. Całkowita przestrzeń parametrów algorytmu $P_{tot}$ składa się z podprzestrzeni $P_i$ każdego pojedynczego parametru $i$. Zbiór $P_{tot}$ jest zatem iloczynem kartezjańskim zbiorów $P_i$. Każdy zbiór $P_i$ określony jest przez granice przedziału liczbowego, do którego należy, oraz przez rodzaj granularności (np. liniową). Faktyczna zawartość zbioru $P_{tot}$ znana jest dopiero wówczas, gdy użytkownik ustali wartość granularności. Na podstawie tej informacji generowane są elementy zbiorów $P_i$, a co za tym idzie, całej przestrzeni $P_{tot}$.
+
+Po zakończeniu ustalania szczegółów grupowania, użytkownikowi pozostanie ustawienie procesu klasyfikowania danych. Odbiorca aplikacji będzie musiał wskazać algorytmy, których działanie ma zostać sprawdzone, jak również granularność dla tych algorytmów. Jak zatem widać, zbiór parametrów rodziny jednoznacznie wyznacza algorytmy, które do niej należą. Umiejętne dobranie parametrów rodziny umożliwia wygenerowanie mniejszej lub większej liczby algorytmów wewnątrz rodziny.
 
 \begin{figure}[h]
 \centering
@@ -119,29 +121,30 @@ Po zakończeniu ustalania szczegółów grupowania, użytkownikowi pozostanie us
   \begin{enumerate}
     \item Imputacja: 
     \begin{enumerate}
-      \item Zbiór metod, np. $\{$\emph{średnia}, \emph{mediana}$\}$
+      %\item Zbiór metod, np. $\{$\emph{średnia}, \emph{mediana}$\}$
+      \item Podzbiór zbioru metod $\{$\emph{mean}, \emph{median}$\}$, np. $\{$\emph{mean}$\}$
     \end{enumerate}
     \item Usuwanie i skalowanie atrybutów:
     \begin{enumerate}
-      \item Zbiór atrybutów, np. $\{X_1, X_4, X_5\}$
+      \item Podzbiór atrybutów $\{$\emph{vegf}, \emph{psa}, \emph{tnfa}, \emph{il6}, \emph{il8}, \emph{age}$\}$, np. $\{$\emph{tnfa}, \emph{il8}$\}$
       \item Zbiór liczności podzbiorów, np. $\{0, 1, 3\}$
     \end{enumerate}
     \item Grupowanie:
     \begin{enumerate}
-      \item Zbiór algorytmów, np. $\{$\emph{K-Średnich}$\}$
-      \item Zbiór atrybutów, np. $\{X_1, ..., X_6\}$
+      \item Podzbiór dostępnych algorytmów $\{$\emph{k-means}, \emph{meanshift}$\}$, np. $\{$\emph{k-means}$\}$
+      \item Zbiór atrybutów, np. $\{$\emph{vegf}, \ldots, \emph{age}$\}$
       \item Zbiór liczb algorytmów używanych jednocześnie, np. $\{2\}$
       \item Maksymalna liczba atrybutów podlegających grupowaniu przez algorytm, np. $2$
       \item Granularność, np. $5$
     \end{enumerate}
     \item Klasyfikacji
     \begin{enumerate}
-      \item Zbiór algorytmów, np. $\{$\emph{Las Losowy}$\}$
+      \item Podzbiór algorytmów $\{$\emph{bayes}, \emph{randomforest}, \emph{tree}, \emph{svm}$\}$, np. $\{$\emph{tree}$\}$
       \item Granularność, np. $6$
     \end{enumerate}
   \end{enumerate}
 \end{framed}
-\caption{Parametry wchodzące w skład opisu pojedynczej grupy algorytmów. Opis jest podzielony na części poświęcone imputacji braków, usuwaniu, skalowaniu i grupowaniu atrybutów oraz klasyfikowaniu danych.}
+\caption{Parametry wchodzące w skład opisu pojedynczej rodziny algorytmów. Opis jest podzielony na części poświęcone imputacji braków, usuwaniu, skalowaniu i grupowaniu atrybutów oraz klasyfikowaniu danych.}
 \label{req:as}
 \end{figure}
 
@@ -162,23 +165,23 @@ Po zakończeniu fazy przetwarzania nadchodzi kolej na ocenę klasyfikacji. Na pr
 
 Powyższe obliczenia powtarzane są dla każdego z 10 podziałów na zbiory trenujące i testowe. Oznacza to, że wynikiem dla każdego algorytmu $A_i$ ze zbioru $A$ jest 30 liczb - 10 trójek miar jakości oceny. 
 
-Wyżej opisane obliczenia wykonywane są dla każdego algorytmu w grupie. Po zakończeniu obliczeń oceny poszczególnych algorytmów są łączone w jeden zbiór i przypisywane do grupy algorytmów.
+Wyżej opisane obliczenia wykonywane są dla każdego algorytmu w rodzinie. Po zakończeniu obliczeń oceny poszczególnych algorytmów są łączone w jeden zbiór i przypisywane do rodziny algorytmów.
 
-Posiadając wyniki obliczeń dla każdej z grup, można przejść do porównania grup. Najpierw dla każdej pary grup należy ocenić, czy wyniki w grupach różnią się od siebie. W tym celu używa się testu Manna-Whitneya-Wilcoxona. Jeżeli wyniki grup różnią się od siebie, wygrywa ta z nich, której różnica średniej i odchylenia standardowego jest większa. Dla każdej grupy $i$ należy policzyć wartość $t_i$ oznaczającą z iloma pozostałymi grupami ,,wygrała''. Na końcu należy uszeregować grupy używając wartości $t_i$.
+Posiadając wyniki obliczeń dla każdej z rodzin, można przejść do porównania rodzin. Najpierw dla każdej pary rodzin należy ocenić, czy wyniki w rodzinach różnią się od siebie. W tym celu używa się testu Manna-Whitneya-Wilcoxona. Jeżeli wyniki rodzin różnią się od siebie, wygrywa ta z nich, której różnica średniej i odchylenia standardowego jest większa. Dla każdej rodziny $i$ należy policzyć wartość $t_i$ oznaczającą z iloma pozostałymi rodzinami ,,wygrała''. Na końcu należy uszeregować rodziny używając wartości $t_i$.
 
 Całość obliczeń w dużym skrócie prezentuje algorytm \ref{req:algorithm}.
 
 \begin{algorithm}[ht]
-  \KwIn{zbiór grup algorytmów $A$}
+  \KwIn{zbiór rodzin algorytmów $A$}
   \KwOut{ranking $R$}
   \ForEach{$A_i \in A$} {
     \ForEach{$a_j \in A_i$} {
       Oblicz miary oceny klasyfikacji $M_{a_j}$\;
     }
     $Y_i = \bigcup M_{a_j}$\;
-    Porównaj oceny $Y_i$ z ocenami poprzednich grup $Y_k, k \in [1, i)$\;
+    Porównaj oceny $Y_i$ z ocenami poprzednich rodzin $Y_k, k \in [1, i)$\;
   }
-  Utwórz ranking grup $R$\;
+  Utwórz ranking rodzin $R$\;
   \Return{$R$}
   \caption{Uproszczony schemat obliczeń}
   \label{req:algorithm}
@@ -190,34 +193,34 @@ Wykonywanie obliczeń opisanych w poprzednim podpunkcie może być bardzo czasoc
 
 \subsubsection{Przechowywanie wyników}
 
-Z wymagania dotyczącego wstrzymywania i wznawiania obliczeń wynika konieczność przechowywania informacji o cząstkowych rezultatach. Co więcej, system powinien zapamiętywać wyniki obliczeń dla grup algorytmów, aby późniejsze zapytania o te grupy zwracały informacje błyskawicznie.
+Z wymagania dotyczącego wstrzymywania i wznawiania obliczeń wynika konieczność przechowywania informacji o cząstkowych rezultatach. Co więcej, system powinien zapamiętywać wyniki obliczeń dla rodzin algorytmów, aby późniejsze zapytania o te rodziny zwracały informacje błyskawicznie.
 
 \subsubsection{Rozproszenie obliczeń}
 
-Jak łatwo zauważyć, możliwe jest zdefiniowanie grup algorytmów, których liczność jest bardzo duża (zależna wykładniczo od niektórych parametrów). Oznacza to, że badania przeprowadzanie na takich grupach będą bardzo czasochłonne. W celu skrócenia czasu, obliczenia można wykonywać równolegle na wielu maszynach. Projektowany system powinien umożliwiać wykonywanie obliczeń na pojedynczej maszynie (np. na laptopie) lub na grupie maszyn połączonych siecią komputerową.
+Jak łatwo zauważyć, możliwe jest zdefiniowanie rodzin algorytmów, których liczność jest bardzo duża (zależna wykładniczo od niektórych parametrów). Oznacza to, że badania przeprowadzanie na takich rodzinach będą bardzo czasochłonne. W celu skrócenia czasu, obliczenia można wykonywać równolegle na wielu maszynach. Projektowany system powinien umożliwiać wykonywanie obliczeń na pojedynczej maszynie (np. na laptopie) lub na grupie maszyn połączonych siecią komputerową.
 
-Rozpraszając obliczenia na wiele maszyn, należy mieć na uwadze wpływ opóźnień w sieci na wydajność przebiegu badań. Komunikacja sieciowa jest wolniejszą metodą wymiany informacji niż np. komunikacja międzywątkowa lub międzyprocesowa. Należy również zdawać sobie sprawę z problemu związanego z zawodnością zdalnych komputerów. Z losowych przyczyn mogą się one zawiesić, wyłączyć, wprowadzając za-kłócenia do całego procesu obliczeń. 
+Rozpraszając obliczenia na wiele maszyn, należy mieć na uwadze wpływ opóźnień w sieci na wydajność przebiegu badań. Komunikacja sieciowa jest wolniejszą metodą wymiany informacji niż np. komunikacja międzywątkowa lub międzyprocesowa. Należy również zdawać sobie sprawę z problemu związanego z zawodnością zdalnych komputerów. Z losowych przyczyn mogą się one zawiesić, wyłączyć, wprowadzając zakłócenia do całego procesu obliczeń. 
 
 \subsubsection{Ustalony podział zbioru danych}
 
-Porównując oceny jakości klasyfikacji dla różnych grup algorytmów należy zadbać o to, aby podziały na zbiory trenujące i testowe były jednakowe dla każdego algorytmu. Tylko wtedy mamy pewność że miary jakości klasyfikacji odnoszą się do efektów predykcji klasyfikatora na tych samych zbiorach danych. Warunek ten powinien być spełniony również wtedy, gdy obliczenia robione są na wielu niezależnych maszynach oraz, gdy raz przerwane obliczenia zostały wznowione.
+Porównując oceny jakości klasyfikacji dla różnych rodzin algorytmów należy zadbać o to, aby podziały na zbiory trenujące i testowe były jednakowe dla każdego algorytmu. Tylko wtedy mamy pewność że miary jakości klasyfikacji odnoszą się do efektów predykcji klasyfikatora na tych samych zbiorach danych. Warunek ten powinien być spełniony również wtedy, gdy obliczenia robione są na wielu niezależnych maszynach oraz, gdy raz przerwane obliczenia zostały wznowione.
 
 \subsection{Prezentacja wyników}
 
 Ostatnią częścią poświęconą wymaganiom funkcjonalnym są wymagania dotyczące prezentacji wyników obliczeń. Istotnym jest, aby raz policzone rozkłady miar można było łatwo zobrazować i przeanalizować.
 
-\subsubsection{Informacje o grupach algorytmów}
+\subsubsection{Informacje o rodzinach algorytmów}
 
-System komputerowy powinien pozwalać na podgląd obliczonych miar jakości klasyfikacji dla grup algorytmów zdefiniowanych przez użytkownika. System powinien dawać możliwość podglądu podstawowych statystyk dla każdej z grup algorytmów. Do wartości tych powinny zaliczać się średnia ocen oraz odchylenie standardowe dla każdej z miar (precyzja, wrażliwość, F1) z osobna. Dodatkowo, aplikacja musi umożliwiać graficzny podgląd histogramów rozkładów ocen wraz z uwzględnieniem zapisu wykresów do plików. Warto również wspomnieć o tym, że dla każdej grupy algorytmów system powinien wyświetlić prosty i zrozumiały opis, pozwalający zrozumieć jak grupa została zdefiniowana (metoda imputacji, atrybuty do usunięcia itp).
+System komputerowy powinien pozwalać na podgląd obliczonych miar jakości klasyfikacji dla rodzin algorytmów zdefiniowanych przez użytkownika. System powinien dawać możliwość podglądu podstawowych statystyk dla każdej z rodzin algorytmów. Do wartości tych powinny zaliczać się średnia ocen oraz odchylenie standardowe dla każdej z miar (precyzja, wrażliwość, F1) z osobna. Dodatkowo, aplikacja musi umożliwiać graficzny podgląd histogramów rozkładów ocen wraz z uwzględnieniem zapisu wykresów do plików. Warto również wspomnieć o tym, że dla każdej rodziny algorytmów system powinien wyświetlić prosty i zrozumiały opis, pozwalający zrozumieć jak rodzina została zdefiniowana (metoda imputacji, atrybuty do usunięcia itp).
 
-\subsubsection{Ranking grup}
+\subsubsection{Ranking rodzin algorytmów}
 
-Celem projektowanego systemu komputerowego jest porównywanie jakości predykcji grup algorytmów. Porównanie to powinno być zrealizowane w postaci rankingu tych grup. Jak zostało to opisane w sekcji  \ref{req:research_scheme}, porządek w rankingu powinien być oparty na liczbie ,,zwycięstw'' pomiędzy grupami algorytmów. Grupy powinny być przedstawione od najlepszej do najgorszej wg kryterium wybranej miary oceny (np. precyzji). W celu uproszczenia porównywania grup między sobą, każda pozycja w rankingu powinna zawierać:
+Celem projektowanego systemu komputerowego jest porównywanie jakości predykcji rodzin algorytmów. Porównanie to powinno być zrealizowane w postaci rankingu tych rodzin. Jak zostało to opisane w sekcji  \ref{req:research_scheme}, porządek w rankingu powinien być oparty na liczbie ,,zwycięstw'' pomiędzy rodzinami algorytmów. Rodziny powinny być przedstawione od najlepszej do najgorszej wg kryterium wybranej miary oceny (np. precyzji). W celu uproszczenia porównywania rodzin między sobą, każda pozycja w rankingu powinna zawierać:
 \begin{enumerate}
-  \item Opis grupy algorytmów wynikający z parametrów grupy
+  \item Opis rodziny algorytmów wynikający z parametrów rodziny
   \item Informacje o miejscu w rankingach tworzonych wg pozostałych miar ocen
   \item Wartości średnie miar oceny klasyfikacji
-  \item Informacje o grupach z którymi zwyciężyła (dla każdej z miar ocen)
+  \item Informacje o rodzinach z którymi zwyciężyła (dla każdej z miar ocen)
 \end{enumerate}
 
 \section{Wymagania niefunkcjonalne}
@@ -226,7 +229,7 @@ W związku z tym, że praca dyplomowa ma głównie charakter badawczy, etap anal
 
 \subsection{Rozmiar przechowywanych danych}
 
-Projektowany system komputerowy powinien umożliwiać zapis informacji o wynikach dla 1000 grup algorytmów. Każda grupa może posiadać do 1000000 wyników dla każdej z miar oceny klasyfikacji. System powinien być w stanie wygenerować ranking dla grup z takimi ograniczeniami.
+Projektowany system komputerowy powinien umożliwiać zapis informacji o wynikach dla 1000 rodzin algorytmów. Każda rodzina może posiadać do 1000000 wyników dla każdej z miar oceny klasyfikacji. System powinien być w stanie wygenerować ranking dla rodzin z takimi ograniczeniami.
 
 \subsection{Dane wejściowe}
 
@@ -234,11 +237,11 @@ Dostępne dane medyczne znajdują się w pliku MS Excel, a wyszczególniona kolu
 
 \subsection{Algorytmy uczenia maszynowego}
 
-System powinien stwarzać możliwość porównania grup używających popularnych algorytmów klasyfikacji i grupowania. Aplikacja powinna udostępniać co najmniej 4 algorytmy klasyfikacji danych oraz co najmniej 2 algorytmy grupowania atrybutów.
+System powinien stwarzać możliwość porównania rodzin używających popularnych algorytmów klasyfikacji i grupowania. Aplikacja powinna udostępniać co najmniej 4 algorytmy klasyfikacji danych oraz co najmniej 2 algorytmy grupowania atrybutów.
 
 \section{Wymagania systemowe}
 
-Biorąc pod uwagę różnorodność popularnie używanych systemów operacyjnych, projektowany system nie powinien wymuszać na użytkowniku żadnej konkretnej platformy. Projektowane rozwiązanie powinno działać równie dobrze zarówno na systemach z rodziny MS Windows, jak i Linux (na przykład). Jednocześnie aplikacja powinna umożliwiać przetwarzanie wstępne oraz klasyfikowanie danych w prosty i intuicyjny sposób. W tym celu system powinien oferować nieskomplikowany, konsolowy interfejs użytkownika. Interfejs musi pozwalać na wprowadzanie danych do przetwarzania oraz na łatwe ustawianie parametrów opisanych w części \ref{req:input}.
+Biorąc pod uwagę różnorodność popularnie używanych systemów operacyjnych, projektowany system nie powinien wymuszać na użytkowniku żadnej konkretnej platformy. Projektowane rozwiązanie powinno działać równie dobrze zarówno na systemach z rodziny MS Windows, jak i Linux. Jednocześnie aplikacja powinna umożliwiać przetwarzanie wstępne oraz klasyfikowanie danych w prosty i intuicyjny sposób. W tym celu system powinien oferować nieskomplikowany, konsolowy interfejs użytkownika. Interfejs musi pozwalać na wprowadzanie danych do przetwarzania oraz na łatwe ustawianie parametrów opisanych w części \ref{req:input}.
 
 \section{Wymagania ograniczeń}
 
@@ -256,8 +259,8 @@ Tabela \ref{req:table} stanowi zestawienie wymagań projektowych opisanych w tym
 \hline
 \rowcolor{lightgray} Rodzaj wymagania & Opis wymagania \\\hline
 
-Funkcjonalne & Obliczanie miar jakości klasyfikacji dla zdefiniowanych przez użytkownika grup algorytmów metodą walidacji krzyżowej. \\\hline
-Funkcjonalne & Definiowanie grup algorytmów poprzez wprowadzanie odpowiednich parametrów. \\\hline
+Funkcjonalne & Obliczanie miar jakości klasyfikacji dla zdefiniowanych przez użytkownika rodzin algorytmów metodą walidacji krzyżowej. \\\hline
+Funkcjonalne & Definiowanie rodzin algorytmów poprzez wprowadzanie odpowiednich parametrów. \\\hline
 Funkcjonalne & Każdy algorytm zawiera etapy imputacji i klasyfikacji. Opcjonalne etapy to usuwanie, skalowanie i grupowanie atrybutów. \\\hline
 Funkcjonalne & Porównywanie zbiorów ocen testem Manna Whitneya Wilcoxona. \\\hline
 Funkcjonalne & Możliwość wstrzymywania obliczeń. \\\hline
@@ -267,13 +270,13 @@ Funkcjonalne & Skrócenie czasu obliczeń poprzez wykonywanie ich na wielu maszy
 Funkcjonalne & Ustalony podział na zbiory trenujące i testowe. \\\hline
 Funkcjonalne & Informacja o postępie obliczeń. \\\hline
 Funkcjonalne & Informacja o przewidywanym czasie zakończenia obliczeń. \\\hline
-Funkcjonalne & Podgląd średniej i odchylenia standardowego dla każdej policzone grupy algorytmów. \\\hline
-Funkcjonalne & Generowanie histogramu miar jakości dla każdej grupy algorytmów. \\\hline
-Funkcjonalne & Wyświetlanie czytelnych i zrozumiałych opisów grup. \\\hline
-Funkcjonalne & Tworzenie rankingu grup. \\\hline
+Funkcjonalne & Podgląd średniej i odchylenia standardowego dla każdej policzonej rodziny algorytmów. \\\hline
+Funkcjonalne & Generowanie histogramu miar jakości dla każdej rodziny algorytmów. \\\hline
+Funkcjonalne & Wyświetlanie czytelnych i zrozumiałych opisów rodzin. \\\hline
+Funkcjonalne & Tworzenie rankingu rodzin. \\\hline
 
-Niefunkcjonalne & Zapis do 1000 grup algorytmów w bazie danych. \\\hline
-Niefunkcjonalne & Zapis do 1000000 ocen dla każdej miary dla każdej grupy algorytmów. \\\hline
+Niefunkcjonalne & Zapis do 1000 rodzin algorytmów w bazie danych. \\\hline
+Niefunkcjonalne & Zapis do 1000000 ocen dla każdej miary dla każdej rodziny algorytmów. \\\hline
 Niefunkcjonalne & Odczyt danych posiadających wyszczególnioną kolumnę kategorii. \\\hline 
 Niefunkcjonalne & Obsługa formatu MS Excel. \\\hline
 Niefunkcjonalne & Wybór spośród co najmniej 4 algorytmów klasyfikacji. \\\hline 
