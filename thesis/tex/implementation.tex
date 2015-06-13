@@ -8,11 +8,11 @@ Rozdział ten skupia się na wybranych fragmentach implementacji systemu, które
 
 \section{Użyte technologie}
 
-Część ta jest poświęcona technologii, w której został zaimplementowany system komputerowy będący jednym z celów pracy magisterskiej.
+Część ta jest poświęcona technologii, w~której został zaimplementowany system komputerowy będący jednym z celów pracy magisterskiej.
 
 \subsection{Język programowania Python}
 
-System został w całości zaimplementowany z wykorzystaniem języka programowania \emph{Python}. \emph{Python} jest interpretowanym językiem programowania wysokiego poziomu, o rozbudowanym pakiecie bibliotek standardowych, którego główną ideą jest czytelność i klarowność kodu źródłowego. Jego składnia jest przejrzysta i zwięzła. Python jest dynamicznie typowany i posiada automatyczne zarządzanie pamięcią. Język ten jest zaprojektowany pod kątem wielu paradygmatów programowania: obiektowego (klasy, dziedziczenie), imperatywnego oraz w pewnym stopniu funkcyjnego (praca na listach). Implementacje języka Python są dostępne dla wielu systemów operacyjnych oraz platform sprzętowych, w tym dla systemów wbudowanych.
+System został w~całości zaimplementowany z wykorzystaniem języka programowania \emph{Python}. \emph{Python} jest interpretowanym językiem programowania wysokiego poziomu, o rozbudowanym pakiecie bibliotek standardowych, którego główną ideą jest czytelność i~klarowność kodu źródłowego. Jego składnia jest przejrzysta i~zwięzła. Python jest dynamicznie typowany i~posiada automatyczne zarządzanie pamięcią. Język ten jest zaprojektowany pod kątem wielu paradygmatów programowania: obiektowego (klasy, dziedziczenie), imperatywnego oraz w~pewnym stopniu funkcyjnego (praca na listach). Implementacje języka Python są dostępne dla wielu systemów operacyjnych oraz platform sprzętowych, w~tym dla systemów wbudowanych.
 
 \begin{figure}[h]
 \centering
@@ -23,23 +23,23 @@ System został w całości zaimplementowany z wykorzystaniem języka programowan
   postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
 }
 \lstinputlisting[language=Python]{fib.py}
-\caption{Kod funkcji w języku \emph{Python} zwracającej $n$-ty wyraz ciągu Fibonacciego.}
+\caption{Kod funkcji w~języku \emph{Python} zwracającej $n$-ty wyraz ciągu Fibonacciego.}
 \label{impl:snippet_python}
 \end{figure}
 
-Wybrałem ten język programowania, ponieważ znałem go bardzo dobrze i potrafiłem się nim płynnie posługiwać. Drugim, również bardzo istotnym, powodem jest obecność wielu gotowych i przetestowanych bibliotek związanych z algorytmami uczenia maszynowego. Możliwość użycia pewnego, działającego i niezawodnego kodu przesądziła o wyborze tego języka.
+Wybrałem ten język programowania, ponieważ znałem go bardzo dobrze i~potrafiłem się nim płynnie posługiwać. Drugim, również bardzo istotnym, powodem jest obecność wielu gotowych i~przetestowanych bibliotek związanych z algorytmami uczenia maszynowego. Możliwość użycia pewnego, działającego i~niezawodnego kodu przesądziła o wyborze tego języka.
 
-Wysoka zwięzłość języka pozwoliła na eksperymentowanie z systemem komputerowym niewielkim kosztem czasu. Wprowadzanie małych zmian i poprawek mogło być realizowane ad-hoc, co znacznie przyspieszyło proces implementacji.
+Wysoka zwięzłość języka pozwoliła na eksperymentowanie z systemem komputerowym niewielkim kosztem czasu. Wprowadzanie małych zmian i~poprawek mogło być realizowane ad-hoc, co znacznie przyspieszyło proces implementacji.
 
 \subsection{System kolejkowy RabbitMQ}
 
-Systemem odpowiedzialnym za przesyłanie komunikatów pomiędzy nadzorcą a robotnikami jest system kolejkowy \emph{RabbitMQ}. Jest to otwarte oprogramowanie umożliwiające bezpieczne umieszczanie wiadomości w kolejce (na serwerze) w celu późniejszego ich odebrania przez zainteresowane procesy. Serwer \emph{RabbitMQ} jest zaimplementowany w języku Erlang i w pełni wspiera otwarty standard komunikacji \emph{AMQP} (ang. \emph{Advanced Message Queuing Protocol}). Twórcy tej technologii chwalą się wysoką wydajnością systemu, łatwością użycia oraz wsparciem ze strony innych firm.
+Systemem odpowiedzialnym za przesyłanie komunikatów pomiędzy nadzorcą a~robotnikami jest system kolejkowy \emph{RabbitMQ}. Jest to otwarte oprogramowanie umożliwiające bezpieczne umieszczanie wiadomości w~kolejce (na serwerze) w~celu późniejszego ich odebrania przez zainteresowane procesy. Serwer \emph{RabbitMQ} jest zaimplementowany w~języku Erlang i~w pełni wspiera otwarty standard komunikacji \emph{AMQP} (ang. \emph{Advanced Message Queuing Protocol}). Twórcy tej technologii chwalą się wysoką wydajnością systemu, łatwością użycia oraz wsparciem ze strony innych firm.
 
-Wybrałem właśnie ten system kolejkowy ze względu na jego przenośność (obsługuje systemy operacyjne z rodziny Windows, Linux i Mac OS) oraz bogate wsparcie dla programistów (obecność bibliotek w wielu językach programowania, w tym w Pythonie).
+Wybrałem właśnie ten system kolejkowy ze względu na jego przenośność (obsługuje systemy operacyjne z rodziny Windows, Linux i~Mac OS) oraz bogate wsparcie dla programistów (obecność bibliotek w~wielu językach programowania, w~tym w~Pythonie).
 
 \subsection{Biblioteka Celery}
 
-W celu uproszczenia kodu związanego z komunikacją z systemem kolejkowym, użyłem gotowej biblioteki o nazwie \emph{Celery}. Biblioteka ta pozwala w prosty sposób zaimplementować elastyczny i niezawodny rozproszony system do obsługi dużej liczby wiadomości (zadań) jednocześnie oferując narzędzia do obsługi takiego systemu. \emph{Celery} udostępnia nieskomplikowany interfejs programistyczny systemu kolejkowego, realizując faktyczną wymianę wiadomości za pomocą innych systemów tj. \emph{RabbitMQ}, \emph{Redis} lub \emph{Mongo DB}. 
+W celu uproszczenia kodu związanego z komunikacją z systemem kolejkowym, użyłem gotowej biblioteki o nazwie \emph{Celery}. Biblioteka ta pozwala w~prosty sposób zaimplementować elastyczny i~niezawodny rozproszony system do obsługi dużej liczby wiadomości (zadań) jednocześnie oferując narzędzia do obsługi takiego systemu. \emph{Celery} udostępnia nieskomplikowany interfejs programistyczny systemu kolejkowego, realizując faktyczną wymianę wiadomości za pomocą innych systemów tj. \emph{RabbitMQ}, \emph{Redis} lub \emph{Mongo DB}. 
 
 \begin{figure}[h]
 \centering
@@ -50,36 +50,36 @@ W celu uproszczenia kodu związanego z komunikacją z systemem kolejkowym, uży�
   postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
 }
 \lstinputlisting[language=Python]{celery.py}
-\caption{Kod przykładowego programu odbierającego zadania do policzenia sumy liczb (\emph{Celery}). Kod związany z nasłuchiwaniem na nadchodzące zadania obliczeniowe przypomina prostą definicję funkcji w języku \emph{Python}.}
+\caption{Kod przykładowego programu odbierającego zadania do policzenia sumy liczb (\emph{Celery}). Kod związany z nasłuchiwaniem na nadchodzące zadania obliczeniowe przypomina prostą definicję funkcji w~języku \emph{Python}.}
 \label{impl:snippet_celery}
 \end{figure}
 
 Projekt \emph{Celery} jest przykładem otwartego oprogramowania, jest udostępniany na licencji BSD. Posiada duże zaplecze użytkowników oraz programistów. \emph{Celery} jest biblioteką języka Python.
 
-Użycie \emph{Celery} pomogło utrzymać prostotę i przejrzystość kodu oraz umożliwiło bezproblemową komunikację z systemem \emph{RabbitMQ}.
+Użycie \emph{Celery} pomogło utrzymać prostotę i~przejrzystość kodu oraz umożliwiło bezproblemową komunikację z systemem \emph{RabbitMQ}.
 
 \subsection{Baza danych PostgreSQL}
 
-Baza \emph{PostgreSQL} jest systemem zarządzania relacyjnymi bazami danych z rozszerzeniami obiektowymi. Jest jednym z trzech najpopularniejszych rozwiązań wolnodostępnych z dziedziny baz danych. System ten jest rozwijany od połowy 1995 roku, całość jest zaimplementowana w języku \emph{C}.
+Baza \emph{PostgreSQL} jest systemem zarządzania relacyjnymi bazami danych z rozszerzeniami obiektowymi. Jest jednym z trzech najpopularniejszych rozwiązań wolnodostępnych z dziedziny baz danych. System ten jest rozwijany od połowy 1995 roku, całość jest zaimplementowana w~języku \emph{C}.
 
 Baza ta została wybrana ze względu na wolny dostęp oraz dużą wydajność.
 
 \subsection{Mapowanie obiektowo-relacyjne SQLAlchemy}
 
-W celu uproszczenia odczytu i zapisu wartości do bazy danych, użyta została biblioteka \emph{SQLAlchemy} udostępniająca warstwę mapowania obiektowo-relacyjnego. Głównym zadaniem mapowania obiektowo relacyjnego jest zapewnienie kontroli nad danymi w bazie za pomocą obiektów występujących w danym języku programowania. \emph{SQLAlchemy} jest biblioteką dla języka \emph{Python}.
+W celu uproszczenia odczytu i~zapisu wartości do bazy danych, użyta została biblioteka \emph{SQLAlchemy} udostępniająca warstwę mapowania obiektowo-relacyjnego. Głównym zadaniem mapowania obiektowo relacyjnego jest zapewnienie kontroli nad danymi w~bazie za pomocą obiektów występujących w~danym języku programowania. \emph{SQLAlchemy} jest biblioteką dla języka \emph{Python}.
 
-Biblioteka \emph{SQLAlchemy} pozwala w prosty sposób dodawać, wyszukiwać i usuwać wiersze z bazy danych. System ten jawnie oddziela operacje przeprowadzane na bazie od samej bazy danych. Możliwe jest zatem użycie tego samego kodu do współpracy z bazą \emph{PostgreSQL}, \emph{MySQL}, \emph{Oracle}, \emph{SQLite} lub nawet\emph{ Microsoft SQL Server}.
+Biblioteka \emph{SQLAlchemy} pozwala w~prosty sposób dodawać, wyszukiwać i~usuwać wiersze z bazy danych. System ten jawnie oddziela operacje przeprowadzane na bazie od samej bazy danych. Możliwe jest zatem użycie tego samego kodu do współpracy z bazą \emph{PostgreSQL}, \emph{MySQL}, \emph{Oracle}, \emph{SQLite} lub nawet\emph{ Microsoft SQL Server}.
 
 
 Biblioteka SQLAlchemy została wybrana aby uprościć implementację systemu komputerowego poprzez zdjęcie z programisty odpowiedzialności za prawidłowe konstruowanie kwarend. Z tego punktu widzenia biblioteka spełniła wszystkie oczekiwania.
 
 \subsection{Biblioteka scikit-learn}
 
-Kluczową częścią całego systemu jest implementacja algorytmów przetwarzania wstępnego i klasyfikacji. O ile niektóre fazy przetwarzania są nieskomplikowane i mogą być zaimplementowane własnoręcznie (imputacja, usuwanie atrybutów, skalowanie atrybutów) to przygotowanie kodu odpowiedzialnego za resztę algorytmów (grupowania i klasyfikacji) mogłoby zająć bardzo dużo czasu. Zważywszy, że celem pracy jest porównanie metod, a nie ich implementacja, w systemie została użyta gotowa biblioteka \emph{scikit-learn} zawierająca implementację ,,najtrudniejszych'' algorytmów.
+Kluczową częścią całego systemu jest implementacja algorytmów przetwarzania wstępnego i~klasyfikacji. O ile niektóre fazy przetwarzania są nieskomplikowane i~mogą być zaimplementowane własnoręcznie (imputacja, usuwanie atrybutów, skalowanie atrybutów) to przygotowanie kodu odpowiedzialnego za resztę algorytmów (grupowania i~klasyfikacji) mogłoby zająć bardzo dużo czasu. Zważywszy, że celem pracy jest porównanie metod, a~nie ich implementacja, w~systemie została użyta gotowa biblioteka \emph{scikit-learn} zawierająca implementację ,,najtrudniejszych'' algorytmów.
 
-Biblioteka \emph{scikit-learn} jest biblioteką uczenia maszynowego dla języka \emph{Python} rozpowszechnianą na licencji otwartego oprogramowania (licencja BSD). Biblioteka zawiera wiele implementacji popularnych algorytmów klasyfikacji, regresji i grupowania, w tym drzewa decyzyjne, lasy losowe, maszyny wektorów nośnych oraz wiele innych.
+Biblioteka \emph{scikit-learn} jest biblioteką uczenia maszynowego dla języka \emph{Python} rozpowszechnianą na licencji otwartego oprogramowania (licencja BSD). Biblioteka zawiera wiele implementacji popularnych algorytmów klasyfikacji, regresji i~grupowania, w~tym drzewa decyzyjne, lasy losowe, maszyny wektorów nośnych oraz wiele innych.
 
-Użycie biblioteki \emph{scikit-learn} pozwoliło na błyskawiczne użycie wielu algorytmów opisanych w pracy magisterskiej. Dodatkowo, dokumentacja biblioteki stanowi cenne źródło wiedzy na temat uczenia maszynowego.
+Użycie biblioteki \emph{scikit-learn} pozwoliło na błyskawiczne użycie wielu algorytmów opisanych w~pracy magisterskiej. Dodatkowo, dokumentacja biblioteki stanowi cenne źródło wiedzy na temat uczenia maszynowego.
 
 \section{Program liczący}
 
@@ -88,11 +88,11 @@ Podrozdział ten koncentruje się na interesujących fragmentach implementacji p
 \subsection{Buforowanie wyników}
 \label{impl:opt}
 
-Analizując złożoność czasową każdego etapu algorytmu, można zauważyć, że najwięcej czasu poświęca się na obliczenia związane z grupowaniem oraz klasyfikowaniem danych. O ile klasyfikacja musi być przeprowadzana za każdym razem, o tyle grupowanie niekoniecznie. Dane po grupowaniu (czyli po przetworzeniu wstępnym) można zapamiętać oraz natychmiastowo odtworzyć w następnej iteracji przebiegu badań. Zapamiętywanie informacji o wynikach przetwarzania wstępnego może być zrealizowane poprzez przechowywanie danych w buforze. Bufor taki miałby ograniczoną pojemność, dlatego co jakiś czas należałoby usunąć z niego niepotrzebne wyniki obliczeń. Wyboru tych ,,niepotrzebnych'' można dokonać algorytmem \emph{LRU} (ang. \emph{Least Recently Used}).
+Analizując złożoność czasową każdego etapu algorytmu, można zauważyć, że najwięcej czasu poświęca się na obliczenia związane z grupowaniem oraz klasyfikowaniem danych. O ile klasyfikacja musi być przeprowadzana za każdym razem, o tyle grupowanie niekoniecznie. Dane po grupowaniu (czyli po przetworzeniu wstępnym) można zapamiętać oraz natychmiastowo odtworzyć w~następnej iteracji przebiegu badań. Zapamiętywanie informacji o wynikach przetwarzania wstępnego może być zrealizowane poprzez przechowywanie danych w~buforze. Bufor taki miałby ograniczoną pojemność, dlatego co jakiś czas należałoby usunąć z niego niepotrzebne wyniki obliczeń. Wyboru tych ,,niepotrzebnych'' można dokonać algorytmem \emph{LRU} (ang. \emph{Least Recently Used}).
 
 \subsubsection{Klasa Cache}
 
-Buforowanie wyników zostało zrealizowane poprzez implementację dwóch klas: \emph{LRUCache} oraz \emph{Cache}. Pierwsza z klas to uniwersalna implementacja bufora opróżnianego zgodnie z algorytmem \emph{LRU}. Druga klasa to bufor dedykowany pod kod związany z ocenianiem algorytmów przetwarzania i klasyfikacji. Klasa ta wewnętrznie używa klasy \emph{LRUCache}. Implementację klasy \emph{Cache} prezentuje listing \ref{impl:snippet_cache}.
+Buforowanie wyników zostało zrealizowane poprzez implementację dwóch klas: \emph{LRUCache} oraz \emph{Cache}. Pierwsza z klas to uniwersalna implementacja bufora opróżnianego zgodnie z algorytmem \emph{LRU}. Druga klasa to bufor dedykowany pod kod związany z ocenianiem algorytmów przetwarzania i~klasyfikacji. Klasa ta wewnętrznie używa klasy \emph{LRUCache}. Implementację klasy \emph{Cache} prezentuje listing \ref{impl:snippet_cache}.
 
 \begin{figure}[h]
 \centering
@@ -103,17 +103,17 @@ Buforowanie wyników zostało zrealizowane poprzez implementację dwóch klas: \
   postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
 }
 \lstinputlisting[language=Python]{cache.py}
-\caption{Implementacja klasy \emph{Cache} w języku \emph{Python}.}
+\caption{Implementacja klasy \emph{Cache} w~języku \emph{Python}.}
 \label{impl:snippet_cache}
 \end{figure}
 
-Konstruktor klasy \emph{Cache} przyjmuje parametr $n$ oznaczający maksymalny rozmiar bufora. Klasę \emph{Cache} można interpretować jako tablicę asocjacyjną z automatycznym usuwaniem wartości w której kluczem jest trójka wartości $(checksum, split, pd)$, gdzie $checksum$ to suma kontrolna pliku z danymi, $split$ to podział przykładów na zbiór trenujący i testowy, a $pd$ to deskryptor przetwarzania wstępnego.
+Konstruktor klasy \emph{Cache} przyjmuje parametr $n$ oznaczający maksymalny rozmiar bufora. Klasę \emph{Cache} można interpretować jako tablicę asocjacyjną z automatycznym usuwaniem wartości w~której kluczem jest trójka wartości $(checksum, split, pd)$, gdzie $checksum$ to suma kontrolna pliku z danymi, $split$ to podział przykładów na zbiór trenujący i~testowy, a~$pd$ to deskryptor przetwarzania wstępnego.
 
-Metoda \emph{contains} pozwala stwierdzić czy bufor zawiera dany klucz. Metoda \emph{set} służy do ustalenia wartości pod określonym kluczem, a metoda \emph{get} do pobrania wartości spod klucza.
+Metoda \emph{contains} pozwala stwierdzić czy bufor zawiera dany klucz. Metoda \emph{set} służy do ustalenia wartości pod określonym kluczem, a~metoda \emph{get} do pobrania wartości spod klucza.
 
 \subsubsection{Klasa LRUCache}
 
-Podstawą optymalizacji opisywanej w tej części rozdziału jest implementacja klasy odpowiedzialnej za algorytm \emph{LRU}.
+Podstawą optymalizacji opisywanej w~tej części rozdziału jest implementacja klasy odpowiedzialnej za algorytm \emph{LRU}.
 
 \begin{figure}[h]
 \centering
@@ -124,7 +124,7 @@ Podstawą optymalizacji opisywanej w tej części rozdziału jest implementacja 
   postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
 }
 \lstinputlisting[language=Python]{lru.py}
-\caption{Implementacja klasy \emph{LRUCache} w języku \emph{Python}.}
+\caption{Implementacja klasy \emph{LRUCache} w~języku \emph{Python}.}
 \label{impl:snippet_lru}
 \end{figure}
 
@@ -132,7 +132,7 @@ Klasa \emph{LRUCache} przechowuje wewnętrzną kolekcję obiektów typu klucz-wa
 
 \subsection{Wykonywanie obliczeń}
 
-Zastosowanie biblioteki \emph{Celery} umożliwiło bardzo zwięzłą i przejrzystą implementację programu-robotnika. Dzięki szczegółowemu projektowi rozwiązania, który obejmuje warstwę zadań (deskryptory) oraz modele przetwarzania i klasyfikacji, wynikowy kod jest czytelny i przypomina istotę algorytmu, który reprezentuje (listing \ref{impl:snippet_worker}).
+Zastosowanie biblioteki \emph{Celery} umożliwiło bardzo zwięzłą i~przejrzystą implementację programu-robotnika. Dzięki szczegółowemu projektowi rozwiązania, który obejmuje warstwę zadań (deskryptory) oraz modele przetwarzania i~klasyfikacji, wynikowy kod jest czytelny i~przypomina istotę algorytmu, który reprezentuje (listing \ref{impl:snippet_worker}).
 
 \begin{figure}[h]
 \centering
@@ -147,18 +147,18 @@ Zastosowanie biblioteki \emph{Celery} umożliwiło bardzo zwięzłą i przejrzys
 \label{impl:snippet_worker}
 \end{figure}
 
-Rozpoczęcie obliczeń związanych z oceną jakości klasyfikacji bloku algorytmów można traktować jako zdalne wywołanie procedury \emph{evaluate} (\emph{RPC}, ang. \emph{Remote Procedure Call}). Parametrami takiego wywołania są ścieżka do pliku z danymi, obiekt przechowujący ziarno pseudolosowe oraz zbiór par deskryptorów (przetwarzania wstępnego i klasyfikacji).
+Rozpoczęcie obliczeń związanych z oceną jakości klasyfikacji bloku algorytmów można traktować jako zdalne wywołanie procedury \emph{evaluate} (\emph{RPC}, ang. \emph{Remote Procedure Call}). Parametrami takiego wywołania są ścieżka do pliku z danymi, obiekt przechowujący ziarno pseudolosowe oraz zbiór par deskryptorów (przetwarzania wstępnego i~klasyfikacji).
 
-W pierwszej kolejności, opierając się na liczbie przykładów w pliku oraz na ziarnie pseudolosowym, generowane jest 10 podziałów zbioru danych na zbiory trenujące i testowe (funkcja \emph{get\textunderscore splits()}).
+W pierwszej kolejności, opierając się na liczbie przykładów w~pliku oraz na ziarnie pseudolosowym, generowane jest 10 podziałów zbioru danych na zbiory trenujące i~testowe (funkcja \emph{get\textunderscore splits()}).
 
-Następnie dla każdej pary i dla każdego podziału zbioru tworzony jest obiekt $t$ klasy \emph{Sample} zawierający tylko te przykłady, które wchodzą w skład zbioru trenującego. Na podstawie tego obiektu tworzony jest model imputacji. Modelu używa się aby usunąć braki z obiektu $t$. Dalej z obiektu usuwane są wybrane atrybuty. Kolejnym krokiem jest utworzenie modelu skalowania używając obiektu $t$. W kolejnym kroku model ten służy do przeskalowania atrybutów obiektu $t$. Kiedy to nastąpi, wytwarzany jest model grupowania. Używa się go następnie do zgrupowania wybranych atrybutów w $t$.
+Następnie dla każdej pary i~dla każdego podziału zbioru tworzony jest obiekt $t$ klasy \emph{Sample} zawierający tylko te przykłady, które wchodzą w~skład zbioru trenującego. Na podstawie tego obiektu tworzony jest model imputacji. Modelu używa się aby usunąć braki z obiektu $t$. Dalej z obiektu usuwane są wybrane atrybuty. Kolejnym krokiem jest utworzenie modelu skalowania używając obiektu $t$. W kolejnym kroku model ten służy do przeskalowania atrybutów obiektu $t$. Kiedy to nastąpi, wytwarzany jest model grupowania. Używa się go następnie do zgrupowania wybranych atrybutów w~$t$.
 
-Po wygenerowaniu wszystkich potrzebnych modeli na zbiorze trenującym i po przetworzeniu tego zbioru, przychodzi kolej na transformację zbioru testowego. Poddaje się go kolejno etapom imputacji, usuwania atrybutów, skalowania i grupowania.
+Po wygenerowaniu wszystkich potrzebnych modeli na zbiorze trenującym i~po przetworzeniu tego zbioru, przychodzi kolej na transformację zbioru testowego. Poddaje się go kolejno etapom imputacji, usuwania atrybutów, skalowania i~grupowania.
 
-Klasyfikacja danych odbywa się po przetworzeniu wstępnym zbioru uczącego i testowego. Najpierw, przy użyciu metody \emph{create\textunderscore classifier()}, tworzony jest wybrany klasyfikator $clf$. Nauka, test i ocena klasyfikatora $clf$ odbywa się przy użyciu funkcji pomocniczej \emph{get\textunderscore scores()}. Wynik funkcji - trójka ocen predykcji - zostaje dodana do zbioru ocen.
+Klasyfikacja danych odbywa się po przetworzeniu wstępnym zbioru uczącego i~testowego. Najpierw, przy użyciu metody \emph{create\textunderscore classifier()}, tworzony jest wybrany klasyfikator $clf$. Nauka, test i~ocena klasyfikatora $clf$ odbywa się przy użyciu funkcji pomocniczej \emph{get\textunderscore scores()}. Wynik funkcji - trójka ocen predykcji - zostaje dodana do zbioru ocen.
 
-Optymalizacja opisana w punkcie \ref{impl:opt} polega na użyciu obiektu klasy \emph{Cache}. Przed rozpoczęciem każdego przetwarzania wstępnego sprawdza się, czy wyniki znajdują się już w buforze. Jeżeli tak, stają się natychmiast dostępne i program przechodzi do oceny klasyfikacji. Jeżeli nie, program wykonuje przetwarzanie i utrwala (chwilowo) wyniki w buforze.
+Optymalizacja opisana w~punkcie \ref{impl:opt} polega na użyciu obiektu klasy \emph{Cache}. Przed rozpoczęciem każdego przetwarzania wstępnego sprawdza się, czy wyniki znajdują się już w~buforze. Jeżeli tak, stają się natychmiast dostępne i~program przechodzi do oceny klasyfikacji. Jeżeli nie, program wykonuje przetwarzanie i~utrwala (chwilowo) wyniki w~buforze.
 
-Funkcja \emph{evaluate()} zwraca zbiór ocen, co w przypadku biblioteki \emph{Celery} oznacza wysłanie tego zbioru do programu-nadzorcy.
+Funkcja \emph{evaluate()} zwraca zbiór ocen, co w~przypadku biblioteki \emph{Celery} oznacza wysłanie tego zbioru do programu-nadzorcy.
 
 \end{document}
